@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poetsen+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poetsen+One&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @font-face {
+    font-family: sweet-dating;
+    src: url("/public/fonts/sweet-dating/Sweet\ Dating.otf") format("opentype");
+} */
+
+* {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    max-width: 100%;
+    /* height: 100%; */
+}
+
+.lato-regular {
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+/* 
+.sweet-dating {
+    font-family: "sweet-dating", sans-serif;
+    font-style: medium;
+    font-weight: 400;
+} */
+
+.poetsen-one-regular {
+    font-family: "Poetsen One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+  
+
+.bg-light-gray {
+    background-color: #EEEEEE;
+}
+
+.bg-light-gray1 {
+    background-color: #E0E0E0;
+}
+
+.bg-pink {
+    background-color: #D2649A;
+}
+
+.bg-pastel-pink {
+    background-color: #FFB5B5;
+}
+
+.hover\:bg-pastel-pink:hover {
+    background-color: #FFB5B5;
+}
+
+.text-pastel-pink {
+    color: #FFB5B5;
+}
+
+
+.hover\:text-pastel-pink:hover {
+    color: #FFB5B5;
+}
+
+.bg-pastel-pink-100 {
+    background-color: #FF9696;
+}
+
+.text-continue {
+    color: #828282;
+}
+
+.item1 {
+    flex: 0 0 60%;
+}
+
+.item2 {
+    flex: 1;
+}
+
+.border-e0 {
+    --tw-border-opacity: 1;
+    border-color: rgb(224 224 224 / var(--tw-border-opacity));
+}
