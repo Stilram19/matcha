@@ -89,9 +89,9 @@ export default function ProfileSetup() {
     }
 
     return (
-        <div className="flex justify-around pt-11">
-            <div className="flex flex-col flex-start gap w-1/2">
-                <h1 className="text-xl mb-9">3/3</h1>
+        <div className="flex justify-around pt-[80px]">
+            <div className="flex flex-col gap w-1/2">
+                <h1 className="text-xl my-9">3/3</h1>
                 <h1 className=" text-4xl mb-1">Upload Some Pictures</h1>
                 <p className="mb-4">
                     Upload at least 5 real photos to your profile to make a stronger and more authentic connection with others

@@ -1,0 +1,57 @@
+[
+    {
+        "name": "Hellis Steve",
+        "profile_image": "/imgs/test.jpg",
+        "last_message": "Hello, I just wanna tell that your task has been done and you should contact"
+    },
+    {
+        "name": "Jane Doe",
+        "profile_image": "/imgs/Avatar.png",
+        "last_message": "Are we still on for the meeting tomorrow?"
+    },
+    {
+        "name": "John Smith",
+        "profile_image": "/imgs/man_placeholder.jpg",
+        "last_message": "Don't forget to check the report I sent you."
+    },
+    {
+        "name": "Alice Johnson",
+        "profile_image": "/imgs//man_placeholder1.jpg",
+        "last_message": "Great job on the presentation today!"
+    },
+    {
+        "name": "Bob Brown",
+        "profile_image": "/imgs/Avatar.png",
+        "last_message": "Can we reschedule our call?"
+    },
+    {
+        "name": "Charlie Davis",
+        "profile_image": "/imgs/test.jpg",
+        "last_message": "I'll send over the documents by EOD."
+    },
+    {
+        "name": "Diana Evans",
+        "profile_image": "/imgs//man_placeholder2.jpg",
+        "last_message": "Looking forward to our lunch meeting."
+    },
+    {
+        "name": "Edward Harris",
+        "profile_image": "/imgs/man_placeholder3.jpg",
+        "last_message": "Could you review the latest draft?"
+    },
+    {
+        "name": "Fiona Green",
+        "profile_image": "/imgs/Avatar.png",
+        "last_message": "Happy birthday! Hope you have a great day!"
+    },
+    {
+        "name": "George Clark",
+        "profile_image": "/imgs/man_placeholder.jpg",
+        "last_message": "Let's catch up later this week."
+    },
+    {
+        "name": "Hannah Lewis",
+        "profile_image": "/imgs/Avatar.png",
+        "last_message": "The meeting has been moved to 3 PM."
+    }
+]

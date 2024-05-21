@@ -41,6 +41,7 @@
     background-color: #EEEEEE;
 }
 
+
 .bg-light-gray1 {
     background-color: #E0E0E0;
 }
@@ -97,8 +98,34 @@
     background-color: #b1ffe9;
 }
 
+.max-w-80p {
+    max-width: 80%;
+}
+
 
 .transition-blur {
     -webkit-transition: 1s -webkit-filter ease-in-out;
     -o-transition: 1s -o-filter ease-in-out;
   }
+
+
+
+.scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+/* Track */
+.scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+ 
+/* Handle */
+.scrollbar::-webkit-scrollbar-thumb {
+    background: #D2649A;
+    border-radius: 5px;
+}
+ 
+/* Handle on hover */
+.scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ca387f;
+}
