@@ -49,7 +49,7 @@
     background-color: #D2649A;
 }
 
-.bg-pastel-pink {
+/* .bg-pastel-pink {
     background-color: #FFB5B5;
 }
 
@@ -64,7 +64,7 @@
 
 .hover\:text-pastel-pink:hover {
     color: #FFB5B5;
-}
+} */
 
 .bg-pastel-pink-100 {
     background-color: #FF9696;
@@ -86,3 +86,19 @@
     --tw-border-opacity: 1;
     border-color: rgb(224 224 224 / var(--tw-border-opacity));
 }
+
+.upload-section {
+    border: dashed 6px;
+    border-color: #49243E;
+    background-color: #EAFFF9;
+}
+
+.hover\:upload-section:hover {
+    background-color: #b1ffe9;
+}
+
+
+.transition-blur {
+    -webkit-transition: 1s -webkit-filter ease-in-out;
+    -o-transition: 1s -o-filter ease-in-out;
+  }
