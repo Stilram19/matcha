@@ -2,11 +2,19 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaHeart, FaUserFriends } from "react-icons/fa";
 import users from "./data.json"
 
-const   MessageBar = ({user}) => {
+type MessageBarProps = {
+    user: {
+        profile_image: string,
+        name: string,
+        last_message: string,
+    }
+}
+
+const   MessageBar = ({user}: MessageBarProps) => {
 
     return (
         <div className="w-full p-1 h-20 flex items-center gap-2  hover:bg-gray-200 cursor-pointer">
-            <img src={user.profile_image} alt="Profile" className="w-16 h-16 rounded-full object-cover" />
+            <img src={user.profile_image} alt="Profile" className="min-w-16 max-w-16 min-h-16 max-h-16 rounded-full object-cover" />
             <div className="flex flex-col overflow-hidden">
                 <h1 className="text-xl truncate">
                     {user.name}
@@ -45,7 +53,7 @@ const   ChatList = () => {
                 <div className="relative">
                     <div className="absolute top-0 bottom-0 ps-3 flex items-center">
                         <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                         </svg>
                     </div>
                     <input
@@ -53,11 +61,9 @@ const   ChatList = () => {
                         placeholder="search Chats"
                         className="w-full outline-none p-2 border border-e0 placeholder:text-lg rounded-lg ps-10" />
                 </div>
-
-
             </div>
 
-            <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-scroll scrollbar">
+            <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
 
                 {users.map((user, index) => {
                     return <MessageBar key={index} user={user}/>
