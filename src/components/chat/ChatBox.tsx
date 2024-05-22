@@ -1,8 +1,9 @@
 import { AiOutlineAudio } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
 import { LuHeart } from "react-icons/lu"
-import Message from "./Message";
 import { useEffect, useRef } from "react";
+import Message from "./Message";
+import messages from "./messages.json"
 
 
 
@@ -34,8 +35,7 @@ const   ChatBox = () => {
             <div className="h-full w-full p-2 pr-0 overflow-hidden">
                 <div className="relative w-full h-full">
                     <div className="h-[92%] overflow-y-auto scrollbar">
-                        <Message isSender={false} />
-                        <Message ref={messagesEndRef} isSender={true} last={true} />
+                        {messages.map((message, index) => <Message key={index} {...message} ref={index == messages.length - 1 ? messagesEndRef : null} />)}
                     </div>
 
                     <div className="absolute bottom-3 w-full">
