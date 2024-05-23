@@ -89,8 +89,7 @@ export default function ProfileSetup() {
     }
 
     return (
-        <div className="flex justify-around pt-[80px]">
-            <div className="flex flex-col gap w-1/2">
+        <div className="w-full">
                 <h1 className="text-xl my-9">3/3</h1>
                 <h1 className=" text-4xl mb-1">Upload Some Pictures</h1>
                 <p className="mb-4">
@@ -98,7 +97,7 @@ export default function ProfileSetup() {
                 </p>
 
                 <label htmlFor="upload" className="mb-6">
-                    <div className="flex justify-around"> 
+                    <div className="flex justify-around mb-10"> 
                         <div className="p-7 w-1/2 h-72 flex flex-col  items-center justify-center upload-section hover:upload-section rounded-3xl  cursor-pointer" >
                             <MdCloudUpload size={65} fill="#49243E" />
                             <h1 className="text-xl">Browse Files to upload</h1>
@@ -116,10 +115,11 @@ export default function ProfileSetup() {
 
                 <ImageCards images={images} handleRemove={handleRemove} />
 
-                <button className="self-end mt-5 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
-                    Confirm
-                </button>
-            </div>
+                <div className="flex justify-end">
+                    <button className="mt-5 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+                        Confirm
+                    </button>
+                </div>
         </div>
     );
 }

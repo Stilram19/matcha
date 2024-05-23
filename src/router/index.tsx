@@ -6,6 +6,8 @@ import SetupLayout from "../layouts/SetupLayout";
 import SignUp from "../pages/auth/signup";
 import LandingPage from "../pages/LandingPage";
 import Chat from "../pages/chat/Chat";
+import PersonalInfo from "../pages/profile_setup/PersonalInfo";
+import CompleteInfo from "../pages/profile_setup/CompleteInfo";
 
 const router = createBrowserRouter([
     {
@@ -25,11 +27,25 @@ const router = createBrowserRouter([
       element: <GuestLayout><Chat/></GuestLayout>
     },
     {
-      path: '/complete_info3',
-      element: <SetupLayout>
-                < ProfileSetup />
-              </SetupLayout>
-    }
+      path: '/complete-info',
+
+      element: <SetupLayout><CompleteInfo /></SetupLayout>,
+      children: [
+        {
+          path: '1',
+          element: <PersonalInfo />,
+        },
+        {
+          path: '2',
+          element: <ProfileSetup />,
+        },
+        {
+          path: '*',
+          element: <div>404 Not Found -_-</div>,
+        },
+      ],
+    },
+
 ]);
 
 export default router;

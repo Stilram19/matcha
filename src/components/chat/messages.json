@@ -25,6 +25,11 @@
         "message": "Yes, I'm part of the team. It's going to be a challenging but rewarding project."
     },
     {
+        "isSender": true,
+        "last": false,
+        "message": "Yes, I'm part of the team. It's going to be a challenging but rewarding project."
+    },
+    {
         "isSender": false,
         "last": false,
         "message": "Yes, I heard about it. It sounds exciting! Are you going to be involved?"

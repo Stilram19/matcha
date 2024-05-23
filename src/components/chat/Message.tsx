@@ -11,9 +11,10 @@ const Message = forwardRef<HTMLDivElement, MessageProps>((props, ref) => {
     // const roundedClasses =
 
     return (
-        <div ref={ref} className={`my-4 mr-1 flex ${props.isSender ? 'justify-end' : 'justify-start'} ${props.last ? "mb-10" : ''}`}>
-            <div className={`h-min border p-2 max-w-[60%] rounded-t-2xl ${props.isSender ? 'rounded-bl-2xl bg-black text-white' : 'rounded-br-2xl bg-light-gray1'}  break-words`}>
+        <div ref={ref} className={`flex ${props.isSender ? 'justify-end' : 'justify-start'}`}>
+            <div className={`h-min border p-2 max-w-[60%] rounded-t-2xl ${props.isSender ? 'rounded-bl-2xl bg-black text-white' : 'rounded-br-2xl bg-red-light'}  break-words`}>
                 { props.message }
+                <p className="text-gray-500">sent at 10:30PM</p>
             </div>
         </div>
     )
