@@ -1,9 +1,9 @@
 import { AiOutlineAudio } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
-import { LuHeart } from "react-icons/lu"
 import { useEffect, useRef } from "react";
 import Message from "./Message";
 import messages from "./messages.json"
+import RecipiantBar from "./RecipiantView";
 
 
 
@@ -20,17 +20,8 @@ const   ChatBox = () => {
 
     return (
         <div className="w-full h-full flex flex-col">
-            <div className="border-b h-[80px] w-full flex justify-between items-center py-2 px-5">
-                <div className="flex gap-3">
-                    <img src="/imgs/man_placeholder.jpg" className="h-16 w-16 object-cover rounded-full"/>
-                    <div className="flex flex-col">
-                        <h1 className="text-xl">Hellis steve</h1>
-                        <p className=" text-green-700">online</p>
-                    </div>
-                </div>
 
-                <LuHeart title="add to favorites" size={25} className="hover:fill-black cursor-pointer" />
-            </div>
+            <RecipiantBar />
 
             <div className="h-full w-full p-2 pr-0 overflow-hidden">
                 <div className="relative w-full h-full">
