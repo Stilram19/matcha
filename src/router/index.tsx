@@ -8,11 +8,17 @@ import LandingPage from "../pages/LandingPage";
 import Chat from "../pages/chat/Chat";
 import PersonalInfo from "../pages/profile_setup/PersonalInfo";
 import CompleteInfo from "../pages/profile_setup/CompleteInfo";
+import InterestTag from "../pages/profile_setup/InterestTag";
+import Home from "../pages/home/Home";
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <GuestLayout><LandingPage /></GuestLayout>
+    },
+    {
+      path: '/home',
+      element: <GuestLayout><Home /></GuestLayout>
     },
     {
       path: '/login',
@@ -37,6 +43,10 @@ const router = createBrowserRouter([
         },
         {
           path: '2',
+          element: <InterestTag />,
+        },
+        {
+          path: '3',
           element: <ProfileSetup />,
         },
         {
