@@ -1,31 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 import { IoHeartDislikeSharp, IoVolumeMute } from "react-icons/io5";
 import { MdBlockFlipped } from "react-icons/md";
-
+import useOutsideClick from "../../hooks/useOutsideClick";
 
 const Dropdown = () => {
     const [isOpen, setIsOpen] = useState(true);
 
 
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useOutsideClick(() => setIsOpen(true));
 
     const handleDropdown = () => {
         setIsOpen((prev) => !prev);
     }
-    
-    const handleClickOutside = (e) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(e.target))
-            setIsOpen(true)
-    }
-
-    useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
     return (
         <div ref={dropdownRef} className="self-end relative w-[150px] z-20">

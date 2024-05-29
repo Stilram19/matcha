@@ -10,6 +10,7 @@ import PersonalInfo from "../pages/profile_setup/PersonalInfo";
 import CompleteInfo from "../pages/profile_setup/CompleteInfo";
 import InterestTag from "../pages/profile_setup/InterestTag";
 import Home from "../pages/home/Home";
+import HomeV2 from "../pages/home/Home1";
 
 const router = createBrowserRouter([
     {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
     {
       path: '/home',
       element: <GuestLayout><Home /></GuestLayout>
+    },
+    {
+      path: '/home1',
+      element: <GuestLayout><HomeV2 /></GuestLayout>
     },
     {
       path: '/login',
