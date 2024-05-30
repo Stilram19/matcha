@@ -8,10 +8,10 @@ import RecipiantBar from "./RecipiantView";
 
 
 const   ChatBox = () => {
-    const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current && messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     };
 
     useEffect(() => {
@@ -29,8 +29,8 @@ const   ChatBox = () => {
                         {
                             messages.map((message, index, arr) => {
                                 return (
-                                    <div className={`mr-1 my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-10' : '')} ${index == messages.length - 1 ? 'mb-16' : ''}`}>
-                                        <Message key={index} {...message} ref={index == messages.length - 1 ? messagesEndRef : null} />
+                                    <div key={index} ref={index == messages.length - 1 ? messagesEndRef : null} className={`mr-1 my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-10' : '')} ${index == messages.length - 1 ? 'mb-16' : ''}`}>
+                                        <Message  {...message}  />
                                     </div>
                                 )
                             })

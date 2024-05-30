@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { Link } from "react-router-dom";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 
 export default function Navbar() {
     const [isHidden, setHidden] = useState(true);
+    const wrapper = useOutsideClick(() => setHidden(true));
 
-    
     const handleOnClick = () => {
         setHidden((prev) => !prev);
     }
@@ -27,18 +28,22 @@ export default function Navbar() {
                     <Link to="/signup" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider bg-pink text-white hover:text-pastel-pink">sign up</Link>
                 </div>
             </div>
+
+            {/* Phone version */}
             <div className="px-3 w-full flex justify-between md:hidden">
                 <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>
-                <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button>
-                <div className={`absolute top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
-                    <ul className='w-full flex flex-col items-center justify-center list-none'>
-                        <li><Link to="/" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</Link></li>
-                        <li><Link to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">about</Link></li>
-                        <li><Link to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">why us</Link></li>
-                    </ul>
-                    <div className="flex justify-center gap-4">
-                        <Link to="/login" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider hover:text-pastel-pink">login</Link>
-                        <Link to="/signup" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider bg-pink text-white hover:text-pastel-pink">sign up</Link>
+                <div ref={wrapper} className="flex">
+                    <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button>
+                    <div className={`p-2 absolute top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
+                        <ul className='w-full flex flex-col items-center justify-center list-none'>
+                            <li><Link to="/" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</Link></li>
+                            <li><Link to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">about</Link></li>
+                            <li><Link to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">why us</Link></li>
+                        </ul>
+                        <div className="flex justify-center gap-4">
+                            <Link to="/login" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider hover:text-pastel-pink">login</Link>
+                            <Link to="/signup" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider bg-pink text-white hover:text-pastel-pink">sign up</Link>
+                        </div>
                     </div>
                 </div>
             </div>
