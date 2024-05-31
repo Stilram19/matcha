@@ -4,10 +4,17 @@ import { ChatBoxProps } from "../../types";
 import Message from "./Message";
 import ConversationHeader from "./ConversationHeader";
 import useScrollInto from "../../hooks/useScrollInto";
+import { FC } from "react";
 
 
-const   ChatBox = (props: ChatBoxProps) => {
+const   ChatBox: FC<ChatBoxProps> = ({messages}) => {
     const messagesEndRef = useScrollInto();
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        if (e.currentTarget.scrollTop === 0)
+            console.log("Top");
+        // Fetching more messages
+    }
 
     return (
         <div className="w-full h-full flex flex-col">
@@ -16,11 +23,11 @@ const   ChatBox = (props: ChatBoxProps) => {
 
             <div className="h-full w-full p-2 pr-0 overflow-hidden">
                 <div className="relative w-full h-full">
-                    <div className="h-[92%] overflow-y-auto scrollbar mr-1">
+                    <div className="h-[92%] overflow-y-auto scrollbar mr-1"  onScroll={handleScroll}>
                         {
-                            props.messages.map((message, index, arr) => {
+                            messages.map((message, index, arr) => {
                                 return (
-                                    <div key={index} ref={index == props.messages.length - 1 ? messagesEndRef : null} className={`mr-1 my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-10' : '')} ${index == props.messages.length - 1 ? 'mb-16' : ''}`}>
+                                    <div key={index} ref={index == messages.length - 1 ? messagesEndRef : null} className={`mr-1 my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-10' : '')} ${index == messages.length - 1 ? 'mb-16' : ''}`}>
                                         <Message  {...message}  />
                                     </div>
                                 )

@@ -12,7 +12,7 @@ const Message: FC<MessageProps> = (props) => {
         <div className={`flex ${ props.isSender ? 'justify-end' : 'justify-start' }`}>
             <div className={`h-min border p-2 max-w-[60%] rounded-t-2xl ${ props.isSender ? 'rounded-bl-2xl bg-black text-white' : 'rounded-br-2xl bg-red-light'}  break-words`}>
                 { props.message }
-                <p className="text-gray-500">{ props.sent_at }</p>
+                <p className="text-gray-500 text-sm md:text-md">{ props.sent_at }</p>
             </div>
         </div>
     )

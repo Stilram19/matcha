@@ -2,6 +2,7 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaHeart, FaUserFriends } from "react-icons/fa";
 import { MessageBarProps } from "../../types";
 import { ChatListProps } from "../../types/ChatListProps";
+import { FC } from "react";
 
 const   MessageBar = (props: MessageBarProps) => {
 
@@ -21,7 +22,7 @@ const   MessageBar = (props: MessageBarProps) => {
 }
 
 
-const   ChatList = ({dms}: ChatListProps) => {
+const   ChatList: FC<ChatListProps> = ({dms}) => {
     return (
         <div className="w-full h-full pb-1">
             <div className="p-2 mb-2">

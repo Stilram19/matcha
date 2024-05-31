@@ -30,7 +30,7 @@ export default function Navbar() {
             </div>
 
             {/* Phone version */}
-            <div className="px-3 w-full flex justify-between md:hidden">
+            <div className="px-3 w-full flex justify-between shadow md:hidden">
                 <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>
                 <div ref={wrapper} className="flex">
                     <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button>
