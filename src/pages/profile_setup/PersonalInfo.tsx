@@ -1,3 +1,5 @@
+import { ChangeEvent, useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
 
 type FormFieldProps = {
     id: string;
@@ -21,6 +23,18 @@ const FormField = ({ id, label, placeholder} : FormFieldProps) => {
   
 
 const PersonalInfo = () => {
+    const   [image, setImage] = useState<File>();
+
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const uploaded_pic = event.target.files && event.target.files[0];
+
+        if (!uploaded_pic)
+            return ;
+        console.log(uploaded_pic);
+        setImage(uploaded_pic);
+    }
+
 
     return (
         <div className="w-full">
@@ -50,6 +64,28 @@ const PersonalInfo = () => {
                         </select>
                     </div>
                 </div>
+
+                <div className="flex gap-2">
+                    <label htmlFor="upload-pic" className="flex items-center gap-2">
+                            <div className="bg-gray-200 h-20 w-20 rounded-lg flex justify-center items-center cursor-pointer">
+                                {!image ?
+                                    <FaUserCircle size={40} className="fill-gray-600" />
+                                :   <img src={URL.createObjectURL(image)} alt="pic" className="object-cover h-full w-full rounded-lg" /> }
+                            </div>
+                                {!image ? "upload profile picture" : image.name}
+                    </label>
+                    <input
+                        id="upload-pic"
+                        type="file"
+                        className="hidden"
+                        onChange={handleInputChange}
+                    />
+                </div>
+            </div>
+            <div className="flex justify-end">
+                <button className="mt-6 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+                    Continue
+                </button>
             </div>
         </div>
     )

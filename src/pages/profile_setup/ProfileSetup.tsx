@@ -69,7 +69,7 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
 
 
 export default function ProfileSetup() {
-    const   [images, setImages] = useState<File[]>([])
+    const   [images, setImages] = useState<File[]>([]);
 
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {
