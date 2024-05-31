@@ -1,35 +1,26 @@
 import { AiOutlineAudio } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
-import { useEffect, useRef } from "react";
+import { ChatBoxProps } from "../../types";
 import Message from "./Message";
-import messages from "./messages.json"
-import RecipiantBar from "./RecipiantView";
+import ConversationHeader from "./ConversationHeader";
+import useScrollInto from "../../hooks/useScrollInto";
 
 
-
-const   ChatBox = () => {
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current && messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, []);
+const   ChatBox = (props: ChatBoxProps) => {
+    const messagesEndRef = useScrollInto();
 
     return (
         <div className="w-full h-full flex flex-col">
 
-            <RecipiantBar />
+            <ConversationHeader full_name="John Smith" status="online" />
 
             <div className="h-full w-full p-2 pr-0 overflow-hidden">
                 <div className="relative w-full h-full">
                     <div className="h-[92%] overflow-y-auto scrollbar mr-1">
                         {
-                            messages.map((message, index, arr) => {
+                            props.messages.map((message, index, arr) => {
                                 return (
-                                    <div key={index} ref={index == messages.length - 1 ? messagesEndRef : null} className={`mr-1 my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-10' : '')} ${index == messages.length - 1 ? 'mb-16' : ''}`}>
+                                    <div key={index} ref={index == props.messages.length - 1 ? messagesEndRef : null} className={`mr-1 my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-10' : '')} ${index == props.messages.length - 1 ? 'mb-16' : ''}`}>
                                         <Message  {...message}  />
                                     </div>
                                 )

@@ -1,26 +1,19 @@
 import { AiFillMessage } from "react-icons/ai";
 import { FaHeart, FaUserFriends } from "react-icons/fa";
-import users from "./data.json"
+import { MessageBarProps } from "../../types";
+import { ChatListProps } from "../../types/ChatListProps";
 
-type MessageBarProps = {
-    user: {
-        profile_image: string,
-        name: string,
-        last_message: string,
-    }
-}
-
-const   MessageBar = ({user}: MessageBarProps) => {
+const   MessageBar = (props: MessageBarProps) => {
 
     return (
         <div className="w-full p-1 h-20 flex items-center gap-2  hover:bg-gray-200 cursor-pointer">
-            <img src={user.profile_image} alt="Profile" className="min-w-16 max-w-16 min-h-16 max-h-16 rounded-full object-cover" />
+            <img src={props.profile_image} alt="Profile" className="min-w-16 max-w-16 min-h-16 max-h-16 rounded-full object-cover" />
             <div className="flex flex-col overflow-hidden">
                 <h1 className="text-xl truncate">
-                    {user.name}
+                    {props.full_name}
                 </h1>
                 <p className="text-gray-500 truncate">
-                    {user.last_message}
+                    {props.last_message}
                 </p>
             </div>
         </div>
@@ -28,7 +21,7 @@ const   MessageBar = ({user}: MessageBarProps) => {
 }
 
 
-const   ChatList = () => {
+const   ChatList = ({dms}: ChatListProps) => {
     return (
         <div className="w-full h-full pb-1">
             <div className="p-2 mb-2">
@@ -65,8 +58,8 @@ const   ChatList = () => {
 
             <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
 
-                {users.map((user, index) => {
-                    return <MessageBar key={index} user={user}/>
+                {dms.map((dm, index) => {
+                    return <MessageBar key={index} {...dm}/>
                 })}
 
             </div>

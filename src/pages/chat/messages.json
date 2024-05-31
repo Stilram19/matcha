@@ -1,62 +1,62 @@
 [
     {
         "isSender": true,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Hello Brother, how are you?"
     },
     {
         "isSender": false,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Hey! I'm doing well, thanks for asking. How about you?"
     },
     {
         "isSender": true,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "I'm good too, thanks. Did you hear about the new project at work?"
     },
     {
         "isSender": false,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Yes, I heard about it. It sounds exciting! Are you going to be involved?"
     },
     {
         "isSender": true,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Yes, I'm part of the team. It's going to be a challenging but rewarding project."
     },
     {
         "isSender": true,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Yes, I'm part of the team. It's going to be a challenging but rewarding project."
     },
     {
         "isSender": false,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Yes, I heard about it. It sounds exciting! Are you going to be involved?"
     },
     {
         "isSender": true,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Yes, I'm part of the team. It's going to be a challenging but rewarding project."
     },
     {
         "isSender": false,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "That's great! I'm sure you'll do amazing. Let me know if you need any help."
     },
     {
         "isSender": true,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Thanks, I appreciate it. I might reach out to you for some advice later."
     },
     {
         "isSender": false,
-        "last": false,
+        "sent_at": "11:12PM",
         "message": "Sure, anytime! I'm here to help."
     },
     {
         "isSender": true,
-        "last": true,
+        "sent_at": "11:12PM",
         "message": "Great, talk to you later then. Have a good day!"
     }
 ]
