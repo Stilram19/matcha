@@ -3,10 +3,10 @@ import './style.css'
 
 function LoggedInHeader() {
     return (
-        <div className="flex justify-between shadow bg-white lg:pl-10 lg:pr-10 xl:pl-36 xl:pr-36 2xl:pl-44 2xl:pr-44">
+        <div className="flex justify-between shadow bg-white lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-96 2xl:pr-96">
             <div className="flex gap-3 lg:gap-12">
                 <div className="">
-                    <Link to='/'><img src="/matcha_logo.svg" alt="logo" className="scale-90 lg:scale-100" width={116} height={74} style={{minWidth: 116, minHeight: 74}}/></Link>
+                    <Link to='/'><img src="/matcha_logo.svg" alt="logo" className="scale-90 sm:scale-100 md:scale-90 lg:scale-100" width={116} height={74} style={{minWidth: 116, minHeight: 74}}/></Link>
                 </div>
                 <div className="hidden md:inline-flex flex mt-3 w-52 h-12 search-bar-bg round-7px">
                     <img src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
@@ -27,10 +27,12 @@ function LoggedInHeader() {
                     <Link to="/logout" className="p-3 lg:p-5 hover:text-pastel-pink">logout</Link>
                 </div>
             </nav>
-            <div className="md:hidden"><i className="fa-sharp fa-solid fa-bars p-7"></i></div>
+            <div className="flex justify-between md:hidden sm:gap-2 items-center">
+                <div><i className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-magnifying-glass"></i></div>
+                <div><i className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
+            </div>
         </div>
     )
 };
 
 export default LoggedInHeader;
-
