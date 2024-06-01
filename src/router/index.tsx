@@ -20,14 +20,6 @@ const router = createBrowserRouter([
         element: <GuestLayout><LandingPage /></GuestLayout>
     },
     {
-      path: '/home',
-      element: <GuestLayout><Home /></GuestLayout>
-    },
-    {
-      path: '/home1',
-      element: <GuestLayout><HomeV2 /></GuestLayout>
-    },
-    {
       path: '/login',
       element: <GuestLayout><Login /></GuestLayout>
     },
@@ -36,12 +28,8 @@ const router = createBrowserRouter([
       element: <GuestLayout><SignUp/></GuestLayout>
     },
     {
-      path: '/chat',
-      element: <GuestLayout><Chat/></GuestLayout>
-    },
-    {
       path: '/complete-info',
-
+      
       element: <SetupLayout><CompleteInfo /></SetupLayout>,
       children: [
         {
@@ -62,6 +50,18 @@ const router = createBrowserRouter([
         },
       ],
     },    
+    {
+      path: '/home',
+      element: <LoggedInLayout><Home /></LoggedInLayout>
+    },
+    {
+      path: '/home1',
+      element: <LoggedInLayout><HomeV2 /></LoggedInLayout>
+    },
+    {
+      path: '/chat',
+      element: <LoggedInLayout><Chat/></LoggedInLayout>
+    },
     {
       path: '/user-profile',
       element: <LoggedInLayout><UserProfile/></LoggedInLayout>

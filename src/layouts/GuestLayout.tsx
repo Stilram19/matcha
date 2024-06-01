@@ -1,5 +1,5 @@
 import { FC, ReactNode } from "react";
-import Navbar from "../components/header/Navbar";
+import GuestHeader from "../components/header/GuestHeader";
 
 type Props = {
     children: ReactNode;
@@ -9,7 +9,7 @@ const GuestLayout: FC<Props> = ({children}) =>  {
 
     return (
         <>
-            <Navbar />
+            <GuestHeader />
             {children}
         </>
     )

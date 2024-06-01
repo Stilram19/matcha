@@ -72,7 +72,8 @@ const MatchedCard = () => {
 const HomeV2 = () => {
 
     return (
-        <div className="pt-[71px] w-screen h-screen flex">
+        // pt-[71px]
+        <div className="w-screen h-[calc(100vh-80px)] flex">
             <div className="w-[20%] border-r h-full">
                 <HomeSideBar />
             </div>

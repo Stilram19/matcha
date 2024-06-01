@@ -91,7 +91,7 @@ const   MatchedProfile = () => {
 
 const Home = () => {
     return (
-        <div className="pt-[71px] flex justify-around w-screen h-screen">
+        <div className="flex justify-around w-screen h-[calc(100vh-80px)]">
             <div className="w-1/4 border-r">
                 <HomeSideBar />
             </div>

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import useOutsideClick from "../../hooks/useOutsideClick";
 
 
-export default function Navbar() {
+export default function GuestHeader() {
     const [isHidden, setHidden] = useState(true);
     const wrapper = useOutsideClick(() => setHidden(true));
 
@@ -18,9 +18,9 @@ export default function Navbar() {
                 <div className="flex gap-16">
                     <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>
                     <ul className="flex items-center list-none">
-                        <li><Link to="/" className="p-5 hover:text-pastel-pink">home</Link></li>
-                        <li><Link to="#" className="p-5 hover:text-pastel-pink">about</Link></li>
-                        <li><Link to="#" className="p-5 hover:text-pastel-pink">why us</Link></li>
+                        <li><NavLink to="/" className="p-5 hover:text-pastel-pink">home</NavLink></li>
+                        <li><NavLink to="#" className="p-5 hover:text-pastel-pink">about</NavLink></li>
+                        <li><NavLink to="#" className="p-5 hover:text-pastel-pink">why us</NavLink></li>
                     </ul>
                 </div>
                 <div className="flex gap-4">
@@ -36,9 +36,9 @@ export default function Navbar() {
                     <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button>
                     <div className={`p-2 absolute top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
                         <ul className='w-full flex flex-col items-center justify-center list-none'>
-                            <li><Link to="/" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</Link></li>
-                            <li><Link to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">about</Link></li>
-                            <li><Link to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">why us</Link></li>
+                            <li><NavLink to="/" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</NavLink></li>
+                            <li><NavLink to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">about</NavLink></li>
+                            <li><NavLink to="#" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">why us</NavLink></li>
                         </ul>
                         <div className="flex justify-center gap-4">
                             <Link to="/login" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider hover:text-pastel-pink">login</Link>

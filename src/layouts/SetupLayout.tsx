@@ -1,12 +1,12 @@
 import { FC, ReactNode } from "react";
-import Navbar from "../components/header/Navbar";
+import GuestHeader from "../components/header/GuestHeader";
 
 
 const SetupLayout: FC<{children: ReactNode}> = ({children}) => {
 
     return (
         <>
-            <Navbar />
+            <GuestHeader />
             { children }
         </>
     )

@@ -9,7 +9,8 @@ const Chat = () => {
 
 
     return (
-        <div className="pt-[80px] flex justify-around w-screen h-screen">
+        // pt-[80px]
+        <div className="flex justify-around w-screen h-[calc(100vh-80px)]">
             <div className="w-[90%] m-5 border border-e0 rounded-xl shadow-md flex">
                 <div className="w-1/4 h-full border-r">
                     <ChatList dms={dms} />
