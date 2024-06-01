@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { Link } from "react-router-dom";
-import useOutsideClick from "../hooks/useOutsideClick";
+import useOutsideClick from "../../hooks/useOutsideClick";
 
 
 export default function Navbar() {

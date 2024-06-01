@@ -11,6 +11,8 @@ import CompleteInfo from "../pages/profile_setup/CompleteInfo";
 import InterestTag from "../pages/profile_setup/InterestTag";
 import Home from "../pages/home/Home";
 import HomeV2 from "../pages/home/Home1";
+import UserProfile from "../pages/profile/UserProfile";
+import LoggedInLayout from "../layouts/LoggedInLayout";
 
 const router = createBrowserRouter([
     {
@@ -59,8 +61,11 @@ const router = createBrowserRouter([
           element: <div>404 Not Found -_-</div>,
         },
       ],
+    },    
+    {
+      path: '/user-profile',
+      element: <LoggedInLayout><UserProfile/></LoggedInLayout>
     },
-
 ]);
 
 export default router;
