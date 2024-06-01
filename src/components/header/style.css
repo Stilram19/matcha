@@ -1,0 +1,43 @@
+.search-bar-bg {
+    background: #F0E4E9;
+}
+
+.round-7px {
+    border-radius: 7px;
+}
+
+.bg-transparent {
+    background: transparent;
+}
+
+input.middle:focus {
+    outline-width: 0;
+}
+
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+.left-700px {
+    left: 700px;
+}
+
+.w-131px {
+    width: 131px;
+}
+
+.w-22px {
+    width: 22px;
+}
+
+.h-34px {
+    height: 34px;
+}
+
+.w-177px {
+    width: 177px;
+}
