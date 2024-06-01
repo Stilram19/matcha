@@ -10,14 +10,6 @@
     background: transparent;
 }
 
-.w-209px {
-    width: 209px;
-}
-
-.h-48px {
-    height: 48px;
-}
-
 input.middle:focus {
     outline-width: 0;
 }
@@ -34,8 +26,8 @@ button:focus {
     left: 700px;
 }
 
-.w-133px {
-    width: 133px;
+.w-131px {
+    width: 131px;
 }
 
 .w-22px {
@@ -44,4 +36,8 @@ button:focus {
 
 .h-34px {
     height: 34px;
+}
+
+.w-177px {
+    width: 177px;
 }
