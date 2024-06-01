@@ -6,9 +6,9 @@ export default function Login() {
 
     return (
         <div className="flex relative w-screen h-screen">
-            <div className="flex justify-center item1">
+            <div className="flex justify-center w-full md:w-[60%]">
                 <div className="flex flex-col items-center justify-center ">
-                    <h1 className="mb-4 text-5xl poetsen-one-regular">Login to your account</h1>
+                    <h1 className="mb-4 text-5xl poetsen-one-regular text-center">Login to your account</h1>
                     <p className="mb-4">Enter your email and password to sign in</p>
                     <form className="flex flex-col items-center justify-center">
                         <div className="flex flex-col items-start mb-4">
@@ -34,7 +34,7 @@ export default function Login() {
             </div>
 
 
-            <div className=" p-8 flex flex-col justify-center items-center item2 bg-pastel-pink">
+            <div className="hidden p-8 md:flex flex-col justify-center items-center w-[40%] bg-pastel-pink">
                  <div className="flex flex-col mb-10">
                     <h1 className="poetsen-one-regular text-6xl text-white">New here?</h1>
                     <p className="poetsen-one-regular text-xl">

@@ -2,10 +2,6 @@ import { FC } from "react";
 import {MessageProps} from "../../types/index";
 
 const Message: FC<MessageProps> = (props) => {
-
-    // const roundedClasses =
-
-
     // maybe i should just accept the message prop since i can handle the case of the sender vs recipiant
     // in the parent component so that this component is more reusable and straightforward
     return (

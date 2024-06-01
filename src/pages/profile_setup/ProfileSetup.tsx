@@ -76,7 +76,7 @@ export default function ProfileSetup() {
         const files = event.target.files;
         setImages((prev) => {
             const newArray: File[] = [];
-            for (let i = 0; files && i < files['length']; i++) {
+            for (let i = 0; files && i < files.length; i++) {
                 newArray.push(files[i]);
             }
             return [...prev, ...newArray];
