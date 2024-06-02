@@ -2,6 +2,10 @@
     background: #F0E4E9;
 }
 
+.search-result-bg:hover {
+    background: #F3EFF0;
+}
+
 .round-7px {
     border-radius: 7px;
 }
