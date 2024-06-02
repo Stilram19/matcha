@@ -3,7 +3,7 @@
 const   SignUp = () => {
     return (
         <div className="flex w-full h-screen">
-            <div className="w-3/5 flex flex-col items-center justify-center">
+            <div className="w-full md:w-3/5 flex flex-col items-center justify-center">
                 <h1 className="text-5xl poetsen-one-regular">Sign up!</h1>
                 <h1 className="mb-4 text-5xl poetsen-one-regular text-center">and find your partner</h1>
                 <form className="flex flex-col justify-start">
@@ -43,7 +43,7 @@ const   SignUp = () => {
                     <a className="text-blue-900" href="#"> Privacy Policy</a>
                 </p>
             </div>
-            <div className="w-2/5">
+            <div className="hidden md:block w-2/5">
                 <img src="/imgs/lovers.jpg" className="w-full h-full object-cover"/>
             </div>
         </div>

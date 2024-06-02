@@ -1,9 +1,10 @@
+import { useState } from "react"
 import { FaArrowRight, FaHeart, FaStar } from "react-icons/fa"
 import { GrMapLocation } from "react-icons/gr"
 import { IoBookmark, IoClose } from "react-icons/io5"
 import { TbGenderMale } from "react-icons/tb"
 
-const CheckBox = ({label}) => {
+const CheckBox = ({label}: {label: string}) => {
     return (
         <div className="flex items-center gap-2">
             <input
@@ -52,11 +53,7 @@ const   MatchedUserSummary = () => {
 
 
 const   MatchedProfile = () => {
-    const   stars = [];
-
-    for (let i = 0; i < 5; i++) {
-        stars.push(i);
-    }
+    const [hovered, setHovered] = useState<number>(0)
 
     return (
             <div className="w-full h-full flex justify-center">
@@ -69,8 +66,17 @@ const   MatchedProfile = () => {
 
                             <div className="absolute bottom-4 right-5 border  z-10 flex gap-1 p-2 px-3 rounded-full bg-white">
                                 {
-                                    stars.map((index) => {
-                                        return <FaStar key={index} className={`fill-yellow-500 ${index == stars.length - 1 ? 'fill-gray-300' : ''}`} size={25}/>
+                                    [...Array(5).keys()].map((index) => {
+                                        index++;
+                                        return (
+                                            <FaStar
+                                                key={index}
+                                                size={25}
+                                                className={`${index <= hovered ? 'fill-yellow-500' : 'fill-gray-300'} cursor-pointer`}
+                                                onMouseEnter={() => setHovered(index)}
+                                                onMouseLeave={() => setHovered(0)}
+                                            />
+                                        )
                                     })
                                 }
                             </div>

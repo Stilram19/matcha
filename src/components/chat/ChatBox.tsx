@@ -5,9 +5,11 @@ import Message from "./Message";
 import ConversationHeader from "./ConversationHeader";
 import useScrollInto from "../../hooks/useScrollInto";
 import { FC } from "react";
+import messages from './messages.json' // dummy data , previwing rendering
 
 
-const   ChatBox: FC<ChatBoxProps> = ({messages}) => {
+
+const   ChatBox: FC<ChatBoxProps> = ({dmId}) => {
     const messagesEndRef = useScrollInto();
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -15,6 +17,7 @@ const   ChatBox: FC<ChatBoxProps> = ({messages}) => {
             console.log("Top");
         // Fetching more messages
     }
+    console.log(dmId);
 
     return (
         <div className="w-full h-full flex flex-col">

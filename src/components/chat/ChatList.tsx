@@ -4,6 +4,8 @@ import { MessageBarProps } from "../../types";
 import { ChatListProps } from "../../types/ChatListProps";
 import { FC } from "react";
 
+
+// Dm bar
 const   MessageBar = (props: MessageBarProps) => {
 
     return (
@@ -22,7 +24,7 @@ const   MessageBar = (props: MessageBarProps) => {
 }
 
 
-const   ChatList: FC<ChatListProps> = ({dms}) => {
+const   ChatList: FC<ChatListProps> = ({dms, onClick}) => {
     return (
         <div className="w-full h-full pb-1">
             <div className="p-2 mb-2">
@@ -57,12 +59,15 @@ const   ChatList: FC<ChatListProps> = ({dms}) => {
                 </div>
             </div>
 
+
             <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
-
                 {dms.map((dm, index) => {
-                    return <MessageBar key={index} {...dm}/>
+                    return (
+                        <div key={index}  onClick={() => onClick(dm.id)}>
+                            <MessageBar {...dm}/>
+                        </div>
+                    )
                 })}
-
             </div>
 
 

@@ -4,12 +4,23 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { IoHeartDislikeSharp, IoVolumeMute } from "react-icons/io5";
 import { MdBlockFlipped } from "react-icons/md";
 import useOutsideClick from "../../hooks/useOutsideClick";
+import { IconType } from "react-icons";
+
+const DropdownItem = ({title, Icon} : {title: string, Icon: IconType}) => {
+
+    return (
+        <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1">
+            <Icon  size={15} className="fill-gray-600" />
+            <p className="text-gray-600">{title}</p>
+        </button>
+    )
+}
 
 const Dropdown = () => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
 
-    const dropdownRef = useOutsideClick(() => setIsOpen(true));
+    const dropdownRef = useOutsideClick(() => setIsOpen(false));
 
     const handleDropdown = () => {
         setIsOpen((prev) => !prev);
@@ -17,32 +28,22 @@ const Dropdown = () => {
 
     return (
         <div ref={dropdownRef} className="self-end relative w-[150px] z-20">
-                    <div className="absolute right-0">
-                        <button onClick={handleDropdown}>
-                            <BsThreeDotsVertical size={20} className="hover:fill-gray-600" />
-                        </button>
-                    </div>
-                    {!isOpen && 
-                    <div className='absolute right-5 w-full shadow-lg bg-white border rounded-lg overflow-hidden'>
-                        {/* <button className="w-full">block</button> */}
-                        <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1">
-                            <MdBlockFlipped size={15} className="fill-gray-600"/>
-                            <p className="text-gray-600">Block</p>
-                        </button>
-                        <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1">
-                            <IoVolumeMute size={15} className="fill-gray-600"/>
-                            <p className="text-gray-600">Mute</p>
-                        </button>
-                        <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1">
-                            <IoHeartDislikeSharp size={15} className="fill-gray-600"/>
-                            <p className="text-gray-600">Unlike</p>
-                        </button>
-                        <button className="p-1 w-full hover:bg-gray-100 flex justify-center items-center gap-1">
-                            <FaRegUserCircle size={15} className="fill-gray-600"/>
-                            <p className="text-gray-600">Profile</p>
-                        </button>
-                    </div> }
+            <div className="absolute right-0">
+                <button onClick={handleDropdown}>
+                    <BsThreeDotsVertical size={20} className="hover:fill-gray-600" />
+                </button>
+            </div>
+            {isOpen && 
+                <div className='absolute right-5 w-full shadow-lg bg-white border rounded-lg overflow-hidden'>
+
+                    <DropdownItem title="Block" Icon={MdBlockFlipped} />
+                    <DropdownItem title="Mute" Icon={IoVolumeMute} />
+                    <DropdownItem title="Unlike" Icon={IoHeartDislikeSharp} />
+                    <DropdownItem title="Profile" Icon={FaRegUserCircle} />
+
                 </div>
+            }
+        </div>
     )
 }
 

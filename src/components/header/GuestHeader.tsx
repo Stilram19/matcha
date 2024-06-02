@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { RxHamburgerMenu } from "react-icons/rx";
 import { Link, NavLink } from "react-router-dom";
 import useOutsideClick from "../../hooks/useOutsideClick";
+import { FaBars } from "react-icons/fa6";
 
 
 export default function GuestHeader() {
@@ -33,7 +33,11 @@ export default function GuestHeader() {
             <div className="px-3 w-full flex justify-between shadow md:hidden">
                 <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>
                 <div ref={wrapper} className="flex">
-                    <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button>
+                    {/* <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button> */}
+                    <button onClick={handleOnClick}><FaBars size={25} className="hover:fill-pastel-pink" /></button>
+
+                {/* <div><i className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-bars p-7"></i></div> */}
+    
                     <div className={`p-2 absolute top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
                         <ul className='w-full flex flex-col items-center justify-center list-none'>
                             <li><NavLink to="/" className="w-full block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</NavLink></li>
