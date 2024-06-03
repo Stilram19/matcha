@@ -1,6 +1,6 @@
-import { useState, ChangeEvent, useRef, useEffect } from 'react';
 import './style.css'
-import { Link } from 'react-router-dom';
+import { useState, ChangeEvent, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import dummySearchResults from '../utils/dummySearchResults';
 import Gender from '../utils/Gender';
 import SexualPreferences from '../utils/SexualPreferences';
@@ -11,25 +11,15 @@ type SearchProps = {
     handleSearchClose: () => void;
 };
 
-// type SearchResult = {
-//     id: string;
-//     firstName: string;
-//     lastName: string;
-//     userName: string;
-//     age: number;
-//     gender: string;
-//     sexualPreferences: string;
-//     profilePicture: string; // URL
-// }
-
 function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: SearchProps) {
     let [isSearchOnFocus, setIsSearchOnFocus] = useState(false);
     let [query, setQuery] = useState('');
-    const inputRef = useRef<HTMLInputElement>(null);
+    const searchRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (inputRef.current && isSmallSearchOpen) {
-          inputRef.current.focus();
+        if (searchRef.current && isSmallSearchOpen) {
+          searchRef.current.focus();
         }
     }, [isSmallSearchOpen]);
 
@@ -39,31 +29,36 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
     }
 
     function handleBlur() {
-        setQuery('');
         setIsSearchOnFocus(false);
         handleSearchClose();
     }
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-        const value = e.target.value;
+        setQuery(e.target.value);
+    }
 
-        setQuery(value);
-        // setQuery('');
-        console.log(value);
+    function handleCrossMouseDown(e: React.MouseEvent<HTMLButtonElement | HTMLImageElement>) {
+        e.preventDefault(); // to ignore the cross mouse click and keep the input focused
+        setQuery('');
+    }
+
+    function handleSearchIconMouseDown(e: React.MouseEvent<HTMLButtonElement | HTMLImageElement>) {
+        e.preventDefault(); // to ignore the cross mouse click and keep the input focused
     }
 
     function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key == 'Enter') {
-            // navigate to the search results page
+
+            navigate('/home1');
         }
     }
 
     return (
         <div>
             <div className={`hidden md:inline-flex flex mt-3 w-52 h-12 search-bar-bg round-7px mb-3 ${isSearchOnFocus ? 'w-screen' : ''}`} style={isSmallSearchOpen ? {display: 'inline-flex'} : {}}>
-                <img src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
-                <input onKeyDown={handleKeyDown} onChange={handleInputChange} value={query} onFocus={handleFocus} onBlur={handleBlur} className="bg-transparent mb-1 w-131px" type="text" placeholder="Search..." ref={inputRef} style={isSearchOnFocus ? {width: '100vw'} : {}}></input>
-                <img src="/icons/cross-icon.svg" alt='cross-icon' className="w-22px" style={isSearchOnFocus ? {marginRight: 12} : {}}/>
+                <img onMouseDown={handleSearchIconMouseDown} src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
+                <input onFocus={handleFocus} ref={searchRef} onBlur={handleBlur} onKeyDown={handleKeyDown} onChange={handleInputChange} value={query} className="bg-transparent mb-1 w-131px" type="text" placeholder="Search..." style={isSearchOnFocus ? {width: '100vw'} : {}}></input>
+                <img src="/icons/cross-icon.svg" alt='cross-icon' className="w-22px" onMouseDown={handleCrossMouseDown} style={isSearchOnFocus ? {marginRight: 12} : {}}/>
             </div>
             {
                 isSearchOnFocus && dummySearchResults && dummySearchResults.length > 0 ?

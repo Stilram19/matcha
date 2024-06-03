@@ -12,8 +12,6 @@ function Gender({gender, iconsFolder}: GenderProps) {
             svgPath = `${iconsFolder}/${gender}.svg`;
         }
 
-        console.log(`${gender} ${svgPath}`);
-
         return svgPath;
     }
 

@@ -22,8 +22,6 @@ function SexualPreferences({sexualPreference, iconsFolder}: SexualPreferencesPro
             svgPath = `${iconsFolder}/${sexualPreference}.svg`;
         }
 
-        console.log(`${sexualPreference} ${svgPath}`);
-
         return svgPath;
     }
 

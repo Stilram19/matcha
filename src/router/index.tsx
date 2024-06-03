@@ -13,6 +13,7 @@ import Home from "../pages/home/Home";
 import HomeV2 from "../pages/home/Home1";
 import UserProfile from "../pages/profile/UserProfile";
 import LoggedInLayout from "../layouts/LoggedInLayout";
+import SearchResults from "../pages/searchResults/SearchResults";
 
 const router = createBrowserRouter([
     {
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
     {
       path: '/user-profile',
       element: <LoggedInLayout><UserProfile/></LoggedInLayout>
+    },
+    {
+      path: '/search-results',
+      element: <LoggedInLayout><SearchResults/></LoggedInLayout>
     },
 ]);
 
