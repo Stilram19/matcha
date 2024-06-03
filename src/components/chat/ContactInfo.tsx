@@ -6,8 +6,8 @@ import { MdBlockFlipped } from "react-icons/md";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import { IconType } from "react-icons";
 
-const DropdownItem = ({title, Icon} : {title: string, Icon: IconType}) => {
 
+const DropdownItem = ({title, Icon} : {title: string, Icon: IconType}) => {
     return (
         <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1">
             <Icon  size={15} className="fill-gray-600" />
@@ -25,6 +25,7 @@ const Dropdown = () => {
     const handleDropdown = () => {
         setIsOpen((prev) => !prev);
     }
+
 
     return (
         <div ref={dropdownRef} className="self-end relative w-[150px] z-20">

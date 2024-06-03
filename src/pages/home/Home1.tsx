@@ -1,8 +1,9 @@
 import { FaHeart } from "react-icons/fa"
+import { FaStar } from "react-icons/fa6"
 import { GrMapLocation } from "react-icons/gr"
 import { IoClose } from "react-icons/io5"
 
-const CheckBox = ({label}) => {
+const CheckBox = ({label}: {label: string}) => {
     return (
         <div className="flex items-center gap-2">
             <input
@@ -35,34 +36,39 @@ const HomeSideBar = () => {
 const MatchedCard = () => {
 
     return (
-        <div className="border w-full h-[400px] rounded-lg">
+        <div className="border w-full h-[410px] rounded-lg">
             <div className="w-full h-[65%]">
                 <img src="/imgs/man_placeholder.jpg" className="w-full h-full object-cover object-top"/>
             </div>
 
-            <div className="bg-blue-100 w-full h-[35%] px-1 relative">
-                <h1 className="text-xl">John Steve</h1>
+            <div className="bg-blue-100 w-full h-[35%]  py-0.5 px-1 relative">
+                <div className="w-full relative flex justify-between">
+                    <h1 className="text-xl">John Steve</h1>
+                    <div className="absolute right-0 flex gap-1">
+                        <button className="bg-pink w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 ease-in-out">
+                                <IoClose className="fill-white" size={20} />
+                        </button> 
+
+                        <button className="bg-pink w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 ease-in-out">
+                                <FaHeart className="fill-white" size={15} />
+                        </button>
+                    </div>
+                </div>
                 <div className="flex items-center gap-2 mb-1">
                     <GrMapLocation className="stroke-gray-500" size={18}/>
                     <h2 className="text-lg text-gray-500">6 Km, Morroco</h2>
                 </div>
-                <div className="w-full h-[40%] overflow-hidden">
+                <div className="w-full h-[50px] overflow-hidden">
                     <p className=" ">Lorem ipsum dolor sit amet, consectetur adipiscing elitelt. Phasellus justo nunc, gravida eget felis non, tincidunt maximus nulla.</p>
                 </div>
-               
-               <div className="absolute bottom-1 flex justify-center w-full gap-2">
-                    <button className="bg-pink w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 ease-in-out">
-                            <IoClose className="fill-white" size={20} />
-                    </button> 
 
-                    <button className="bg-pink w-8 h-8 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 ease-in-out">
-                            <FaHeart className="fill-white" size={15} />
-                    </button> 
-               </div>
-               
-                {/* <button className="bg-blue-950 w-16 h-16 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 ease-in-out">
-                        <FaHeart className="fill-white" size={30} />
-                </button> */}
+                <div className="border bg-white w-fit flex p-0.5 px-2 rounded-full">
+                    <FaStar size={25} className="fill-yellow-500" />
+                    <FaStar size={25} className="fill-yellow-500" />
+                    <FaStar size={25} className="fill-yellow-500" />
+                    <FaStar size={25} className="fill-yellow-500" />
+                    <FaStar size={25} className="fill-yellow-500" />
+                </div>
             </div>
         </div>
     )
