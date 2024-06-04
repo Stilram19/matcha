@@ -29,6 +29,7 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
     }
 
     function handleBlur() {
+        console.log('blurr')
         setIsSearchOnFocus(false);
         handleSearchClose();
     }
@@ -48,8 +49,17 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
 
     function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key == 'Enter') {
+            if (searchRef.current) {
+                searchRef.current.blur();
+            }
 
-            navigate('/home1');
+            if (query !== '') {
+                navigate(`/search-results?query=${encodeURIComponent(query)}`);
+            }
+        }
+
+        if (e.key == 'Escape' && searchRef.current) {
+            searchRef.current.blur();
         }
     }
 

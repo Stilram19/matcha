@@ -16,7 +16,7 @@ function Gender({gender, iconsFolder}: GenderProps) {
     }
 
     return (
-        <img src={genderIconPath()} alt="gender icon"></img>
+        <img src={genderIconPath()} alt="gender icon" style={{width: 24}}></img>
     )
 }
 
