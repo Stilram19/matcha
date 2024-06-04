@@ -70,24 +70,26 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
                 <input onFocus={handleFocus} ref={searchRef} onBlur={handleBlur} onKeyDown={handleKeyDown} onChange={handleInputChange} value={query} className="bg-transparent mb-1 w-131px" type="text" placeholder="Search..." style={isSearchOnFocus ? {width: '100vw'} : {}}></input>
                 <img src="/icons/cross-icon.svg" alt='cross-icon' className="w-22px" onMouseDown={handleCrossMouseDown} style={isSearchOnFocus ? {marginRight: 12} : {}}/>
             </div>
-            {
-                isSearchOnFocus && dummySearchResults && dummySearchResults.length > 0 ?
-                dummySearchResults.map(
-                    (result) => (
-                        <Link to="#">
-                            <div className="flex items-center search-result-bg round-7px">
-                                <img src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
-                                <p style={{width: 90, marginRight: 8}}>{result.userName}</p>
-                                <p style={{marginRight: 4}}>{result.age}</p>
-                                <img style={{marginRight: 24}} src="/icons/birthday-cake.svg" alt="birthday cake icon" />
-                                <Gender gender={result.gender} iconsFolder='/icons/gender'/>
-                                <SexualPreferences sexualPreference={result.sexualPreferences} iconsFolder='/icons/sexual-preferences' />
-                            </div>
-                        </Link>
+            <div className="">
+                {
+                    isSearchOnFocus && dummySearchResults && dummySearchResults.length > 0 ?
+                    dummySearchResults.map(
+                        (result) => (
+                            <Link to="#">
+                                <div className="flex items-center search-result-bg round-7px">
+                                    <img src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
+                                    <p style={{width: 90, marginRight: 8}}>{result.userName}</p>
+                                    <p style={{marginRight: 4}}>{result.age}</p>
+                                    <img style={{marginRight: 24}} src="/icons/birthday-cake.svg" alt="birthday cake icon" />
+                                    <Gender gender={result.gender} iconsFolder='/icons/gender'/>
+                                    <SexualPreferences sexualPreference={result.sexualPreferences} iconsFolder='/icons/sexual-preferences' />
+                                </div>
+                            </Link>
+                        )
                     )
-                )
-                : null
-            }
+                    : null
+                }
+            </div>
         </div>
     )
 }
