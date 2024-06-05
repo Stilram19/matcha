@@ -18,10 +18,10 @@ function SearchResults() {
                 dummySearchResults && dummySearchResults.length > 0 ?
                 dummySearchResults.map(
                     (result) => (
-                        <div className="flex items-center mb-8 pl-5 rounded-7px search-result-bg round-7px">
+                        <div className="flex items-center mb-8 pt-3 pb-3 pl-5 rounded-7px search-result-bg round-7px">
                             <Link to="#">
                                 <div className="mr-4 sm:mr-8 w-24 h-24 sm:w-40 sm:h-40 lg:h-40 lg:w-40 bg-cover bg-no-repeat bg-center rounded-full bg-gray-300"
-                                    style={{backgroundImage: "url('https://cdn.intra.42.fr/users/c33a9dddabed7298d6a21bfacd7e5f76/obednaou.JPG')"}}>
+                                    style={{backgroundImage: `url(${result.profilePicture})`}}>
                                 </div>
                             </Link>
                             <div className="flex flex-col sm:gap-2">

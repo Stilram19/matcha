@@ -28,7 +28,7 @@ let dummySearchResults: SearchResult[] = [
         age: 23,
         gender: 'male',
         sexualPreferences: 'heterosexual',
-        profilePicture: 'https://cdn.intra.42.fr/users/c33a9dddabed7298d6a21bfacd7e5f76/obednaou.JPG'
+        profilePicture: 'https://cdn.intra.42.fr/users/b752273cac16bd0fb1cf7195cde87d06/okhiar.JPG'
     },
     {
         id: '3',
@@ -38,7 +38,7 @@ let dummySearchResults: SearchResult[] = [
         age: 23,
         gender: 'intersex',
         sexualPreferences: 'lesbian',
-        profilePicture: 'https://cdn.intra.42.fr/users/c33a9dddabed7298d6a21bfacd7e5f76/obednaou.JPG'
+        profilePicture: 'https://cdn.intra.42.fr/users/b7eb31b25645d03918e9c54265ad7f9a/aben-ham.jpg'
     },
 ];
 
