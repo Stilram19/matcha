@@ -1,0 +1,48 @@
+.text-results-heading {
+    font-size: 50px;
+}
+
+.rounded-20px {
+    border-radius: 20px;
+}
+
+.text-fullname {
+    font-size: 34px;
+}
+
+.text-username {
+    font-size: 24px;
+}
+
+.text-age {
+    font-size: 25px;
+}
+
+.risque-regular {
+  font-family: "Risque", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@media (max-width: 639px) {
+    .text-fullname {
+        font-size: 20px;
+    }
+
+    .text-username {
+        font-size: 18px;
+    }
+
+    .text-age {
+        font-size: 16px;
+    }
+
+    .text-results-heading {
+        font-size: 40px;
+    }
+}
+
+.playfair-display {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+}

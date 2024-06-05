@@ -1,0 +1,8 @@
+.camera-icon {
+    bottom: 25px;
+    right: 25px;
+    transform: translate(0, 30%);
+    position: absolute;
+}
+
+/* <i data-visualcompletion="css-img" class="x1b0d499 xep6ejk" style="background-image: url(&quot;https://static.xx.fbcdn.net/rsrc.php/v3/y5/r/hfjAwSdyy_q.png?_nc_eui2=AeFRzzF6RFSaKa5NqNeSjbYLP2sBdEzmTIY_awF0TOZMhjmZSTMcROisGoFSFM4XWopkFp4TGp_K_0C3b-4xJ00M&quot;); background-position: 0px -21px; background-size: auto; width: 20px; height: 20px; background-repeat: no-repeat; display: inline-block;"></i> */

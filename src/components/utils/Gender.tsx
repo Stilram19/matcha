@@ -12,13 +12,11 @@ function Gender({gender, iconsFolder}: GenderProps) {
             svgPath = `${iconsFolder}/${gender}.svg`;
         }
 
-        console.log(`${gender} ${svgPath}`);
-
         return svgPath;
     }
 
     return (
-        <img src={genderIconPath()} alt="gender icon"></img>
+        <img src={genderIconPath()} alt="gender icon" style={{width: 24}}></img>
     )
 }
 
