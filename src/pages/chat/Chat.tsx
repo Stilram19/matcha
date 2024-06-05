@@ -2,7 +2,7 @@ import ChatBox from "../../components/chat/ChatBox";
 import ChatList from "../../components/chat/ChatList";
 import ContactInfo from "../../components/chat/ContactInfo";
 // import messages from './messages.json'
-import dms from "./data.json"
+import dms from "../../data/data.json"
 import { useState } from "react";
 
 

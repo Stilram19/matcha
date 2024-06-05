@@ -10,13 +10,13 @@ const   MessageBar = (props: MessageBarProps) => {
 
     return (
         <div className="w-full p-1 h-20 flex items-center gap-2  hover:bg-gray-200 cursor-pointer">
-            <img src={props.profile_image} alt="Profile" className="min-w-16 max-w-16 min-h-16 max-h-16 rounded-full object-cover" />
+            <img src={props.profilePicture} alt="Profile" className="min-w-16 max-w-16 min-h-16 max-h-16 rounded-full object-cover" />
             <div className="flex flex-col overflow-hidden">
                 <h1 className="text-xl truncate">
-                    {props.full_name}
+                    {`${props.firstName} ${props.lastName}`}
                 </h1>
                 <p className="text-gray-500 truncate">
-                    {props.last_message}
+                    {props.lastMessage}
                 </p>
             </div>
         </div>
@@ -25,6 +25,9 @@ const   MessageBar = (props: MessageBarProps) => {
 
 
 const   ChatList: FC<ChatListProps> = ({dms, onClick}) => {
+
+    // for favorites section, when it gets clicked, i'll filter the messages by the isFavorite property
+
     return (
         <div className="w-full h-full pb-1">
             <div className="p-2 mb-2">
