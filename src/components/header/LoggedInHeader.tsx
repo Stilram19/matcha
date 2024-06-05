@@ -43,7 +43,7 @@ function LoggedInHeader() {
             </nav>
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>
                 <div><i onClick={handleSmallViewSearchClick} className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-magnifying-glass"></i></div>
-                <div><i className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
+                <div style={{overflow: 'hidden'}}><i className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
             </div>
         </div>
     )
