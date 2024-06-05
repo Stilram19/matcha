@@ -1,35 +1,36 @@
+import { useState } from "react";
 import Tag from "../../components/Tag";
 
+
 const tags = [
-    "anime",
-    "movies",
-    "gaming",
-    "music",
-    "cats",
-    "singing",
-    "travel",
-    "science",
-    "history",
-    "learning",
-    "fantasy",
-    "pop",
-    "animals",
-    "culture",
-    "baking",
-    "comedy",
-    "drawing",
-    "languages",
-    "concerts",
-    "art",
-    "philosophy",
-    "meditation",
-    "books",
-    "dance",
-    "writing",
-    "mystery"
-]
+    "anime", "movies", "gaming", "music", "cats", "singing", "travel",
+    "science", "history", "learning", "fantasy", "pop", "animals", "culture",
+    "baking", "comedy", "drawing", "languages", "concerts", "art", "philosophy",
+    "meditation", "books", "dance", "writing", "mystery"
+];
+
+
 
 const InterestTag = () => {
+    const   [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+
+    const handleOnClick = (tag: string) => {
+        setSelectedTags((prev) => {
+            const newSelectedTags = new Set(prev);
+            if (newSelectedTags.has(tag))
+                newSelectedTags.delete(tag);
+            else
+                newSelectedTags.add(tag);
+            return newSelectedTags;
+        })
+    }
+
+    const   handleContinue = () => {
+        console.log(selectedTags);
+
+        // send tags to the server...
+    }
+
 
     return (
         <div className="w-full">
@@ -42,14 +43,18 @@ const InterestTag = () => {
 
             {tags.map((tag, index) => {
                 return (
-                <div className="ml-4 mb-2 inline-block">
-                    <Tag key={index} tag={tag} />
+                <div key={index} className="ml-4 mb-2 inline-block" onClick={() => handleOnClick(tag)}>
+                    <Tag tag={tag} bgColor={selectedTags.has(tag) ? 'bg-green-light' : 'bg-white'}/>
                 </div>
                 )
             })}
 
             <div className="flex justify-end">
-                <button className="mt-6 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+                <button
+                    disabled={selectedTags.size < 5}
+                    className={`mt-6 px-6 py-2 bg-pastel-pink-100 ${selectedTags.size < 5 ? 'bg-opacity-75' : ''} rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring`}
+                    onClick={handleContinue}>
+
                     Continue
                 </button>
             </div>

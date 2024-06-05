@@ -22,7 +22,9 @@ export default function Login() {
                             </div>
                             <a href="#" className="text-blue-400">forgot password?</a>
                         </div>
-                        <button className="px-7 py-2 border border-e0 rounded-lg tracking-wider bg-pastel-pink-100 text-white font-semibold text-md hover:text-black">Login</button>
+                        <button className="px-7 py-2 border border-e0 rounded-lg tracking-wider bg-pastel-pink-100 text-white font-semibold text-md hover:text-black">
+                            Login
+                        </button>
                     </form>
                     <div className="flex items-center gap-2 my-3">
                         <hr className=" w-24 border-none h-[1px] bg-gray-300" />

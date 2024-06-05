@@ -7,6 +7,7 @@ export default {
         'deep-plum': '#49243E',
         'pastel-pink': '#FFB5B5',
         'pink': '#D2649A',
+        'pastel-pink-100': '#FF9696'
       },
     },
   },
