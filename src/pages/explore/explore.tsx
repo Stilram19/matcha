@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { FaArrowRight, FaHeart, FaStar } from "react-icons/fa"
 import { GrMapLocation } from "react-icons/gr"
 import { IoBookmark, IoClose } from "react-icons/io5"
@@ -16,7 +15,7 @@ const CheckBox = ({label}: {label: string}) => {
     )
 }
 
-const HomeSideBar = () => {
+const ExploreSideBar = () => {
     return (
         <div className="w-full h-full p-4">
             <div className="w-full">
@@ -52,8 +51,32 @@ const   MatchedUserSummary = () => {
 }
 
 
+const   FameRating = ({rating} : {rating: number}) => {
+    // const [hovered, setHovered] = useState<number>(0)
+
+    return (
+        <div className="border flex gap-1 p-2 px-3 rounded-full bg-white">
+        {
+            [...Array(5).keys()].map((index) => {
+                // index++;
+                return (
+                    <FaStar
+                        key={index}
+                        size={25}
+                        className={`${index < rating ? 'fill-yellow-500' : 'fill-gray-300'} cursor-pointer`}
+                        // onMouseEnter={() => setHovered(index)}
+                        // onMouseLeave={() => setHovered(0)}
+                    />
+                )
+            })
+        }
+    </div>
+    )
+
+}
+
+
 const   MatchedProfile = () => {
-    const [hovered, setHovered] = useState<number>(0)
 
     return (
             <div className="w-full h-full flex justify-center">
@@ -64,21 +87,8 @@ const   MatchedProfile = () => {
                                 <MatchedUserSummary />
                             </div>
 
-                            <div className="absolute bottom-4 right-5 border  z-10 flex gap-1 p-2 px-3 rounded-full bg-white">
-                                {
-                                    [...Array(5).keys()].map((index) => {
-                                        index++;
-                                        return (
-                                            <FaStar
-                                                key={index}
-                                                size={25}
-                                                className={`${index <= hovered ? 'fill-yellow-500' : 'fill-gray-300'} cursor-pointer`}
-                                                onMouseEnter={() => setHovered(index)}
-                                                onMouseLeave={() => setHovered(0)}
-                                            />
-                                        )
-                                    })
-                                }
+                            <div className="absolute bottom-4 right-5  z-10">
+                                <FameRating rating={4} />
                             </div>
 
                             <div className="absolute top-0 right-0 h-full w-16 flex items-center justify-center rounded-e-2xl backdrop-blur-lg bg-black/30 bg-opacity-30">
@@ -95,11 +105,11 @@ const   MatchedProfile = () => {
 
 
 
-const Home = () => {
+const Explore = () => {
     return (
         <div className="flex justify-around w-screen h-[calc(100vh-80px)]">
             <div className="w-1/4 border-r">
-                <HomeSideBar />
+                <ExploreSideBar />
             </div>
             <div className="w-3/4 relative flex justify-center">
                 <div className="pt-10 h-full">
@@ -126,4 +136,4 @@ const Home = () => {
 }
 
 
-export default Home;
+export default Explore;

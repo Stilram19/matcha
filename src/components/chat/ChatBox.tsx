@@ -46,13 +46,13 @@ const   ChatBox: FC<ChatBoxProps> = ({dmId}) => {
             </div>
 
             <div className="relative pt-2">
-                <div className="absolute bottom-2 w-full px-2">
+                <div className="absolute bottom-2 w-full px-3">
                     <input
                         type="text"
                         placeholder="Enter your message"
                         className="outline-none border w-full p-3 px-3 pr-20 rounded-lg"
                     />
-                    <div className="absolute bottom-0 top-0 right-4 flex items-center gap-2">
+                    <div className="absolute bottom-0 top-0 right-5 flex items-center gap-2">
                         <button className="">
                             <AiOutlineAudio size={25} className="fill-gray-500 hover:fill-black" />
                         </button>

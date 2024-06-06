@@ -1,5 +1,6 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 type FormFieldProps = {
     id: string;
@@ -13,9 +14,11 @@ const FormField = ({ id, label, placeholder} : FormFieldProps) => {
         <label htmlFor={id}>{label}</label>
         <input
           id={id}
+          name={id}
           type='text'
           placeholder={placeholder}
           className="outline-none border w-full p-2 px-3 rounded-lg focus:ring-2"
+          required
         />
       </div>
     );
@@ -24,6 +27,7 @@ const FormField = ({ id, label, placeholder} : FormFieldProps) => {
 
 const PersonalInfo = () => {
     const   [image, setImage] = useState<File>();
+    const   navigate = useNavigate();
 
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,13 +39,28 @@ const PersonalInfo = () => {
         setImage(uploaded_pic);
     }
 
+    
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(e.currentTarget);
+        const formData = new FormData(e.currentTarget);
+    
+        console.log(formData);
+        formData.forEach((value, key) => console.log(`${key}: ${value}`))
+
+
+        // Post to the server
+        // then navigate if everything is successful
+        navigate('/complete-info/2');
+    }
+
 
     return (
         <div className="w-full">
             <h1 className="text-xl my-9">1/3</h1>
             <h1 className=" text-4xl mb-3">Tell us a little bit about yourself</h1>
 
-            <form>
+            <form onSubmit={handleSubmit} id="extrainfo">
                 <div className="w-full flex flex-col justify-center gap-3">
                     <div className="flex justify-between">
                         <FormField id="fname" label="first name" placeholder="John" />
@@ -51,17 +70,17 @@ const PersonalInfo = () => {
 
                     <div className="flex flex-col h-full gap-1">
                         <label htmlFor="">biography</label>
-                        <textarea className="border outline-none p-2 rounded-lg focus:ring-2 h-48" placeholder="bio"/>
+                        <textarea name="biography" className="border outline-none p-2 rounded-lg focus:ring-2 h-48 resize-none" placeholder="bio" required/>
                     </div>
 
                     <div className="flex">
                         <div className="flex flex-col h-full">
                             <label htmlFor="">Gender</label>
-                            <select className="text-gray-600  w-full outline-none border bg-white rounded-lg p-2 pl-3 pr-8">
-                                <option value="" className="" selected>Gender</option>
-                                <option value="" className="" >Gender1</option>
-                                <option value="" className="">Gender2</option>
-                                <option value="" className="">Gender3</option>
+                            <select name="gender" className="text-gray-600  w-full outline-none border bg-white rounded-lg p-2 pl-3 pr-8" required>
+                                <option value="" className="" defaultChecked>Gender</option>
+                                <option value="" className="" >Male</option>
+                                <option value="" className="">Female</option>
+                                {/* <option value="" className="">Gender3</option> */}
                             </select>
                         </div>
                     </div>
@@ -76,6 +95,7 @@ const PersonalInfo = () => {
                                     {!image ? "upload profile picture" : image.name}
                         </label>
                         <input
+                            name="profile_picture"
                             id="upload-pic"
                             type="file"
                             className="hidden"

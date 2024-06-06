@@ -15,7 +15,7 @@ const CheckBox = ({label}: {label: string}) => {
     )
 }
 
-const HomeSideBar = () => {
+const ExploreSideBar = () => {
     return (
         <div className="w-full h-full p-4">
             <div className="w-full">
@@ -75,13 +75,13 @@ const MatchedCard = () => {
 
 }
 
-const HomeV2 = () => {
+const ExploreV2 = () => {
 
     return (
         // pt-[71px]
         <div className="w-screen h-[calc(100vh-80px)] flex">
             <div className="w-[20%] border-r h-full">
-                <HomeSideBar />
+                <ExploreSideBar />
             </div>
             <div className="w-[80%] h-full p-3 flex justify-center overflow-y-auto scrollbar">
                 <div className="w-full grid md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -104,4 +104,4 @@ const HomeV2 = () => {
 }
 
 
-export default HomeV2;
+export default ExploreV2;

@@ -9,8 +9,8 @@ import Chat from "../pages/chat/Chat";
 import PersonalInfo from "../pages/profile_setup/PersonalInfo";
 import CompleteInfo from "../pages/profile_setup/CompleteInfo";
 import InterestTag from "../pages/profile_setup/InterestTag";
-import Home from "../pages/home/Home";
-import HomeV2 from "../pages/home/Home1";
+import Explore from "../pages/explore/explore";
+import ExploreV2 from "../pages/explore/explore1";
 import UserProfile from "../pages/profile/UserProfile";
 import LoggedInLayout from "../layouts/LoggedInLayout";
 import SearchResults from "../pages/searchResults/SearchResults";
@@ -52,12 +52,12 @@ const router = createBrowserRouter([
       ],
     },    
     {
-      path: '/home',
-      element: <LoggedInLayout><Home /></LoggedInLayout>
+      path: '/explore',
+      element: <LoggedInLayout><Explore /></LoggedInLayout>
     },
     {
-      path: '/home1',
-      element: <LoggedInLayout><HomeV2 /></LoggedInLayout>
+      path: '/explore1',
+      element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
     },
     {
       path: '/chat',
