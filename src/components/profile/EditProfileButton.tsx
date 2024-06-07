@@ -11,7 +11,7 @@ const styles = {
 
 function EditProfileButton() {
     return (
-        <button style={styles} className="lato-black flex items-center justify-evenly" >
+        <button style={styles} className="lato-black flex flex-wrap items-center justify-evenly" >
             <img src="/icons/pencil.svg" alt="pencil icon" />
             <h3>Edit profile</h3>
         </button>
