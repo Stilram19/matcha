@@ -2,9 +2,10 @@ import { FaStar } from "react-icons/fa6";
 
 type FameRatingDisplayProps = {
     starsCount: number;
+    size?: number;
 };
 
-function FameRatingDisplay({starsCount}: FameRatingDisplayProps) {
+function FameRatingDisplay({starsCount, size = 25}: FameRatingDisplayProps) {
     let stars = [1, 2, 3, 4, 5];
 
     return (
@@ -21,7 +22,7 @@ function FameRatingDisplay({starsCount}: FameRatingDisplayProps) {
 
                         return (
                             <div>
-                                <FaStar style={{width: 24, height: 24, color: `${color}`}} />
+                                <FaStar style={{width: size, height: size, color: `${color}`}} />
                             </div>
                         )
                     }
