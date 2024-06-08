@@ -58,14 +58,14 @@ const   MatchedUserSummary = ({firstName, lastName, gender}: MatchedUserSummaryP
 
 function BioAndInterests({biography}: BioAndInterestsProps) {
     return (
-        <div className="flex-col shadow md:overflow-y-scroll rounded-20px md:aspect-[2/3]">
+        <div className="flex-col md:pr-4 shadow md:overflow-y-auto md:scrollbar rounded-20px md:aspect-[2/3]">
             <div className="pb-6 pr-3 pl-3">
                 <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pl-2 sm:pt-6 pl-10 pb-6">Biography</h2>
                 <p style={{fontSize: 20}} className="text-center">{biography}</p>
             </div>
             <div className="">
                 <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-10 pb-6">Interests</h2>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 xl:grid-cols-4 pl-2 lg:pl-7 pr-1 grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 pl-2 lg:pl-7 pr-1 grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
                     {
                         interests.map(
                             (interst) => (
@@ -85,30 +85,29 @@ const   MatchedProfile = () => {
     const profileInfos = dummyProfileInfos[2];
 
     return (
-        <div className="flex flex-row gap-10 w-full h-full max-h-full md:max-h-screen">
-            <div className="md:w-1/2 md:overflow-y-scroll overflow-x-hidden pb-20">
-                <div className="relative aspect-[2/3] mb-10 pr-1 sm:pr-4 pt-1 sm:pt-3">
+        <div className="flex flex-row gap-10 w-full h-full max-h-full md:max-h-screen w-full pb-20 md:w-11/12 lg:w-9/12 2xl:w-8/12">
+            <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden">
+                <div className="relative aspect-[2/3] mb-10 pr-1 md:pr-4 pt-1 md:pt-3">
                     <img src={`${profileInfos.profilePicture}`} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
                     <div className="absolute bottom-4 left-7 w-[50%]">
                         <MatchedUserSummary firstName={profileInfos.firstName} lastName={profileInfos.lastName} gender={profileInfos.gender}/>
                     </div>
                 </div>
-                <div className="md:hidden md:w-1/2 overflow-x-hidden overflow-y-hidden md:overflow-y-scroll mb-10">
+                <div className="md:hidden md:w-1/2 overflow-x-hidden overflow-y-hidden md:overflow-y-auto md:scrollbar mb-10">
                     <BioAndInterests biography={profileInfos.biography}/>
                 </div>
                 <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-6 pb-6">Photos</h2>
                 {
                     profileInfos && profileInfos.userPhotos && profileInfos.userPhotos.length > 0 ?
                     profileInfos.userPhotos.map((pictureURL) => (
-                        <div className="relative aspect-[2/3] overflow-y-scroll overflow-x-hidden mb-6 pr-4">
+                        <div className="relative aspect-[2/3] overflow-y-auto scrollbar overflow-x-hidden mb-6 pr-4">
                             <img src={`${pictureURL}`} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
                         </div>
                     )) : null
                 }
-
             </div>
 
-            <div className="md:w-1/2 md:overflow-y-scroll overflow-x-hidden hidden md:inline-flex">
+            <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden hidden md:inline-flex">
                 <BioAndInterests biography={profileInfos.biography}/>
             </div>
         </div>
@@ -117,8 +116,8 @@ const   MatchedProfile = () => {
 
 const Explore = () => {
     return (
-        <div className="flex justify-center w-screen pl-4 pr-4 sm:pl-6 sm:pr-6 lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44">
-            <div className="pt-4 sm:pt-6 w-screen">
+        <div className="flex justify-center w-screen pl-4 pr-4 md:pl-6 md:pr-6 lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44">
+            <div className="pt-4 flex justify-center md:pt-6 w-screen">
                 <MatchedProfile />
             </div>
             <div className="fixed z-20 pb-4 bottom-1 flex justify-center gap-2 sm:gap-4">
