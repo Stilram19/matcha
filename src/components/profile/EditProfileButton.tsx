@@ -9,9 +9,17 @@ const styles = {
     paddingRight: 8,
 };
 
-function EditProfileButton() {
+type EditProfileButtonProps = {
+    handleEditButtonClick: () => void;
+};
+
+function EditProfileButton({handleEditButtonClick}: EditProfileButtonProps) {
+    function handleClick() {
+        handleEditButtonClick();
+    }
+
     return (
-        <button style={styles} className="lato-black flex flex-wrap items-center justify-evenly" >
+        <button onClick={handleClick} style={styles} className="hover:scale-105 lato-black flex flex-wrap items-center justify-evenly" >
             <img src="/icons/pencil.svg" alt="pencil icon" />
             <h3>Edit profile</h3>
         </button>
@@ -19,14 +27,3 @@ function EditProfileButton() {
 }
 
 export default EditProfileButton;
-
-/* Rectangle 23 */
-
-// position: absolute;
-// width: 175.55px;
-// height: 41px;
-// left: 130.49px;
-// top: 388px;
-
-// background: #D9D9D9;
-// border-radius: 6px;
