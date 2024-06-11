@@ -1,7 +1,29 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+
 import FormField from "../../components/utils/FormField";
+
+type SelectOptions = {
+    value: string;
+    label: string;
+}
+
+type SelectProps = {
+    options: SelectOptions[];
+}
+
+const Select = ({ options }: SelectProps) => {
+    return (
+        <select name="gender" className="text-gray-600  w-full outline-none border bg-white rounded-lg p-2 pl-3 pr-8" required>
+            <option value="" className="" defaultChecked>Gender</option>
+            {/* <option value="male" className="" >Male</option>
+            <option value="female" className="">Female</option> */}
+            {options.map((option_item) => <option value={option_item.value}>{option_item.label}</option>)}
+        </select>
+    )
+}
+  
 
 const PersonalInfo = () => {
     const   [image, setImage] = useState<File>();
@@ -38,7 +60,7 @@ const PersonalInfo = () => {
             <h1 className="text-xl my-9">1/3</h1>
             <h1 className=" text-4xl mb-3">Tell us a little bit about yourself</h1>
 
-            <form onSubmit={handleSubmit} id="extrainfo">
+            <form onSubmit={handleSubmit}>
                 <div className="w-full flex flex-col justify-center gap-3">
                     <div className="flex justify-between">
                         <FormField id="fname" label="first name" placeholder="John" />
@@ -54,12 +76,7 @@ const PersonalInfo = () => {
                     <div className="flex">
                         <div className="flex flex-col h-full">
                             <label htmlFor="">Gender</label>
-                            <select name="gender" className="text-gray-600  w-full outline-none border bg-white rounded-lg p-2 pl-3 pr-8" required>
-                                <option value="" className="" defaultChecked>Gender</option>
-                                <option value="" className="" >Male</option>
-                                <option value="" className="">Female</option>
-                                {/* <option value="" className="">Gender3</option> */}
-                            </select>
+                            <Select options={[{value: 'male', label: "Male"}, {value: 'female', label: "Female"}]} />
                         </div>
                     </div>
 

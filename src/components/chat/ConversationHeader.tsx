@@ -13,7 +13,7 @@ const ConversationHeader = ({firstName, lastName, profilePicture, status, isFavo
 
     return (
         <div className="border-b h-[80px] w-full flex justify-between items-center py-2 px-5">
-            <div className="flex gap-3">
+            <div className="pl-2 flex gap-3">
                 <img src={profilePicture} className="h-16 w-16 object-cover rounded-full"/>
                 <div className="flex flex-col">
                     <h1 className="text-xl">{firstName} {lastName}</h1>
