@@ -1,4 +1,4 @@
-type ProfileInfos = {
+export type ProfileInfos = {
     id: string;
     firstName: string;
     lastName: string;

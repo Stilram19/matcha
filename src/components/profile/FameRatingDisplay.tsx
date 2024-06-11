@@ -9,7 +9,7 @@ function FameRatingDisplay({starsCount, size = 25}: FameRatingDisplayProps) {
     let stars = [1, 2, 3, 4, 5];
 
     return (
-        <div className="flex">
+        <div className="flex hover:scale-110">
             {
                 stars && stars.length == 5 ? 
                 stars.map(
