@@ -6,25 +6,37 @@ import './style.css'
 import FameRatingDisplay from "../../components/profile/FameRatingDisplay";
 import EditProfileButton from "../../components/profile/EditProfileButton";
 import interests from "../../utils/interests";
+import EditProfileOverlay from "../../components/profile/EditProfileOverlay";
+import { useState } from "react";
 
 function UserProfile() {
     const profileInfos = dummyProfileInfos[2];
+    let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
+
+    function handleEditButtonClick() {
+        setIsProfileEditOpen(true);
+    }
+
+    function handleEditOverlayClose() {
+        setIsProfileEditOpen(false);
+    }
 
     return (
         <div className="flex justify-center mt-5 mr-4 ml-4">
             <div className="mb-6 w-full" style={{maxWidth: 1068}}>
+                {isProfileEditOpen ? <EditProfileOverlay profileInfos={profileInfos} handleEditOverlayClose={handleEditOverlayClose}/> : null}
                 <div className="w-full flex flex-col lg:flex-row gap-6 mb-6 bg-white">
                     <div className="shadow  rounded-20px w-boxx">
                         <div className="flex gap-11 lg:gap-0 flex-col lg:flex-row items-center mb-8 mt-6 pl-4 pr-4 lg:pl-9 lg:pr-9 rounded-7px round-7px">
                             <div className="relative">
-                            <Link to="#">
-                                <div className="mr-4 sm:mr-8 w-60 h-60 sm:w-80 sm:h-80 lg:w-40 lg:h-40 bg-cover bg-no-repeat bg-center rounded-full bg-gray-300"
-                                    style={{backgroundImage: `url(${profileInfos.profilePicture})`}}>
-                                </div>
-                                    <div className="camera-icon cursor-pointer bg-gray-300 flex w-9 h-9 sm:w-12 sm:h-12 lg:w-9 lg:h-9 rounded-full justify-center items-center">
-                                        <i className="icon sm:scale-125 lg:scale-100" style={{backgroundImage: 'url("/icons/facebook-camera-icon.png")', backgroundPosition: '0px -21px', width: '20px', height: '20px', backgroundRepeat: 'no-repeat', display: 'inline-block'}}></i>
+                                <Link to="#">
+                                    <div className="mr-4 sm:mr-8 w-60 h-60 sm:w-80 sm:h-80 lg:w-40 lg:h-40 bg-cover bg-no-repeat bg-center rounded-full bg-gray-300"
+                                        style={{backgroundImage: `url(${profileInfos.profilePicture})`}}>
                                     </div>
-                            </Link>
+                                        <div className="camera-icon cursor-pointer bg-gray-300 flex w-9 h-9 sm:w-12 sm:h-12 lg:w-9 lg:h-9 rounded-full justify-center items-center">
+                                            <i className="icon sm:scale-125 lg:scale-100" style={{backgroundImage: 'url("/icons/facebook-camera-icon.png")', backgroundPosition: '0px -21px', width: '20px', height: '20px', backgroundRepeat: 'no-repeat', display: 'inline-block'}}></i>
+                                        </div>
+                                </Link>
                             </div>
                             <div className="flex flex-col items-center sm:gap-2">
                                 <div className="flex justify-center">
@@ -46,7 +58,7 @@ function UserProfile() {
                             </div>
                         </div>
                         <div className="flex justify-center lg:justify-normal gap-5 items-center pl-4 pr-4 lg:pl-9 lg:pr-9 mb-4 lg:mb-9">
-                            <EditProfileButton />
+                            <EditProfileButton handleEditButtonClick={handleEditButtonClick}/>
                             <FameRatingDisplay starsCount={profileInfos.fameRating}/>
                         </div>
                     </div>
@@ -95,5 +107,3 @@ function UserProfile() {
 }
 
 export default UserProfile;
-
-{/* <i data-visualcompletion="css-img" class="x1b0d499 xep6ejk" style="background-image: url(&quot;https://static.xx.fbcdn.net/rsrc.php/v3/y5/r/hfjAwSdyy_q.png?_nc_eui2=AeFRzzF6RFSaKa5NqNeSjbYLP2sBdEzmTIY_awF0TOZMhjmZSTMcROisGoFSFM4XWopkFp4TGp_K_0C3b-4xJ00M&quot;); background-position: 0px -21px; background-size: auto; width: 20px; height: 20px; background-repeat: no-repeat; display: inline-block;"></i> */}
