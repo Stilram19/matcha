@@ -3,7 +3,7 @@ import dummyProfileInfos from "../../components/utils/dummyProfileInfos";
 import Gender from "../../components/utils/Gender";
 import SexualPreferences from "../../components/utils/SexualPreferences";
 import './style.css'
-import FameRatingDisplay from "../../components/profile/FameRatingDisplay";
+import FameRatingDisplay from "../../components/utils/FameRatingDisplay";
 import EditProfileButton from "../../components/profile/EditProfileButton";
 import interests from "../../utils/interests";
 import EditProfileOverlay from "../../components/profile/EditProfileOverlay";

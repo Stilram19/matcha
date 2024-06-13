@@ -4,8 +4,10 @@ import { ImCross, ImFilter } from "react-icons/im"
 import { TbGenderMale } from "react-icons/tb"
 import interests from "../../utils/interests"
 import dummyProfileInfos from "../../components/utils/dummyProfileInfos"
-import FameRatingDisplay from "../../components/profile/FameRatingDisplay"
+import FameRatingDisplay from "../../components/utils/FameRatingDisplay"
 import { BioAndInterestsProps, MatchedUserSummaryProps } from "./types"
+import { useState } from "react"
+import FilterOverlay from "../../components/explore/FilterOverlay"
 
 const CheckBox = ({label}: {label: string}) => {
     return (
@@ -51,7 +53,6 @@ const   MatchedUserSummary = ({firstName, lastName, gender}: MatchedUserSummaryP
                     <TbGenderMale size={20} />22
                 </span>
             </div>
-
         </div>
     )
 }
@@ -68,9 +69,9 @@ function BioAndInterests({biography}: BioAndInterestsProps) {
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 pl-2 lg:pl-7 pr-1 grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
                     {
                         interests.map(
-                            (interst) => (
-                                <div className="flex justify-center tag cursor-pointer max-w-32 fit-box">
-                                    <h3>#{interst}</h3>
+                            (interest, index) => (
+                                <div id={`Interest-${index + 1}`} className="flex justify-center tag cursor-pointer max-w-32 fit-box">
+                                    <h3>#{interest}</h3>
                                 </div>
                             )
                         )
@@ -115,13 +116,26 @@ const   MatchedProfile = () => {
 }
 
 const Explore = () => {
+    let [isFilterOverlayOpen, setIsFilterOverlayOpen] = useState(false);
+
+    function handleFilterOverlayClose() {
+        setIsFilterOverlayOpen(false);
+    }
+
+    function handleFilterButtonClick() {
+        setIsFilterOverlayOpen(true);
+    }
+
     return (
         <div className="flex justify-center w-screen pl-4 pr-4 md:pl-6 md:pr-6 lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44">
+            <div className={isFilterOverlayOpen == false ? 'hidden' : ''}>
+                <FilterOverlay handleFilterOverlayClose={handleFilterOverlayClose}/>
+            </div>
             <div className="pt-4 flex justify-center md:pt-6 w-screen">
                 <MatchedProfile />
             </div>
             <div className="fixed z-20 pb-4 bottom-1 flex justify-center gap-2 sm:gap-4">
-                <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
+                <button  onClick={handleFilterButtonClick} className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
                     <ImFilter className="fill-white" size={30} />
                 </button>
                 <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
