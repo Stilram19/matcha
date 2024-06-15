@@ -8,10 +8,12 @@ import EditProfileButton from "../../components/profile/EditProfileButton";
 import interests from "../../utils/interests";
 import EditProfileOverlay from "../../components/profile/EditProfileOverlay";
 import { useState } from "react";
+import EditInterestsOverlay from "../../components/profile/EditInterestsOverlay";
 
 function UserProfile() {
     const profileInfos = dummyProfileInfos[2];
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
+    let [isInterestsEditOpen, setIsInterestsEditOpen] = useState(false);
 
     function handleEditButtonClick() {
         setIsProfileEditOpen(true);
@@ -21,10 +23,26 @@ function UserProfile() {
         setIsProfileEditOpen(false);
     }
 
+    function handleEditInterestsClick() {
+        setIsInterestsEditOpen(true);
+    }
+
+    function handleInterestsOverlayClose(newSelectedInterests: Set<string>) {
+        // maybe update the selectedInterests in the user object infos && maybe not
+        profileInfos.interests = new Set(newSelectedInterests);
+
+        setIsInterestsEditOpen(false);
+    }
+
     return (
         <div className="flex justify-center mt-5 mr-4 ml-4">
             <div className="mb-6 w-full" style={{maxWidth: 1068}}>
-                {isProfileEditOpen ? <EditProfileOverlay profileInfos={profileInfos} handleEditOverlayClose={handleEditOverlayClose}/> : null}
+                <div className={`${isProfileEditOpen == false ? 'hidden': ''}`}>
+                    <EditProfileOverlay profileInfos={profileInfos} handleEditOverlayClose={handleEditOverlayClose}/>
+                </div>
+                <div className={`${isInterestsEditOpen == false ? 'hidden': ''}`}>
+                    <EditInterestsOverlay userInterests={profileInfos.interests} handleInterestsOverlayClose={handleInterestsOverlayClose}/>
+                </div>
                 <div className="w-full flex flex-col lg:flex-row gap-6 mb-6 bg-white">
                     <div className="shadow  rounded-20px w-boxx">
                         <div className="flex gap-11 lg:gap-0 flex-col lg:flex-row items-center mb-8 mt-6 pl-4 pr-4 lg:pl-9 lg:pr-9 rounded-7px round-7px">
@@ -71,7 +89,7 @@ function UserProfile() {
                     <div className="shadow rounded-20px w-boxx pb-5">
                         <div className="flex justify-between">
                             <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-6 pb-6">Photos</h2>
-                            <div>
+                            <div className="cursor-pointer">
                                 <img src="/icons/upload-photo.svg" alt="uplaod photo svg" className="pt-6 pr-2 sm:pr-6"/>
                             </div>
                         </div>
@@ -87,13 +105,18 @@ function UserProfile() {
                         </div>
                     </div>
                     <div className="shadow rounded-20px w-boxx">
-                        <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-10 pb-6">Interests</h2>
+                        <div className="flex justify-between">
+                            <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-10 pb-6">Interests</h2>
+                            <div className="cursor-pointer" onClick={handleEditInterestsClick}>
+                                <img src="/icons/pencil.svg" width={50} height={50} alt="pencil icon" className="pt-6 pr-6"/>
+                            </div>
+                        </div>
                         <div className="grid grid-cols-3 sm:grid-cols-5 pl-2 lg:pl-7 pr-1 lg:grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
                             {
                                 interests.map(
-                                    (interst) => (
-                                        <div className="flex justify-center tag cursor-pointer max-w-32 fit-box">
-                                            <h3>#{interst}</h3>
+                                    (interest) => (
+                                        <div className={`flex justify-center tag cursor-pointer max-w-32 fit-box ${profileInfos.interests.has(interest) ? 'bg-button-pink' : ''}`}>
+                                            <h3>#{interest}</h3>
                                         </div>
                                     )
                                 )
