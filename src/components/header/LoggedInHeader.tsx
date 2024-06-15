@@ -23,8 +23,9 @@ function LoggedInHeader() {
     return (
         <div className="flex justify-between shadow bg-white lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44" style={isSearchOpen ? {paddingLeft: 20, paddingRight: 20} : {}} >
             <div className="flex gap-3 lg:gap-12">
-                <div className={ isSearchOpen ? 'hidden' : '' }>
-                    <Link to='/'><img src="/matcha_logo.svg" alt="logo" className="scale-90 sm:scale-100 md:scale-90 lg:scale-100" width={116} height={74} style={{minWidth: 116, minHeight: 74}}/></Link>
+                <div className={`flex items-center ${isSearchOpen ? 'hidden' : ''}`}>
+                    <Link to='/'><img src="/matcha_logo.svg" alt="logo" className="scale-75 sm:scale-100 md:scale-90 lg:scale-100" width={116} height={74} style={{minWidth: 116, minHeight: 74}}/></Link>
+                    <div className="sm:hidden"><i onClick={handleSmallViewSearchClick} className="p-2 scale-150 fa-sharp fa-solid fa-magnifying-glass"></i></div>
                 </div>
                 <Search isSmallSearchOpen={isSmallSeachOpen} handleSearchOpen={handleSearchOpen} handleSearchClose={handleSearchClose}/>
             </div>
@@ -37,13 +38,17 @@ function LoggedInHeader() {
                 </ul>
                 <img src="/icons/nav-bar-divider.svg" alt="nav bar divider" className="h-34px mt-5" />
                 <div className="flex items-center">
-                    <Link to="/notifications" className="p-3 lg:p-5"><img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/></Link>
-                    <Link to="/logout" className="p-3 lg:p-5 hover:text-pastel-pink">logout</Link>
+                    <div className="p-3 lg:p-5">
+                        <img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/>
+                    </div>
+                    <div className="p-3 lg:p-5 hover:text-pastel-pink">logout</div>
                 </div>
             </nav>
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>
-                <div><i onClick={handleSmallViewSearchClick} className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-magnifying-glass"></i></div>
-                <div style={{overflow: 'hidden'}}><i className="scale-125 p-2 sm:scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
+                <div className="p-2">
+                    <img src="/icons/notification-bell.svg" alt="notification bell" style={{width: 24}}/>
+                </div>
+                <div style={{overflow: 'hidden'}}><i className="p-2 scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
             </div>
         </div>
     )

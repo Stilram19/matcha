@@ -108,7 +108,7 @@ function UserProfile() {
                         <div className="flex justify-between">
                             <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-10 pb-6">Interests</h2>
                             <div className="cursor-pointer" onClick={handleEditInterestsClick}>
-                                <img src="/icons/pencil.svg" width={50} height={50} alt="pencil icon" className="pt-6 pr-6"/>
+                                <img src="/icons/pencil.svg" width={50} height={50} alt="pencil icon" className="pt-8 pr-6"/>
                             </div>
                         </div>
                         <div className="grid grid-cols-3 sm:grid-cols-5 pl-2 lg:pl-7 pr-1 lg:grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
