@@ -1,14 +1,16 @@
 import { useState } from "react";
-import SaveCancelButtons from "./saveCancelButtons";
+import ApplyCancelButtons from "./ApplyCancelButtons";
 
 type InterstsInputProps = {
     interests: string[];
     initialySelectedInterests: Set<string>;
-    handleInterestsFilterSave: (newSelectedIntersts: Set<string>) => void;
+    handleInterestsSave: (newSelectedIntersts: Set<string>) => void;
 };
 
-function InterstsInput({interests, initialySelectedInterests, handleInterestsFilterSave}: InterstsInputProps) {
+function InterstsInput({interests, initialySelectedInterests, handleInterestsSave}: InterstsInputProps) {
     let [selectedInterests, setSelectedInterests] = useState(new Set(initialySelectedInterests));
+
+    // console.log('interests rerendering');
 
     function addSelectedInterest(selectedInterest: string) {
         let selectedInterestsCopy = new Set(selectedInterests);
@@ -25,8 +27,8 @@ function InterstsInput({interests, initialySelectedInterests, handleInterestsFil
         setSelectedInterests(new Set(initialySelectedInterests));
     }
 
-    function handleSave() {
-        handleInterestsFilterSave(selectedInterests);
+    function handleApply() {
+        handleInterestsSave(selectedInterests);
     }
 
     return (
@@ -45,7 +47,7 @@ function InterstsInput({interests, initialySelectedInterests, handleInterestsFil
                 }
             </div>
             <div className="mr-4">
-                <SaveCancelButtons width={90} height={40} handleCancel={handleCancel} handleSave={handleSave} />
+                <ApplyCancelButtons width={90} height={40} handleCancel={handleCancel} handleApply={handleApply} />
             </div>
         </div>
     )

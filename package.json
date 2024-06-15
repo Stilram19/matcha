@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "rc-slider": "^10.6.2",
+    "rc-tooltip": "^6.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",

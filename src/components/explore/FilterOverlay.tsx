@@ -1,7 +1,8 @@
 import { useState } from "react";
-import FameRatingInput from "../utils/FameRatingInput";
-import InterstsInput from "../utils/InterestsInput";
 import interests from "../../utils/interests";
+import FameRatingFilter from "./FameRatingFilter";
+import InterestsInput from "../utils/InterestsInput";
+import AgeGapFilter from "./age-gap-filter/AgeGapFilter";
 
 type FilterOverlayProps = {
     handleFilterOverlayClose: () => void;
@@ -10,6 +11,8 @@ type FilterOverlayProps = {
 function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
     let [minFameRating, setMinFameRating] = useState(0);
     let [maxFameRating, setMaxFameRating] = useState(5);
+    let [minAge, setMinAge] = useState(18);
+    let [maxAge, setMaxAge] = useState(30);
     let [selectedInterests, setSelectedInterests] = useState<Set<string>>(new Set([]));
 
     function handleBackgroundClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -23,28 +26,25 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
         handleFilterOverlayClose();
     }
 
-    function handleSubmit() {
-        // handle submit
-        handleFilterOverlayClose();
+    // function handleSubmit() {
+    //     // handle submit
+    //     handleFilterOverlayClose();
+    // }
+
+    function handleFameRatingFilterApply(minFameRating: number, maxFameRating: number) {
+        setMinFameRating(minFameRating);
+        setMaxFameRating(maxFameRating);
     }
 
-    function handleMaxFameRatingChange(starsCount: number) {
-        setMaxFameRating(starsCount);
-    }
-
-    function handleMinFameRatingChange(starsCount: number) {
-        setMinFameRating(starsCount);
-    }
-
-    function handleLocationChange(latitude: number, longitude: number) {
-        console.log('latitude: ' + latitude);
-        console.log('longitude: ' + longitude);
-    }
-
-    function handleInterstsFilterSave(newSelectedInterests: Set<string>) {
+    function handleInterstsFilterApply(newSelectedInterests: Set<string>) {
         setSelectedInterests(new Set(newSelectedInterests));
         console.log('saved:')
         console.log(newSelectedInterests);
+    }
+
+    function handleAgeGapFilterApply(newMinAge: number, newMaxAge: number) {
+        setMinAge(newMinAge);
+        setMaxAge(newMaxAge);
     }
 
     return (
@@ -68,19 +68,16 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
                     <div>
                         <h3 style={{fontSize: 23, fontWeight: 'bold'}} className="mb-2">Filter by Fame Rating:</h3>
                         <div className="flex flex-col gap-4 ml-4">
-                            <div>
-                                <h4>Minimum Fame Rating:</h4>
-                                <FameRatingInput initialStarsCount={0} maxStarsCount={maxFameRating} minStarsCount={0} size={30} handleChange={handleMinFameRatingChange}/>
-                            </div>
-                            <div>
-                                <h4>Maximum Fame Rating:</h4>
-                                <FameRatingInput initialStarsCount={5} maxStarsCount={5} minStarsCount={minFameRating} size={30} handleChange={handleMaxFameRatingChange}/>
-                            </div>
+                            <FameRatingFilter minFameRatingProp={minFameRating} maxFameRatingProp={maxFameRating} handleFilterApply={handleFameRatingFilterApply}/>
                         </div>
                     </div>
                     <div>
                         <h3 style={{fontSize: 23, fontWeight: 'bold'}} className="mb-4">Filter by Interests:</h3>
-                        <InterstsInput interests={interests} initialySelectedInterests={selectedInterests} handleInterestsFilterSave={handleInterstsFilterSave}/>
+                        <InterestsInput interests={interests} initialySelectedInterests={selectedInterests} handleInterestsSave={handleInterstsFilterApply}/>
+                    </div>
+                    <div>
+                        <h3 style={{fontSize: 23, fontWeight: 'bold'}} className="mb-4">Filter by Age:</h3>
+                        <AgeGapFilter initialMinAge={minAge} initialMaxAge={maxAge} handleAgeGapFilterApply={handleAgeGapFilterApply}/>
                     </div>
                 </div>
             </div>

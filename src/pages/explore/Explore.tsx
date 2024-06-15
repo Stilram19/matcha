@@ -89,7 +89,7 @@ const   MatchedProfile = () => {
         <div className="flex flex-row gap-10 w-full h-full max-h-full md:max-h-screen w-full pb-20 md:w-11/12 lg:w-9/12 2xl:w-8/12">
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden">
                 <div className="relative aspect-[2/3] mb-10 pr-1 md:pr-4 pt-1 md:pt-3">
-                    <img src={`${profileInfos.profilePicture}`} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
+                    <img src={profileInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
                     <div className="absolute bottom-4 left-7 w-[50%]">
                         <MatchedUserSummary firstName={profileInfos.firstName} lastName={profileInfos.lastName} gender={profileInfos.gender}/>
                     </div>
@@ -102,7 +102,7 @@ const   MatchedProfile = () => {
                     profileInfos && profileInfos.userPhotos && profileInfos.userPhotos.length > 0 ?
                     profileInfos.userPhotos.map((pictureURL) => (
                         <div className="relative aspect-[2/3] overflow-y-auto scrollbar overflow-x-hidden mb-6 pr-4">
-                            <img src={`${pictureURL}`} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
+                            <img src={pictureURL} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
                         </div>
                     )) : null
                 }

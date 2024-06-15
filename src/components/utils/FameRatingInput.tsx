@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 
 type FameRatingInputProps = {
@@ -13,6 +13,12 @@ function FameRatingInput({initialStarsCount = 0, minStarsCount = 0, maxStarsCoun
     const stars = [1, 2, 3, 4, 5];
     const [hoveredStar, setHoveredStar] = useState(initialStarsCount);
     const [lastClickedStar, setLastClickedStar] = useState(initialStarsCount);
+
+    useEffect(() => {
+        setHoveredStar(initialStarsCount);
+        setLastClickedStar(initialStarsCount);
+    }
+    , [initialStarsCount]);
 
     function handleMouseEnter(star: number) {
         if (star < minStarsCount || star > maxStarsCount) {
@@ -55,7 +61,7 @@ function FameRatingInput({initialStarsCount = 0, minStarsCount = 0, maxStarsCoun
                         }
 
                         return (
-                            <div id={`${star}`}>
+                            <div id={String(star)}>
                                 <FaStar onClick={() => handleClick(star)} onMouseEnter={() => handleMouseEnter(star)} onMouseLeave={handleMouseLeave} style={{width: size, height: size, color: `${color}`}} />
                             </div>
                         )
