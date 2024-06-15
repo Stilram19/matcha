@@ -33,7 +33,7 @@ function InterstsInput({interests, initialySelectedInterests, handleInterestsSav
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 pl-2 lg:pl-7 pr-1 grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 pl-2 lg:pl-7 pr-2 grid-cols-3 grid-rows-7 gap-y-5 gap-x-2 pb-5">
                 {
                     interests.map(
                         (interest, index) => {

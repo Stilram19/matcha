@@ -35,7 +35,7 @@ function FameRatingFilter({maxFameRatingProp, minFameRatingProp, handleFilterApp
                 <h4>Minimum Fame Rating:</h4>
                 <FameRatingInput initialStarsCount={minFameRating} maxStarsCount={maxFameRating} minStarsCount={0} size={30} handleChange={handleMinFameRatingChange}/>
             </div>
-            <div>
+            <div className="mb-4">
                 <h4>Maximum Fame Rating:</h4>
                 <FameRatingInput initialStarsCount={maxFameRating} maxStarsCount={5} minStarsCount={minFameRating} size={30} handleChange={handleMaxFameRatingChange}/>
             </div>
