@@ -14,6 +14,7 @@ import ExploreV2 from "../pages/explore/Explore1";
 import UserProfile from "../pages/profile/UserProfile";
 import LoggedInLayout from "../layouts/LoggedInLayout";
 import SearchResults from "../pages/searchResults/SearchResults";
+import History from "../pages/history/History";
 
 const router = createBrowserRouter([
     {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
     {
       path: '/user-profile',
       element: <LoggedInLayout><UserProfile/></LoggedInLayout>
+    },
+    {
+      path: '/history',
+      element: <LoggedInLayout><History/></LoggedInLayout>
     },
     {
       path: '/search-results',
