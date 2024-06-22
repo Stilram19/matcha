@@ -40,7 +40,7 @@ function EditProfileOverlay({profileInfos, handleEditOverlayClose}: EditProfileO
 
     return (
         <div onClick={handleBackgroundClick} className="fixed z-10 flex justify-center items-center inset-0 bg-black bg-opacity-40">
-            <div className="bg-white overflow-y-auto rounded-18px flex flex-col h-full w-550px overlay-slide" style={{maxHeight: 813}}>
+            <div className="bg-white overflow-y-auto scollbar rounded-18px flex flex-col h-full w-550px overlay-slide" style={{maxHeight: 813}}>
                 <div className="flex justify-between items-center w-full mt-4">
                     <h2 style={{ fontSize: '30px' }} className="ml-5">Edit profile</h2>
                     <img

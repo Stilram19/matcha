@@ -21,7 +21,7 @@ function FameRatingDisplay({starsCount, size = 25}: FameRatingDisplayProps) {
                         }
 
                         return (
-                            <div>
+                            <div id={String(star)}>
                                 <FaStar style={{width: size, height: size, color: `${color}`}} />
                             </div>
                         )
