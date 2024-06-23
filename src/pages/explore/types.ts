@@ -5,5 +5,6 @@ export type MatchedUserSummaryProps = {
 }
 
 export type BioAndInterestsProps = {
-    biography: string;    
+    biography: string;
+    userInterests: Set<string>;
 };

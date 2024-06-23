@@ -21,23 +21,23 @@ const CheckBox = ({label}: {label: string}) => {
     )
 }
 
-const ExploreSideBar = () => {
-    return (
-        <div className="w-full h-full p-4">
-            <div className="w-full">
-                <h1 className="text-lg font-semibold">Sort by</h1>
-                <div className="flex flex-wrap gap-5">
-                    <CheckBox label="Age" />
-                    <CheckBox label="Fame rating" />
-                    <CheckBox label="Location" />
-                    <CheckBox label="Common tags" />
-                </div>
+// const ExploreSideBar = () => {
+//     return (
+//         <div className="w-full h-full p-4">
+//             <div className="w-full">
+//                 <h1 className="text-lg font-semibold">Sort by</h1>
+//                 <div className="flex flex-wrap gap-5">
+//                     <CheckBox label="Age" />
+//                     <CheckBox label="Fame rating" />
+//                     <CheckBox label="Location" />
+//                     <CheckBox label="Common tags" />
+//                 </div>
             
-                <h1 className="text-lg font-semibold mt-5">Match with</h1>
-            </div>
-        </div>
-    )
-}
+//                 <h1 className="text-lg font-semibold mt-5">Match with</h1>
+//             </div>
+//         </div>
+//     )
+// }
 
 const   MatchedUserSummary = ({firstName, lastName, gender}: MatchedUserSummaryProps) => {
     return (
@@ -57,7 +57,7 @@ const   MatchedUserSummary = ({firstName, lastName, gender}: MatchedUserSummaryP
     )
 }
 
-function BioAndInterests({biography}: BioAndInterestsProps) {
+function BioAndInterests({biography, userInterests}: BioAndInterestsProps) {
     return (
         <div className="flex-col md:pr-4 shadow md:overflow-y-auto md:scrollbar rounded-20px md:aspect-[2/3]">
             <div className="pb-6 pr-3 pl-3">
@@ -70,7 +70,7 @@ function BioAndInterests({biography}: BioAndInterestsProps) {
                     {
                         interests.map(
                             (interest, index) => (
-                                <div id={`Interest-${index + 1}`} className="flex justify-center tag cursor-pointer max-w-32 fit-box">
+                                <div id={`Interest-${index + 1}`} className={`flex justify-center tag cursor-pointer max-w-32 fit-box ${userInterests.has(interest) ? 'bg-button-pink' : ''}`}>
                                     <h3>#{interest}</h3>
                                 </div>
                             )
@@ -95,7 +95,7 @@ const   MatchedProfile = () => {
                     </div>
                 </div>
                 <div className="md:hidden md:w-1/2 overflow-x-hidden overflow-y-hidden md:overflow-y-auto md:scrollbar mb-10">
-                    <BioAndInterests biography={profileInfos.biography}/>
+                    <BioAndInterests biography={profileInfos.biography} userInterests={profileInfos.interests}/>
                 </div>
                 <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-6 pb-6">Photos</h2>
                 {
@@ -109,7 +109,7 @@ const   MatchedProfile = () => {
             </div>
 
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden hidden md:inline-flex">
-                <BioAndInterests biography={profileInfos.biography}/>
+                <BioAndInterests biography={profileInfos.biography} userInterests={profileInfos.interests}/>
             </div>
         </div>
     )
@@ -151,6 +151,5 @@ const Explore = () => {
         </div>
     )
 }
-
 
 export default Explore;
