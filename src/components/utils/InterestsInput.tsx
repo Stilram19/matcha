@@ -1,16 +1,14 @@
 import { useState } from "react";
 import ApplyCancelButtons from "./ApplyCancelButtons";
+import interests from "../../utils/interests";
 
-type InterstsInputProps = {
-    interests: string[];
+type interestsInputProps = {
     initialySelectedInterests: Set<string>;
-    handleInterestsSave: (newSelectedIntersts: Set<string>) => void;
+    handleInterestsSave: (newSelectedinterests: Set<string>) => void;
 };
 
-function InterstsInput({interests, initialySelectedInterests, handleInterestsSave}: InterstsInputProps) {
+function interestsInput({initialySelectedInterests, handleInterestsSave}: interestsInputProps) {
     let [selectedInterests, setSelectedInterests] = useState(new Set(initialySelectedInterests));
-
-    // console.log('interests rerendering');
 
     function addSelectedInterest(selectedInterest: string) {
         let selectedInterestsCopy = new Set(selectedInterests);
@@ -19,8 +17,6 @@ function InterstsInput({interests, initialySelectedInterests, handleInterestsSav
         : selectedInterestsCopy.add(selectedInterest);
         
         setSelectedInterests(new Set(selectedInterestsCopy));
-        console.log('selected: ');
-        console.log(selectedInterestsCopy);
     }
 
     function handleCancel() {
@@ -53,4 +49,4 @@ function InterstsInput({interests, initialySelectedInterests, handleInterestsSav
     )
 }
 
-export default InterstsInput;
+export default interestsInput;

@@ -65,7 +65,7 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
 
     return (
         <div>
-            <div className={`hidden md:inline-flex flex mt-3 w-52 h-12 search-bar-bg round-7px mb-3 ${isSearchOnFocus ? 'w-screen' : ''}`} style={isSmallSearchOpen ? {display: 'inline-flex'} : {}}>
+            <div className={`hidden sm:inline-flex flex mt-3 w-52 h-12 search-bar-bg round-7px mb-3 ${isSearchOnFocus ? 'w-screen' : ''}`} style={isSmallSearchOpen ? {display: 'inline-flex'} : {}}>
                 <img onMouseDown={handleSearchIconMouseDown} src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
                 <input onFocus={handleFocus} ref={searchRef} onBlur={handleBlur} onKeyDown={handleKeyDown} onChange={handleInputChange} value={query} className={`bg-transparent mb-1 w-131px ${isSearchOnFocus ? 'w-screen' : ''}`} type="text" placeholder="Search..."></input>
                 <img src="/icons/cross-icon.svg" alt='cross-icon' className="w-22px" onMouseDown={handleCrossMouseDown} style={isSearchOnFocus ? {marginRight: 12} : {}}/>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import interests from "../../utils/interests";
 import FameRatingFilter from "./FameRatingFilter";
 import InterestsInput from "../utils/InterestsInput";
 import AgeGapFilter from "./age-gap-filter/AgeGapFilter";
@@ -36,7 +35,7 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
         setMaxFameRating(maxFameRating);
     }
 
-    function handleInterstsFilterApply(newSelectedInterests: Set<string>) {
+    function handleinterestsFilterApply(newSelectedInterests: Set<string>) {
         setSelectedInterests(new Set(newSelectedInterests));
         console.log('saved:')
         console.log(newSelectedInterests);
@@ -73,7 +72,7 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
                     </div>
                     <div>
                         <h3 style={{fontSize: 23, fontWeight: 'bold'}} className="mb-4">Filter by Interests:</h3>
-                        <InterestsInput interests={interests} initialySelectedInterests={selectedInterests} handleInterestsSave={handleInterstsFilterApply}/>
+                        <InterestsInput initialySelectedInterests={selectedInterests} handleInterestsSave={handleinterestsFilterApply}/>
                     </div>
                     <div>
                         <h3 style={{fontSize: 23, fontWeight: 'bold'}} className="mb-4">Filter by Age:</h3>
