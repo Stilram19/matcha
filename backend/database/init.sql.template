@@ -1,0 +1,78 @@
+-- Create database owned by the user
+CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER};
+
+-- Create user
+CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';
+
+-- Grant all privileges on all tables in the database to the user
+GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
+
+-- SCHEMA
+
+CREATE TABLE "user" (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255), -- hashed --
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    biography TEXT,
+    age INTEGER,
+    gender VARCHAR(20),
+    sexual_preference VARCHAR(20),
+    fame_rating DECIMAL(5, 2),
+    profile_picture VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_photo (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    photo VARCHAR(255) NOT NULL,  -- URL of the photo
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES "user" (id)
+    CONSTRAINT unique_user_photo UNIQUE (user_id, photo)
+);
+
+CREATE TABLE interest (
+    id SERIAL PRIMARY KEY,
+    interest VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE history (
+    id SERIAL PRIMARY KEY,
+    visitor_id INTEGER NOT NULL,
+    visited_id INTEGER NOT NULL,
+    visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (visitor_id) REFERENCES "user" (id),
+    FOREIGN KEY (visited_id) REFERENCES "user" (id)
+);
+
+CREATE TABLE dm (
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES "user" (id),
+    FOREIGN KEY (receiver_id) REFERENCES "user" (id)
+);
+
+CREATE TABLE pending_request (
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES "user" (id),
+    FOREIGN KEY (receiver_id) REFERENCES "user" (id)
+    CONSTRAINT unique_sender_receiver UNIQUE (sender_id, receiver_id)
+);
+
+CREATE TABLE connected_users (
+    id SERIAL PRIMARY KEY,
+    user1_id INTEGER NOT NULL,
+    user2_id INTEGER NOT NULL,
+    connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user1_id) REFERENCES "user" (id),
+    FOREIGN KEY (user2_id) REFERENCES "user" (id),
+    CONSTRAINT prevent_self_connection CHECK (user1_id <> user2_id)
+);
