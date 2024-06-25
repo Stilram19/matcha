@@ -1,13 +1,18 @@
-FROM postgres:latest
+FROM postgres
 
 # Install gettext for envsubst
 RUN apt-get update && apt-get install -y gettext
 
-# Copy the initialization template and script
-COPY init.sql.template /docker-entrypoint-initdb.d/
-COPY init.sh /docker-entrypoint-initdb.d/
-COPY conf/postgresql.conf /etc/postgresql/postgresql.conf
-RUN chmod +x /docker-entrypoint-initdb.d/init.sh
+# changing ownership to postgres user at build time (it's requiring sudo later on)
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/
 
-# Set the entrypoint to the official PostgreSQL entrypoint script
-ENTRYPOINT ["/docker-entrypoint-initdb.d/init.sh"]
+# Copy the initialization scripts
+COPY ./init_scripts/init.sh /docker-entrypoint-initdb.d/init.sh
+COPY ./init_scripts/init.sql.template /docker-entrypoint-initdb.d/init.sql.template
+
+# Set the correct permissions and ownership for the initialization scripts
+RUN chmod +x /docker-entrypoint-initdb.d/init.sh
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/init.sql.template
+
+# Copying the config file into the container
+COPY conf/postgresql.conf /etc/postgresql/postgresql.conf
