@@ -29,13 +29,14 @@ CREATE TABLE user_photo (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     photo VARCHAR(255) NOT NULL,  -- URL of the photo
+    is_deleted BOOLEAN DEFAULT FALSE,  -- Indicates if the photo is deleted
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user" (id)
 );
 
 CREATE TABLE interest (
     id SERIAL PRIMARY KEY,
-    interest VARCHAR(255) NOT NULL
+    interest VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE user_interest (
@@ -43,7 +44,8 @@ CREATE TABLE user_interest (
     user_id INTEGER,
     interest_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES "user" (id),
-    FOREIGN KEY (interest_id) REFERENCES "interest" (id)
+    FOREIGN KEY (interest_id) REFERENCES "interest" (id),
+    UNIQUE (user_id, interest_id)
 );
 
 CREATE TABLE history (
@@ -65,20 +67,23 @@ CREATE TABLE dm (
     FOREIGN KEY (receiver_id) REFERENCES "user" (id)
 );
 
-CREATE TABLE pending_request (
+CREATE TABLE user_likes (
     id SERIAL PRIMARY KEY,
-    sender_id INTEGER NOT NULL,
-    receiver_id INTEGER NOT NULL,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES "user" (id),
-    FOREIGN KEY (receiver_id) REFERENCES "user" (id)
+    liking_user_id INTEGER NOT NULL,
+    liked_user_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    are_matched BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (liking_user_id) REFERENCES "user" (id),
+    FOREIGN KEY (liked_user_id) REFERENCES "user" (id),
+    UNIQUE (liking_user_id, liked_user_id)
 );
 
-CREATE TABLE connected_users (
+CREATE TABLE blocked_users (
     id SERIAL PRIMARY KEY,
-    user1_id INTEGER NOT NULL,
-    user2_id INTEGER NOT NULL,
-    connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user1_id) REFERENCES "user" (id),
-    FOREIGN KEY (user2_id) REFERENCES "user" (id)
+    blocking_user_id INTEGER NOT NULL,
+    blocked_user_id INTEGER NOT NULL,
+    blocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (blocking_user_id) REFERENCES "user" (id),
+    FOREIGN KEY (blocked_user_id) REFERENCES "user" (id),
+    UNIQUE (blocking_user_id, blocked_user_id)
 );
