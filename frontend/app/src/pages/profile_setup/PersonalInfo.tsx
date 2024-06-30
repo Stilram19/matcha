@@ -99,7 +99,7 @@ const PersonalInfo = () => {
                     </div>
                 </div>
                 <div className="flex justify-end">
-                    <button type="submit" className="mt-6 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+                    <button type="submit" className="mt-6 mb-4 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
                         Continue
                     </button>
                 </div>

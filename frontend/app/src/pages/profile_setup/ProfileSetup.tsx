@@ -40,13 +40,14 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
 
 export default function ProfileSetup() {
     const   [images, setImages] = useState<File[]>([]);
+    const   MAX_PICTURES = 4;
 
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         setImages((prev) => {
             const newArray: File[] = [];
-            for (let i = 0; files && i < files.length; i++) {
+            for (let i = 0; files && i < files.length && prev.length + i < MAX_PICTURES; i++) {
                 newArray.push(files[i]);
             }
             return [...prev, ...newArray];
@@ -63,7 +64,7 @@ export default function ProfileSetup() {
                 <h1 className="text-xl my-9">3/3</h1>
                 <h1 className=" text-4xl mb-1">Upload Some Pictures</h1>
                 <p className="mb-4">
-                    Upload at least 5 real photos to your profile to make a stronger and more authentic connection with others
+                    Upload to 4 real pictures to your profile to make a stronger and more authentic connection with others
                 </p>
 
                 <label htmlFor="upload" className="mb-6">
@@ -86,7 +87,7 @@ export default function ProfileSetup() {
                 <ImageCards images={images} handleRemove={handleRemove} />
 
                 <div className="flex justify-end">
-                    <button className="mt-5 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+                    <button className="mt-5 mb-4 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
                         Confirm
                     </button>
                 </div>

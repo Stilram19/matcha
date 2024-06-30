@@ -11,7 +11,7 @@ import users from '../../data/users.json'
 
 
 const   ChatBox: FC<ChatBoxProps> = ({dmId}) => {
-    const messagesEndRef = useScrollInto();
+    const lastMessageRef = useScrollInto();
     const user = users[dmId];
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -36,7 +36,7 @@ const   ChatBox: FC<ChatBoxProps> = ({dmId}) => {
                         {
                             messages.map((message, index, arr) => {
                                 return (
-                                    <div key={index} ref={index == messages.length - 1 ? messagesEndRef : null} className={`mr-1 my-2 md:my-3 lg:my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-5 md:mt-7 lg:mt-10' : '')} ${index == messages.length - 1 ? 'mb-5' : ''}`}>
+                                    <div key={index} ref={index == messages.length - 1 ? lastMessageRef : null} className={`mr-1 my-2 md:my-3 lg:my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-5 md:mt-7 lg:mt-10' : '')} ${index == messages.length - 1 ? 'mb-5' : ''}`}>
                                         <Message  {...message}  />
                                     </div>
                                 )
