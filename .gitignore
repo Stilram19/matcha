@@ -22,4 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# all environment variables
 .env
+
+# JS code (result of TS compilation) in the backend
+./backend/backend/app/dist/
+*.js
