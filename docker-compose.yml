@@ -6,23 +6,19 @@ services:
     image: postgres
     container_name: postgresql
     restart: on-failure
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - ./backend/database/.env
     networks:
       - backend
     expose:
-      - '${POSTGRES_PORT}'
-
+      - "${POSTGRES_PORT}"
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: '${PGADMIN_DEFAULT_EMAIL}'
-      PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_DEFAULT_PASSWORD}'
+    env_file:
+      - ./backend/database/.env
     ports:
-      - "8080:80"
+      - "${PGADMIN_MAPPED_PORT}:${PGADMIN_HOST_PORT}"
     depends_on:
       - postgres
     networks:
