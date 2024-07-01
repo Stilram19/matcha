@@ -2,7 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import routes from './api/routers/index.js'
 
-dotenv.config( { path: '../.env'} );
+dotenv.config();
 
 const app = express();
 const API_PORT = process.env.API_PORT;
