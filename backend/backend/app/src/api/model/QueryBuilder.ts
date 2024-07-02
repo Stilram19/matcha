@@ -31,6 +31,7 @@ class QueryBuilder {
 
         for (const [key, value] of Object.entries(whereConditions)) {
             if (this.isFieldValue(key)) {
+                // handling array values connect with the suitable operator (OR, AND)
                 const field_value = `${key} = '${value}'`
                 if (operator === 'NON')
                     return field_value;

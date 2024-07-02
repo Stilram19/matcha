@@ -112,6 +112,15 @@ model.select({
     }
 })
 
+model.select({
+    where: {
+        id: [1, 2]
+    },
+    orderBy: {
+        nameee: 'ASC',
+    }
+})
+
 console.log("*********CREATE*************")
 model.create({
     username: 'okhiar',

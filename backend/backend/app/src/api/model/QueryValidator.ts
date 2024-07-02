@@ -50,6 +50,27 @@ class QueryValidator {
             throw new Error('the field doesn\'t exists in the schema definition');
     }
 
+    private checkOperatorValidity(obj: {[key: string]: any}) {
+        const obj_keys = Object.keys(obj);
+        if (!obj_keys.length || (obj_keys.length === 1 && (!Array.isArray(obj[obj_keys[0]]) || obj[obj_keys[0]].length <= 1)))
+            return (false);
+        
+        
+        for (const [key, value] of Object.entries(obj)) {
+            if (!Array.isArray(obj[key]))
+                continue ;
+            if (obj[key].length === 0)
+                return (false);
+
+            const elements_type = typeof obj[key][0];
+            for (const element of obj[key])
+                if (typeof element !== elements_type)
+                    return (false);
+        }
+    
+        return (true);
+    }
+
 
     /*
         {
@@ -80,9 +101,10 @@ class QueryValidator {
                     throw new Error("can't have two operators at the same levels");
                 hasOperator = true;
 
-                if (Object.keys(queryPart[key]).length < 2)
-                    throw new Error("Operators must have at least two conditions");
+                // if (Object.keys(queryPart[key]).length < 2)
                 this.validateQueryConditions(queryPart[key], true);
+                if (!this.checkOperatorValidity(queryPart[key]))
+                    throw new Error("Operators must have at least two conditions");
             }
         }
 

@@ -1,7 +1,7 @@
 import QueryValidator from "./QueryValidator.js";
 
 
-const queryValidator = new QueryValidator(['username', 'age', 'gender', 'name', 'last_name']);
+const queryValidator = new QueryValidator(['id', 'username', 'age', 'gender', 'name', 'last_name']);
 
 // ? ===== Valid tests =====
 
@@ -95,6 +95,38 @@ try {
     console.log((e as Error).message);
 }
 
+try {
+    console.log("test6: ");
+    queryValidator.validateSelectOptions({
+        where: {
+            OR: {
+                id: [1, 2, 3],
+            }
+        }
+    })
+    console.log("valid options");
+} catch (e) {
+    console.log((e as Error).message);
+}
+
+
+try {
+    console.log("test5: ");
+    queryValidator.validateSelectOptions({
+        where: {
+            OR: {
+                id: [1, 2, 3],
+                AND: {
+                    username: ['oussama', 'khiar'],
+                },
+            }
+        }
+    })
+    console.log("valid options");
+} catch (e) {
+    console.log((e as Error).message);
+}
+
 
 // ! Invalid TEST
 console.log("***********Invalid TESTS: ")
@@ -172,6 +204,41 @@ try {
         },
         orderBy: {
             blah: 'ASC',
+        }
+    })
+    console.log("valid options");
+} catch (e) {
+    console.log((e as Error).message);
+}
+
+
+try {
+    console.log("test5: ");
+    queryValidator.validateSelectOptions({
+        where: {
+            OR: {
+                id: [1, 2, 3],
+                AND: {
+                    username: ['oussama'],
+                }
+            }
+        }
+    })
+    console.log("valid options");
+} catch (e) {
+    console.log((e as Error).message);
+}
+
+
+try {
+    console.log("test5: ");
+    queryValidator.validateSelectOptions({
+        where: {
+            OR: {
+                AND: {
+                    username: ['oussama', 'khiar'],
+                },
+            }
         }
     })
     console.log("valid options");

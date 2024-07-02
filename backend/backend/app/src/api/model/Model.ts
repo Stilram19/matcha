@@ -9,7 +9,6 @@ import QueryValidator from "./QueryValidator.js";
 
 
 // ! this implement does not provide a way to query with operator on the same field (id = '12' OR id = '22')
-// ! bad design always leads to less general porpuse API
 
 
 class Model {
