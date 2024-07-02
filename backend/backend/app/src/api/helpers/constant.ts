@@ -1,11 +1,22 @@
 type User = {
     email: string;
-    username: string;
     hashedPassword: string;
     passwordSalt: string;
 };
 
+type Token = {
+    userId: number;
+    token: string;
+};
+
+type VerificationTokens = {
+    currentMaxId: number;
+    tokens: Token[];
+}
+
 export const users: User[] = [];
+
+export const verificationTokens: VerificationTokens = { currentMaxId: 0, tokens: [] };
 
 export function getVerficationHtml(verificationUrl: string): string {
     return (`        <html>

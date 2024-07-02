@@ -9,7 +9,7 @@ export function isUsernameValid(username: string): boolean {
 }
 
 export function isPasswordValid(password: string): boolean {
-    const passwordRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z\d!@#$%^&*()]{12,28}$/;
+    const passwordRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[a-zA-Z\d!@#$%^&*() ]{12,28}$/;
 
     if (passwordRegexp.test(password) === false) {
         console.log('invalid password');

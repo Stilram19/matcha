@@ -16,9 +16,9 @@ let transporter = nodemailer.createTransport({
 
 // returns the verificationToken
 export async function sendEmailVerification(email: string, verificationToken: string) {
-    const verificationUrl = `${process.env.BASE_URL}/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${process.env.EMAIL_VERIFICATION_URL}?token=${verificationToken}`;
 
-    console.log('sending the email...');
+    console.log(`sending the email... URL: ${verificationUrl}`);
     await transporter.sendMail({
         from: 'Matcha <no-reply@myapp.com>',
         to: email,
