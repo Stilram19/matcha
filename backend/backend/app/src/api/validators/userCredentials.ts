@@ -15,3 +15,10 @@ export function isEmailFormatValid(email: string): boolean {
 
     return (emailRegexp.test(email));
 }
+
+
+export function isIdValid(id: string) {
+    const idRegxp = /^[0-9]+$/;
+
+    return (idRegxp.test(id));
+}
