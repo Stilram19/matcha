@@ -5,11 +5,12 @@
     "moduleResolution": "nodenext",  // Node.js style module resolution
     "strict": true,
     "esModuleInterop": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "resolveJsonModule": true,  // If you need to import JSON files
-    "allowSyntheticDefaultImports": true  // To handle default imports from commonjs modules
+    "allowSyntheticDefaultImports": true,  // To handle default imports from commonjs modules
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

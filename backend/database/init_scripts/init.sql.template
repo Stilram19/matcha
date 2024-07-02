@@ -14,6 +14,8 @@ CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255), -- hashed --
+    passwordSalt VARCHAR(64),
+    is_verified BOOLEAN DEFAULT FALSE, -- for email verification --
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     biography TEXT,
@@ -25,13 +27,21 @@ CREATE TABLE "user" (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE "email_verification" (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+    token VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL
+);
+
 CREATE TABLE user_photo (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    photo VARCHAR(255) NOT NULL,  -- URL of the photo
-    is_deleted BOOLEAN DEFAULT FALSE,  -- Indicates if the photo is deleted
+    user_id INTEGER,
+    photo VARCHAR(255) NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES "user" (id)
+    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE SET NULL
 );
 
 CREATE TABLE interest (
@@ -43,8 +53,8 @@ CREATE TABLE user_interest (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
     interest_id INTEGER,
-    FOREIGN KEY (user_id) REFERENCES "user" (id),
-    FOREIGN KEY (interest_id) REFERENCES "interest" (id),
+    FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (interest_id) REFERENCES "interest" (id) ON DELETE CASCADE,
     UNIQUE (user_id, interest_id)
 );
 
@@ -53,8 +63,8 @@ CREATE TABLE history (
     visitor_id INTEGER NOT NULL,
     visited_id INTEGER NOT NULL,
     visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (visitor_id) REFERENCES "user" (id),
-    FOREIGN KEY (visited_id) REFERENCES "user" (id)
+    FOREIGN KEY (visitor_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (visited_id) REFERENCES "user" (id) ON DELETE CASCADE
 );
 
 CREATE TABLE dm (
@@ -63,8 +73,8 @@ CREATE TABLE dm (
     receiver_id INTEGER NOT NULL,
     content TEXT NOT NULL,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES "user" (id),
-    FOREIGN KEY (receiver_id) REFERENCES "user" (id)
+    FOREIGN KEY (sender_id) REFERENCES "user" (id) ON DELETE SET NULL,
+    FOREIGN KEY (receiver_id) REFERENCES "user" (id) ON DELETE SET NULL
 );
 
 CREATE TABLE user_likes (
@@ -73,8 +83,8 @@ CREATE TABLE user_likes (
     liked_user_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     are_matched BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (liking_user_id) REFERENCES "user" (id),
-    FOREIGN KEY (liked_user_id) REFERENCES "user" (id),
+    FOREIGN KEY (liking_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (liked_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
     UNIQUE (liking_user_id, liked_user_id)
 );
 
@@ -83,7 +93,7 @@ CREATE TABLE blocked_users (
     blocking_user_id INTEGER NOT NULL,
     blocked_user_id INTEGER NOT NULL,
     blocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (blocking_user_id) REFERENCES "user" (id),
-    FOREIGN KEY (blocked_user_id) REFERENCES "user" (id),
+    FOREIGN KEY (blocking_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (blocked_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
     UNIQUE (blocking_user_id, blocked_user_id)
 );

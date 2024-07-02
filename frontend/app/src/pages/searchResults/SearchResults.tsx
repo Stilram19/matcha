@@ -7,7 +7,7 @@ import './style.css'
 function SearchResults() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const query = queryParams.get('query');
+    const SearchQuery = queryParams.get('query');
 
     // need to implement a search results logic in a seperate module
     return (
