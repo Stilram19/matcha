@@ -1,15 +1,30 @@
-export type FieldValues = { [key: string]: any };
-export type FieldSortOrder = { [key: string]: 'DESC' | 'ASC' };
-
-export interface NestedCondition {
-    OR?: NestedCondition | FieldValues;
-    AND?: NestedCondition | FieldValues;
+export type ModelFieldsArray<T> = {
+    [P in keyof T]?: T[P][];
 }
 
-export type QueryCondition = NestedCondition | FieldValues;
+export type ModelFields<T> = {
+    [P in keyof T]?: T[P];
+}
 
-export interface QueryOptions {
-    where?: QueryCondition;
+
+export interface NestedCondition<T> {
+    OR?: (ModelFieldsArray<T> | NestedCondition<T>)[];
+    AND?: (ModelFieldsArray<T> | NestedCondition<T>)[]; 
+}
+
+export type ConditionType<T> = (NestedCondition<T> | ModelFieldsArray<T>)[]
+
+export type QueryCondition<T> = ModelFields<T> | NestedCondition<T>;
+
+export type OrderByType<T> = {
+    [P in keyof T]?: 'ASC' | 'DESC';
+}
+
+export type AttributesType<T> = (keyof T)[];
+
+export interface FindOptions<T> {
+    where?: QueryCondition<T>;
     limit?: number;
-    orderBy?: FieldSortOrder;
+    orderBy?: OrderByType<T>;
+    attributes?: AttributesType<T>;
 }
