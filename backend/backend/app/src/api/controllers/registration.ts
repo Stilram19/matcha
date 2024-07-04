@@ -57,13 +57,18 @@ export async function emailVerficiation(request: Request, response: Response): P
         // verifying the token, if it exists it will be deleted (consumed)
         const userId = await consumeEmailVerificationToken(token);
 
-        if (!userId) {
+        console.log('RETURNED VALUE: ' + userId)
+            
+        if (userId === undefined) {
             response.status(403).send( { msg: 'token not found or expired!' } );
             return ;
         }
 
         // set user as validated
+
         // set jwt tokens in httpOnly cookies
+
+        console.log('user verified successfully')        
 
         response.sendStatus(201);
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik, Field, Form, ErrorMessage } from "formik";
@@ -12,7 +12,7 @@ const ResetPasswordSchema = Yup.object().shape({
         .matches(/(?=.*[a-z])/, 'Password must contain a lowercase letter.')
         .matches(/(?=.*[A-Z])/, 'Password must contain an uppercase letter.')
         .matches(/(?=.*[!@#$%^&*])/, 'Password must contain a special character.')
-        .required('required')
+        .required('New password is required')
 });
 
 export default function ResetPassword() {
@@ -22,30 +22,24 @@ export default function ResetPassword() {
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get('token');
 
+    if (!token) {
+        setTimeout(() => {
+            navigate('/login');
+        }, 2000);
+        return ;
+    }
+
     const handleSubmit = async (values: { newPassword: string }) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_LOCAL_RESET_PASSWORD_API_URL}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ password: values.newPassword }),
-            });
-
-            if (response.ok) {
-                setMessage("Password has been reset successfully.");
-            } else {
-                setMessage("Failed to reset password. Please try again.");
-            }
-
-            setTimeout(() => {
-                navigate('/login'); // Redirect to login page after successful reset
-            }, 3000);
-            
+            await sendPostRequest(import.meta.env.VITE_LOCAL_RESET_PASSWORD_API_URL as string, { password: values.newPassword }, token);
+            setMessage("Password has been reset successfully.");
         } catch (error) {
             setMessage("Failed to reset password. Please try again.");
             console.error(error);
+        } finally {
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         }
     };
 

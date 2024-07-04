@@ -8,6 +8,12 @@ export async function isLoginValid(username: string, password: string): Promise<
         return (false);
     }
 
+    // check that the user is validated
+
+    // if (user.isValidated == false) {
+    //     return (false);
+    // }
+
     return (await compareDataWithSalt(password, user.hashedPassword, user.passwordSalt));
 }
 

@@ -20,8 +20,6 @@ export function validateLocalLoginBody(request: Request, response: Response, nex
         return ;
     }
 
-    console.log('username in validator: ' + username);
-
     next();
 }
 

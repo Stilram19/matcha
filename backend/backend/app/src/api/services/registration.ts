@@ -16,7 +16,7 @@ export async function isNewUsername(username: string): Promise<boolean> {
 
 export async function saveUserSignUpCredentials(email: string, username: string, firstname: string, lastname: string, hashedPassword: string, passwordSalt: string): Promise<void> {
     // create a new record in user table
-    users.push({email, username, firstname, lastname, hashedPassword, passwordSalt });
+    users.push({email, username, firstname, lastname, hashedPassword, isValidated: false, passwordSalt });
 }
 
 export async function saveEmailVerificationToken(verificationToken: string): Promise<void> {
@@ -32,8 +32,6 @@ export async function consumeEmailVerificationToken(verificationToken: string): 
     if (recordIndex === -1) {
         return (undefined);
     }
-
-    // add logic for token expiration
 
     const userId = verificationTokens.tokens[recordIndex].userId;
 

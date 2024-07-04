@@ -26,13 +26,13 @@ export default function Login() {
     const handleSubmit = async (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => {
         const { setSubmitting } = formikHelpers;
 
-        
         try {
             await sendPostRequest(import.meta.env.VITE_LOCAL_LOGIN_API_URL as string, values);
             
             setShowErrorMessage(false);
             setShowForgotPasswordErrorMessage(false);
         } catch (error) {
+            setShowForgotPasswordMessage(false);
             setShowErrorMessage(true);
             console.log(error);
         } finally {

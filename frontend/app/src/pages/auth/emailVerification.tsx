@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { sendPostRequest } from '../../utils/httpRequests';
 
 function VerifyEmail() {
   const location = useLocation();
@@ -14,30 +15,23 @@ function VerifyEmail() {
   const verifyEmail = async () => {
       
       if (!token) {
-      setMessage('Invalid or missing token.');
-      setIsLoading(false);
-      return;
+        setMessage('Invalid or missing token.');
+        setIsLoading(false);
+        return;
       }
 
       try {
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/emailVerification`, {
-              method: 'POST',
-              headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ token }),
-          });
-
-          if (response.ok) {
-            navigate('/complete-info/1');
-            setMessage('Email verified successfully.');
-          } else {
-              setMessage('Failed to verify email.');
-          }
+        await sendPostRequest(import.meta.env.VITE_VERIFY_EMAIL_API_URL as string, { token }, token);
+        navigate('/complete-info/1');
+        setTimeout(() => {
+          navigate('/complete-info/1');
+        }, 1000);
+        setMessage('Email verified successfully.');
       } catch (error) {
-        console.error('Error verifying email:', error);
-        setMessage('An error occurred while verifying the email.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
+        setMessage('Failed to verify email.');
       } finally {
         setIsLoading(false);
       }
