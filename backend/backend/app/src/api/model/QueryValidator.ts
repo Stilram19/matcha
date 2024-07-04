@@ -33,7 +33,7 @@ export class QueryValidator<ModelSchema> {
 
         for (const fields of conditions) {
             for (const [field, values] of Object.entries(fields)) {
-                if (field === 'OR' || field == 'AND') {
+                if (field === 'OR' || field === 'AND') {
                     conditions_count += 1;
                     continue ;
                 }
@@ -51,7 +51,6 @@ export class QueryValidator<ModelSchema> {
 
     private validateSubConditions(operatorPart: ConditionType<ModelSchema>) {
         for (const condition of operatorPart) {
-
             if ('OR' in condition || 'AND' in condition) {
                 const subCondition = (condition['OR'] || condition['AND'])!;
                 this.validateSubConditions(subCondition);
@@ -65,13 +64,10 @@ export class QueryValidator<ModelSchema> {
     validateQueryCondition(wherePart: QueryCondition<ModelSchema>) {
         if ('OR' in wherePart && 'AND' in wherePart)
             throw new Error('Cannot have both OR and AND at the same level');// ! remove this redunant condition, 
-        // console.log(wherePart)
-        for (const key in wherePart) {
-            if (this.isOperator(key) && ('OR' in wherePart || 'AND' in wherePart)) {
-                // console.log("one operator")
-                const subCondition = (wherePart['OR'] || wherePart['AND'])!;
-                this.validateSubConditions(subCondition);
-            }
+
+        if (('OR' in wherePart || 'AND' in wherePart)) {
+            const subCondition = (wherePart['OR'] || wherePart['AND'])!;
+            this.validateSubConditions(subCondition);
         }
 
         return (true);

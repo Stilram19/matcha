@@ -330,6 +330,7 @@ user.find({
             }
         ],
     },
+    attributes: ['age', 'username'],
     limit: 5,
     orderBy: {
         username: 'DESC',
