@@ -8,6 +8,6 @@ export async function usersController(request: Request, response: Response): Pro
         response.status(200).send(users);
     }
     catch (err) {
-        response.status(500).send( { msg: err } );
+        // response.status(500).send( { msg: err } );
     }
 }

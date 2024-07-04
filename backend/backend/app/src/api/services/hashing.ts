@@ -13,11 +13,11 @@ export async function hashDataWithSalt(data: string): Promise<[string, string]> 
 }
 
 export async function compareData(plainData: string, hashedData: string): Promise<boolean> {
-    return (verify(hashedData, plainData));
+    return (await verify(hashedData, plainData));
 }
 
 export async function compareDataWithSalt(plainData: string, hashedData: string, salt: string): Promise<boolean> {
-    return (verify(hashedData, plainData + salt));
+    return (await verify(hashedData, plainData + salt));
 }
 
 export function generateRandomToken(length: number): string {

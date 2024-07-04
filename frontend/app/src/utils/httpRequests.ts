@@ -8,15 +8,15 @@ export async function sendPostRequest(url: string, data: any) {
             body: JSON.stringify(data)
         });
 
-        const result = await response.json();
+        const responseBody = await response.json();
 
         if (!response.ok) {
-            console.log(result.msg);
-            throw new Error(`HTTP error! Msg: ${result.msg}`);
+            let { error } = responseBody;
+
+            throw (error || responseBody);
         }
 
-        const responseData = await response.json();
-        return (responseData);
+        return (responseBody);
     }
     catch (err) {
         throw err;

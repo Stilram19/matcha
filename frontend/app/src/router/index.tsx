@@ -16,6 +16,7 @@ import LoggedInLayout from "../layouts/LoggedInLayout";
 import SearchResults from "../pages/searchResults/SearchResults";
 import History from "../pages/history/History";
 import VerifyEmail from "../pages/auth/emailVerification";
+import ResetPassword from "../pages/auth/resetVerification";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
     {
       path: '/emailVerification',
       element: <GuestLayout><VerifyEmail/></GuestLayout>
+    },
+    {
+      path: '/passwordReset',
+      element: <GuestLayout><ResetPassword/></GuestLayout>
     },
     {
       path: '/complete-info',
