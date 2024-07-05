@@ -29,7 +29,7 @@ export class QueryValidator<ModelSchema> {
     private checkOperatorConditions(conditions: ConditionType<ModelSchema>) {
         let conditions_count = 0;
 
-        console.log(conditions);
+        // console.log(conditions);
 
         for (const fields of conditions) {
             for (const [field, values] of Object.entries(fields)) {
@@ -41,7 +41,7 @@ export class QueryValidator<ModelSchema> {
             }
         }
 
-        console.log(conditions_count)
+        // console.log(conditions_count)
         return (conditions_count >= 2);
     }
 

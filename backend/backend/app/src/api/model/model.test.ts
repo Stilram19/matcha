@@ -336,3 +336,40 @@ user.find({
         username: 'DESC',
     }
 })
+
+user.find({
+    where: {
+    },
+})
+
+
+
+
+console.log("*************INSERT QUERY**************")
+user.create({
+    username: 'okhiar',
+    first_name: 'oussama',
+    last_name: 'khiar',
+    age: 20,
+})
+
+
+
+console.log("*************UPDATE QUERY**************")
+user.update({
+    username: 'okhiar',
+    first_name: 'oussama',
+    last_name: 'khiar',
+}, {})
+
+user.update({
+    username: 'okhiar',
+    first_name: 'oussama',
+    last_name: 'khiar',
+},  {
+    id: 1,
+    username: 'okhiar'
+})
+
+
+user.update({}, {})

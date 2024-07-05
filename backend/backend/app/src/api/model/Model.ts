@@ -1,6 +1,7 @@
 import { FindOptions, OrderByType, QueryCondition } from "./model.types.js";
 import { QueryValidator } from './QueryValidator.js';
 import QueryBuilder from './QueryBuilder.js';
+import { isEmptyObject } from "../helpers/utils.js";
 
 
 
@@ -138,8 +139,17 @@ class Model<ModelSchema> {
         this.queryBuilder = new QueryBuilder(table);
     }
 
+    /*
+        {
+            username: 'oussama',
+            first_name: 'oussama',
 
+        }
+    */
     async create(data: Partial<ModelSchema>) {
+        if (!data)
+            return ;
+        console.log(this.queryBuilder.create(data));
         // ? Execute here
     }
 
@@ -159,10 +169,22 @@ class Model<ModelSchema> {
         console.log(this.queryBuilder.select(options))
     }
 
-    // async update(data: FieldValues, where: QueryCondition) {
+    async update(data: Partial<ModelSchema>, where: QueryCondition<ModelSchema>) {
+        if (isEmptyObject(data))
+            return ;
+        try {
+            this.queryValidator.validateQueryCondition(where);
+        } catch (e) {
+            console.log((e as Error).message);
+            return ;
+        }
+    
+    
+        console.log(this.queryBuilder.update(data, where));
+    }
 
-    // }
 
+    
     
 
 }

@@ -1,4 +1,5 @@
 // import { FieldValues, QueryCondition, QueryOptions } from "./model.types.js";
+import { isEmptyObject } from '../helpers/utils.js';
 import { ConditionType, FindOptions, ModelFieldsArray, NestedCondition, OrderByType, QueryCondition } from './model.types.js';
 
 
@@ -129,8 +130,8 @@ class QueryBuilder<ModelSchema> {
     }
      */
 
-    private joinNonEmpty(parts: string[]) : string {
-        return parts.filter(element => element.trim().length !== 0).join(" ");
+    private joinNonEmpty(parts: string[], delimiter: string) : string {
+        return parts.filter(element => element.trim().length !== 0).join(delimiter);
     }
 
     private connectConditionsWith(conditions: (string | string[])[], operator: 'OR' | 'AND') {
@@ -212,7 +213,7 @@ class QueryBuilder<ModelSchema> {
         let limitPart = limit ? `LIMIT ${limit}` : "";
         let orderPart = "";
 
-        if (where)
+        if (where && !isEmptyObject(where))
             wherePart = `WHERE ${this.whereConditions(where)}`;
 
         if (orderBy) {
@@ -223,7 +224,28 @@ class QueryBuilder<ModelSchema> {
         }
     
 
-        return this.joinNonEmpty([query, wherePart, orderPart, limitPart]);
+        return this.joinNonEmpty([query, wherePart, orderPart, limitPart], " ");
+    }
+
+
+    create(data: Partial<ModelSchema>) {
+        let query = `INSERT INTO ${this.table} (${Object.keys(data).join(', ')})\n`;
+        
+        query += `VALUES (${Object.values(data).map(value => `'${value}'`).join(', ')})`;
+        return (query);
+    }
+
+    update(data: Partial<ModelSchema>, where: QueryCondition<ModelSchema>) {
+        let     query = `UPDATE ${this.table}`;
+
+        // console.log(data)
+        const   updatedValues: string = Object.entries(data).map(([key, value]) => `${key} = '${value}'`).join(", ");
+        let     setPart: string = `SET ${updatedValues}`;
+        let     wherePart: string = "";
+
+        if (!isEmptyObject(where))
+            wherePart = `WHERE ${this.whereConditions(where)}`;
+        return this.joinNonEmpty([query, setPart, wherePart], "\n");
     }
 }
 
