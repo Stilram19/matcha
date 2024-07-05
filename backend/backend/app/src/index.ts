@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import routes from './api/routers/index.js'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 dotenv.config();
 
@@ -10,7 +11,8 @@ const API_PORT = process.env.API_PORT;
 
 app.use(cors({ 
     origin: process.env.FRONTEND_ORIGIN,
-    credentials: true
+    credentials: true,
+    
 }));
 
 app.listen(API_PORT, () => {
@@ -18,4 +20,5 @@ app.listen(API_PORT, () => {
 });
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(routes);

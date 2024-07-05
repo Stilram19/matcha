@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { sendPostRequest } from "../../utils/httpRequests";
+import { sendActionRequest } from "../../utils/httpRequests";
 
 const ResetPasswordSchema = Yup.object().shape({
     newPassword: Yup.string()
@@ -31,7 +31,7 @@ export default function ResetPassword() {
 
     const handleSubmit = async (values: { newPassword: string }) => {
         try {
-            await sendPostRequest(import.meta.env.VITE_LOCAL_RESET_PASSWORD_API_URL as string, { password: values.newPassword }, token);
+            await sendActionRequest('PATCH', import.meta.env.VITE_LOCAL_RESET_PASSWORD_API_URL as string, { password: values.newPassword }, token);
             setMessage("Password has been reset successfully.");
         } catch (error) {
             setMessage("Failed to reset password. Please try again.");

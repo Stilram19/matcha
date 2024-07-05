@@ -2,7 +2,7 @@
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
-import { sendPostRequest } from '../../utils/httpRequests';
+import { sendActionRequest } from '../../utils/httpRequests';
 import { getFormError } from '../../utils/errorHandling';
 
 const SignupSchema = Yup.object().shape({
@@ -48,7 +48,7 @@ const SignUp = () => {
         const { setSubmitting, setErrors } = formikHelpers;
 
         try {
-            await sendPostRequest(import.meta.env.VITE_LOCAL_SIGNUP_API_URL as string, values);
+            await sendActionRequest('POST', import.meta.env.VITE_LOCAL_SIGNUP_API_URL as string, values);
 
             setShowVerificationMessage(true);
         } catch (error) {

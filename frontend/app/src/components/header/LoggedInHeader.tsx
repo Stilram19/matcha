@@ -41,7 +41,7 @@ function LoggedInHeader() {
                     <div className="p-3 lg:p-5">
                         <img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/>
                     </div>
-                    <div className="p-3 lg:p-5 hover:text-pastel-pink">logout</div>
+                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
                 </div>
             </nav>
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>

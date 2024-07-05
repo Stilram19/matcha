@@ -5,10 +5,10 @@ import { formError } from '../helpers/errorFactory.js';
 export function validateLocalSignupBody(request: Request, response: Response, next: NextFunction): void {
     const { email, username, firstname, lastname, password } = request.body;
 
-    const requiredFieds = [email, username, firstname, lastname, password];
+    const requiredFields = { email, username, firstname, lastname, password };
 
-    for (const field of requiredFieds) {
-        if (!field || typeof field !== 'string') {
+    for (const field in requiredFields) {
+        if (!requiredFields[field as keyof typeof requiredFields] || typeof requiredFields[field as keyof typeof requiredFields] !== 'string') {
             response.status(400).send(formError(field, `${field} is required`));
             return;
         }
@@ -20,6 +20,6 @@ export function validateLocalSignupBody(request: Request, response: Response, ne
         response.status(400).send( { msg: 'invalid email or password input' } );
         return ;
     }
-                
+
     next();
 }

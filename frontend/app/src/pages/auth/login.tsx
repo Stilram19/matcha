@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { sendPostRequest } from "../../utils/httpRequests";
+import { sendActionRequest } from "../../utils/httpRequests";
 import { useState } from "react";
-import ForgotPasswordModal from "./ForgotPasswordModel";
+import ForgotPasswordModal from "../../components/auth/ForgotPasswordModel";
 
 
 // Validation schema
@@ -27,7 +27,7 @@ export default function Login() {
         const { setSubmitting } = formikHelpers;
 
         try {
-            await sendPostRequest(import.meta.env.VITE_LOCAL_LOGIN_API_URL as string, values);
+            await sendActionRequest('POST', import.meta.env.VITE_LOCAL_LOGIN_API_URL as string, values);
             
             setShowErrorMessage(false);
             setShowForgotPasswordErrorMessage(false);
@@ -42,7 +42,7 @@ export default function Login() {
 
     const handleForgotPassword = async (email: string) => {
         try {
-            await sendPostRequest(import.meta.env.VITE_LOCAL_FORGOT_PASSWORD_API_URL as string, { email });
+            await sendActionRequest('POST', import.meta.env.VITE_LOCAL_FORGOT_PASSWORD_API_URL as string, { email });
             setShowForgotPasswordMessage(true);
             setShowForgotPasswordErrorMessage(false);
         } catch (error) {

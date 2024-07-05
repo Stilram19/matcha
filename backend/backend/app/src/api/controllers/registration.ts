@@ -3,6 +3,8 @@ import { consumeEmailVerificationToken, isNewEmail, isNewUsername, saveEmailVeri
 import { generateRandomToken, hashDataWithSalt } from '../services/hashing.js';
 import { sendEmailVerification } from '../services/mailService.js';
 import { formError } from '../helpers/errorFactory.js';
+import { generateAccessToken, generateRefreshToken } from '../services/jwt.js';
+import { setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
 
 export async function localStrategy(request: Request, response: Response): Promise<void> {
     try {
@@ -12,6 +14,8 @@ export async function localStrategy(request: Request, response: Response): Promi
         const lastname = request.body.lastname as string;
         const password = request.body.password as string;
 
+        console.log('cookies: ' + request.cookies['AccessToken']);
+
         // checking that the email is not already in use
         if (await isNewEmail(email) == false) {
             response.status(400).send( formError('email', 'Please use a different email address') );
@@ -19,7 +23,7 @@ export async function localStrategy(request: Request, response: Response): Promi
         }
 
         // checking that the username is not already in use
-        if (await isNewUsername(email) == false) {
+        if (await isNewUsername(username) == false) {
             response.status(400).send( formError('username', 'Please use a different username') );
             return ;
         }
@@ -60,15 +64,20 @@ export async function emailVerficiation(request: Request, response: Response): P
         console.log('RETURNED VALUE: ' + userId)
             
         if (userId === undefined) {
+            console.log('user not verified');
             response.status(403).send( { msg: 'token not found or expired!' } );
             return ;
         }
 
         // set user as validated
 
-        // set jwt tokens in httpOnly cookies
+        // set jwt tokens in httpOnly cookies to mitigate XSS attacks
+        setJwtTokensAsHttpOnlyCookies(1, response);
 
-        console.log('user verified successfully')        
+        // set CSRF cookies to mitigate CSRF attacks
+        setCSRFcookies(response);
+
+        console.log('user verified successfully');
 
         response.sendStatus(201);
     }

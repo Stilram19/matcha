@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { changePassword, isEmailValid, isLoginValid, saveResetPasswordToken } from '../services/authentication.js';
 import { sendForgetPasswordEmail } from '../services/mailService.js';
 import { generateRandomToken } from '../services/hashing.js';
+import { setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
 
 export async function localStrategy(request: Request, response: Response): Promise<void> {
     const username = request.body.username as string;
@@ -12,8 +13,13 @@ export async function localStrategy(request: Request, response: Response): Promi
         return ;
     }
 
-    // set JWT tokens in httpOnly cookie
     console.log('logged in successfully');
+ 
+    // set jwt tokens in httpOnly cookies to mitigate XSS attacks
+    setJwtTokensAsHttpOnlyCookies(1, response);
+
+    // set CSRF cookies to mitigate CSRF attacks
+    setCSRFcookies(response);
 
     response.status(201).send( { msg: 'logged in successfully' } )
 }
@@ -47,6 +53,8 @@ export async function resetPassword(request: Request, response: Response) {
         response.status(403).send( { msg: 'resetToken invalid or expired' } );
         return ;
     }
+
+    // deconnect user from all sessions
 
     response.status(201).send( { msg: 'password changed!' } );
 }
