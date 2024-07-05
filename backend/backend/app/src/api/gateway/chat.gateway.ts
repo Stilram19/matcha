@@ -1,24 +1,21 @@
 import { Server, Socket } from "socket.io";
-import socketService from "./socket.service.js";
+import { extractUserId } from "./socket.service.js";
 import { EmittedMessage } from "../types/chat.type.js";
-import { validateMessageData } from "./chat.validator.js";
+import { validateMessageData } from "./socketEventValidator.js";
+import ioEmitter from './emitter.service.js';
 
 
-function sendMessage(server: Server, client: Socket, message: EmittedMessage) {
-    const senderId = client.handshake.auth.user.id;
-
+function sendMessage(client: Socket, message: EmittedMessage) {
+    const senderId = extractUserId(client);
     if (senderId === message.to)
         return ;
 
-    const receiverSockets = socketService.getSockets(message.to);
-
-    receiverSockets?.forEach((receiverSocket) => {
-        console.log(`send to userID ${message.to} with socketID ${receiverSocket.id}`);
-        server.to(receiverSocket.id).emit('chat:message', {
-            from: senderId,
-            message: message.message,
-        })
+    ioEmitter.emitToClientSockets(message.to, 'chat:message', {
+        from: senderId,
+        message: message.message,
     })
+
+
     // Add message to the database
     /*
     dms.create({
@@ -28,12 +25,10 @@ function sendMessage(server: Server, client: Socket, message: EmittedMessage) {
         created_at: Date.now(),
     })
     */
-
-    
 }
 
 
-function    sendMessageHandler(server: Server, client: Socket, data: any) {
+function    sendMessageHandler(client: Socket, data: any) {
     if (!validateMessageData(data)) { // Checking for the data type also
         client.emit('error', {data: "Invalid Message Data"});
         return ;
@@ -43,13 +38,12 @@ function    sendMessageHandler(server: Server, client: Socket, data: any) {
         if (!isUserExists(data.to) || isBlocked(data.to, client.handshake.user.id))
             client.emit('error', {message: "User Not found"});
     */
-
-    sendMessage(server, client, data);
+    sendMessage(client, data);
 }
 
 
 function registerChatHandlers(io: Server, client: Socket) {
-    io.on('chat:send', (data) => sendMessageHandler(io, client, data));
+    io.on('chat:send', (data) => sendMessageHandler(client, data));
 }
 
 
