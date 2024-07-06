@@ -181,16 +181,29 @@ class Model<ModelSchema> {
     
     
         console.log(this.queryBuilder.update(data, where));
+        // UPDATE users SET username = $1
+        // execute=>postgers.execute(query, ['; OR 1=1']);
     }
-
-
-    
-    
-
 }
 
+/*
+    interface UserSchema {
+        username: string,
+        first_name: string,
+    }
+    const user = new Model<UserSchema>('users', ['userame', 'id']);
 
-
+    user.find({
+        where: {
+            username: "okhiar",
+            OR: [
+                {
+                    username: ['oussama', 'khiar'],
+                }
+            ]
+        }
+    });
+*/
 
 
 export default Model;

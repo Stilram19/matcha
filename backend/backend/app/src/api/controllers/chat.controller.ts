@@ -1,31 +1,34 @@
 import { Request, Response } from "express";
-import { checkIdExists, getChatHistory, getContactDetails, getFavoriteUsers, retrieveDms } from "../services/chat.service.js";
+import { getChatHistory, getContactDetails, getFavoriteUsers, retrieveDms } from "../services/chat.service.js";
+import { getErrorObject } from "../helpers/getErrorObject.js";
 
 
 export async function getDirectMessageList(request: Request, response: Response) {
+    const   userId = request.user.id;
+    console.log(`get dms of ${userId}`);
+
     try {
-        const dms = await retrieveDms(request.user.id);
+        const dms = await retrieveDms(userId);
         response.json(dms);
     } catch (e) {
-        response.status(500).json({status: 500, msg: "Something Went Wrong"});
+        const {status, msg} = getErrorObject(e);
+        response.status(status).json({status, msg});
     }
 }
 
 
 export async function getDmHistory(request: Request, response: Response) {
-    const participantId: number = +request.params.id;
+    const   participantId: number = +request.params.id;
+    const   userId = request.user.id;
+
     // console.log(participantId);
 
     try {
-        if (!await checkIdExists(participantId)) {
-            response.status(404).json("Not found");
-            return ;
-        }
-        const chatHistory = await getChatHistory(request.user.id, participantId);
+        const chatHistory = await getChatHistory(userId, participantId);
         response.json(chatHistory);
     } catch (e) {
-        // later serialize the error to the correct format
-        response.status(500).json({status: 500, msg: "Something Went Wrong"});
+        const {status, msg} = getErrorObject(e);
+        response.status(status).json({status, msg});
     }
 }
 
@@ -33,16 +36,12 @@ export async function getConversationDetails(request: Request, response: Respons
     const participantId: number = +request.params.id;
 
     try {
-        if (!await checkIdExists(participantId)) {
-            response.status(404).json("Not found");
-            return ;
-        }
         const conversationDetails = await getContactDetails(participantId);
         response.json(conversationDetails);
     } catch (e) {
-        response.status(500).json({status: 500, msg: "Something went wrong"})
+        const {status, msg} = getErrorObject(e);
+        response.status(status).json({status, msg});
     }
-
 }
 
 
@@ -51,6 +50,7 @@ export async function getFavoritesChat(request: Request, response: Response) {
         const favorites = await getFavoriteUsers(request.user.id);
         response.json(favorites);
     } catch (e) {
-        response.status(500).json({status: 500, msg: "Something went wrong"});
+        const {status, msg} = getErrorObject(e);
+        response.status(status).json({status, msg});
     }
 }

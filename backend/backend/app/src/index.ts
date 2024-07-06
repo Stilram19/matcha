@@ -7,18 +7,18 @@ import createIoServer from './api/gateway/index.js';
 dotenv.config();
 
 const app = express();
-const API_PORT = process.env.API_PORT;
+const API_PORT = process.env.API_PORT || 3000;
 
 app.use(cors({ 
-    origin: process.env.FRONTEND_ORIGIN,
+    origin: process.env.FRONTEND_ORIGIN || "*",
     credentials: true
 }));
 
-createIoServer(app);
+app.use(express.json());
+app.use(routes);
 
-app.listen(API_PORT, () => {
+const http_server = app.listen(API_PORT, () => {
     console.log(`server listening on port ${API_PORT}`);
 });
 
-app.use(express.json());
-app.use(routes);
+createIoServer(http_server);

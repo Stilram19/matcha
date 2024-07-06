@@ -1,3 +1,4 @@
+import HttpError from "../helpers/HttpError.js";
 
 // type DmListType = {
 //     id: number,
@@ -8,6 +9,12 @@
 //     status: 'online' | 'offline',
 //     msg_created_at: Date,
 // }
+
+
+export async function checkIdExists(id: number) {
+    // check the id is it exists in the users table
+    return (true);
+}
 
 export async function retrieveDms(userId: number) {
     // retrieving the last dms list
@@ -21,6 +28,10 @@ export async function retrieveDms(userId: number) {
 
 
 export async function getChatHistory(userId: number, participantId: number) {
+    if (!await checkIdExists(participantId)) {
+        throw new HttpError(404, 'User Id not found');
+    }
+
     const records: any[] = [];
     const chat_history = records.map((record) => {
         return {
@@ -41,12 +52,12 @@ export async function getChatHistory(userId: number, participantId: number) {
     };
 }
 
-export async function checkIdExists(id: number) {
-    // check the id is it exists in the users table
-    return (true);
-}
 
 export async function getContactDetails(participant: number) {
+    if (!await checkIdExists(participant)) {
+        throw new HttpError(404, 'User Id not found');
+    }
+
     // find the user #participant
     return {
         id: 1,

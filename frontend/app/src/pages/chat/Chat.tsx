@@ -3,7 +3,7 @@ import ChatList from "../../components/chat/ChatList";
 import ContactInfo from "../../components/chat/ContactInfo";
 // import messages from './messages.json'
 import dms from "../../data/data.json"
-import { useState } from "react";
+import { useState, useEffect } from 'react';
 import { FaArrowLeft } from "react-icons/fa6";
 
 
@@ -11,6 +11,19 @@ const Chat = () => {
     const [activeDmId, setActiveDmId] = useState(-1);
 
     const isDmActive = activeDmId !== -1;
+
+    // useEffect(() => {
+    //     const fetch_data = async () => {
+    //         const response = await fetch("http://localhost:3000/chat/dms");
+    //         if (!response.ok) {
+    //             return ;
+    //         }
+
+    //         const data = await response.json();
+    //         console.log(data);
+    //     }
+    //     fetch_data();
+    // })
 
     return (
         // pt-[80px]
