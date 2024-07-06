@@ -3,6 +3,7 @@ import { isEmailFormatValid, isPasswordValid, isUsernameValid } from '../validat
 import { validateJwtAccessToken, validateJwtRefreshToken } from '../services/jwt.js';
 import { clearJwtCookies, setAccessTokensCookie, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
 import dotenv from 'dotenv'
+import { extractAuthToken } from '../services/authToken.js';
 
 dotenv.config();
 
@@ -73,6 +74,28 @@ export function validateJwtToken(request: Request, response: Response, next: Nex
         }
 
         setAccessTokensCookie(userId, response);
+    }
+
+    next();
+}
+
+export function validateCSRFCookies(request: Request, response: Response, next: NextFunction) {
+    const secretCookie = request.cookies['csrfSecretCookie'];
+    const authHeader = request.headers['authorization'];
+    const clientAccessibleCookie = extractAuthToken(authHeader);
+
+    if (!secretCookie || !clientAccessibleCookie
+        || typeof secretCookie != 'string' || typeof clientAccessibleCookie != 'string') {
+        // send a mail to warn the user of a csrf attack attempt
+
+        response.status(401).send( { msg: 'missing csrf header' } );
+        return ;
+    }
+
+    if (secretCookie != clientAccessibleCookie) {
+        // send a mail to warn the user of a csrf attack attempt
+
+        response.status(401).send( { msg: 'invalid csrf cookie' } );
     }
 
     next();

@@ -44,3 +44,8 @@ export function clearJwtCookies(response: Response) {
     response.clearCookie('AccessToken');
     response.clearCookie('RefreshToken');
 }
+
+export function clearCSRFCookies(response: Response) {
+    response.clearCookie('csrfSecretCookie');
+    response.clearCookie('csrfClientExposedCookie');
+}

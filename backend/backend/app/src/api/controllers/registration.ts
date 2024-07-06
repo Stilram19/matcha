@@ -3,8 +3,7 @@ import { consumeEmailVerificationToken, isNewEmail, isNewUsername, saveEmailVeri
 import { generateRandomToken, hashDataWithSalt } from '../services/hashing.js';
 import { sendEmailVerification } from '../services/mailService.js';
 import { formError } from '../helpers/errorFactory.js';
-import { generateAccessToken, generateRefreshToken } from '../services/jwt.js';
-import { setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
+import { clearJwtCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
 
 export async function localStrategy(request: Request, response: Response): Promise<void> {
     try {
@@ -15,6 +14,8 @@ export async function localStrategy(request: Request, response: Response): Promi
         const password = request.body.password as string;
 
         console.log('cookies: ' + request.cookies['AccessToken']);
+
+        clearJwtCookies(response);
 
         // checking that the email is not already in use
         if (await isNewEmail(email) == false) {

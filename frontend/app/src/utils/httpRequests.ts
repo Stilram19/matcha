@@ -1,7 +1,6 @@
+import { getCookie } from "./generalPurpose";
+
 export async function sendActionRequest(method: string, url: string, data: any, token?: string) {
-
-    // console.log('cookies: ' + document.cookie);
-
     const headers: { [key: string]: string } = {
         'Content-Type': 'application/json',
     }
@@ -32,17 +31,17 @@ export async function sendActionRequest(method: string, url: string, data: any, 
     return (responseBody);
 }
 
-export async function sendGetRequest(url: string, token?: string) {
-    const headers: { [key: string]: string} = {};
+export async function sendLoggedInGetRequest(url: string) {
+    const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
 
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
+    console.log(csrfClientExposedCookie);
 
     const response = await fetch(url, {
         method: "GET",
         credentials: 'include',
-        headers
+        headers: {
+            'Authorization': `Bearer ${csrfClientExposedCookie}`
+        },
     });
 
     let responseBody: any;

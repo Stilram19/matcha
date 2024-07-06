@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import dummyProfileInfos from "../../components/utils/dummyProfileInfos";
 import Gender from "../../components/utils/Gender";
 import SexualPreferences from "../../components/utils/SexualPreferences";
@@ -7,16 +7,63 @@ import FameRatingDisplay from "../../components/utils/FameRatingDisplay";
 import EditProfileButton from "../../components/profile/EditProfileButton";
 import interests from "../../utils/interests";
 import EditProfileOverlay from "../../components/profile/EditProfileOverlay";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditInterestsOverlay from "../../components/profile/EditInterestsOverlay";
+import LikeProfileButton from "../../components/profile/LikeProfileButton";
+import UnlikeProfileButton from "../../components/profile/UnlikeProfileButton";
+import LikeBackProfileButton from "../../components/profile/LikeBackProfileButton";
+import { ProfileButton } from "../../types/profile";
+import { sendLoggedInGetRequest } from "../../utils/httpRequests";
 
 function UserProfile() {
-    const profileInfos = dummyProfileInfos[2];
+    const profileInfos = dummyProfileInfos[1];
+    let { userId } = useParams();
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
     let [isInterestsEditOpen, setIsInterestsEditOpen] = useState(false);
+    let [profileMainButton, setProfileMainButton] = useState<ProfileButton>(ProfileButton.editButton);
+
+    function updateProfileMainButton() {
+        if (profileInfos.isSelf && profileMainButton != ProfileButton.editButton) {
+            setProfileMainButton(ProfileButton.editButton);
+            return ;
+        }
+
+        if (profileInfos.isLiked && profileMainButton != ProfileButton.unlikeButton) {
+            setProfileMainButton(ProfileButton.unlikeButton);
+            return ;
+        }
+
+        if (profileInfos.isLiking && profileMainButton != ProfileButton.likeBackButton) {
+            setProfileMainButton(ProfileButton.likeBackButton);
+            return ;
+        }
+
+        if (profileMainButton != ProfileButton.likeButton) {
+            setProfileMainButton(ProfileButton.likeButton);
+        }
+    }
+
+    useEffect(() => {
+        (async function initializeComponent() {
+            await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}`);
+            updateProfileMainButton();
+        })();
+    }, []);
 
     function handleEditButtonClick() {
         setIsProfileEditOpen(true);
+    }
+
+    function handleLikeButtonClick() {
+
+    }
+
+    function handleUnlikeButtonClick() {
+
+    }
+
+    function handleLikeBackButtonClick() {
+
     }
 
     function handleEditOverlayClose() {
@@ -76,7 +123,10 @@ function UserProfile() {
                             </div>
                         </div>
                         <div className="flex justify-center lg:justify-normal gap-5 items-center pl-4 pr-4 lg:pl-9 lg:pr-9 mb-4 lg:mb-9">
-                            <EditProfileButton handleEditButtonClick={handleEditButtonClick}/>
+                            { profileMainButton === ProfileButton.editButton && <EditProfileButton handleEditButtonClick={handleEditButtonClick}/>}
+                            { profileMainButton === ProfileButton.likeButton && <LikeProfileButton handleLikeButtonClick={handleLikeButtonClick}/>}
+                            { profileMainButton === ProfileButton.unlikeButton && <UnlikeProfileButton handleUnlikeButtonClick={handleUnlikeButtonClick}/>}
+                            { profileMainButton === ProfileButton.likeBackButton && <LikeBackProfileButton handleLikeBackButtonClick={handleLikeBackButtonClick}/> }
                             <FameRatingDisplay starsCount={profileInfos.fameRating}/>
                         </div>
                     </div>

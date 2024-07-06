@@ -1,4 +1,4 @@
-import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
 dotenv.config();
@@ -24,9 +24,9 @@ function validateJwtToken(token: string, secret: string): {userId: number | null
         return {userId: decoded.userId as number, error: null};
 
     } catch (err) {
-        if (err instanceof TokenExpiredError) {
-            return {userId: null, error: 'expired token'};
-        }
+        // if (err instanceof TokenExpiredError) {
+        //     return {userId: null, error: 'expired token'};
+        // }
 
         return {userId: null, error: 'invalid token'};
     }

@@ -22,6 +22,7 @@ function VerifyEmail() {
 
       try {
         await sendActionRequest('POST', import.meta.env.VITE_VERIFY_EMAIL_API_URL as string, { token }, token);
+
         setTimeout(() => {
           navigate('/complete-info/1');
         }, 2000);

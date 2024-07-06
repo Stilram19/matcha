@@ -1,5 +1,8 @@
 export type ProfileInfos = {
     id: string;
+    isSelf: boolean;
+    isLiked: boolean;
+    isLiking: boolean;
     firstName: string;
     lastName: string;
     userName: string;
@@ -16,6 +19,9 @@ export type ProfileInfos = {
 let dummyProfileInfos: ProfileInfos[] = [
     {
         id: '1',
+        isSelf: true,
+        isLiked:false,
+        isLiking: false,
         firstName: 'Omar',
         lastName: 'Bednaoui',
         userName: 'obednaou',
@@ -30,6 +36,9 @@ let dummyProfileInfos: ProfileInfos[] = [
     },
     {
         id: '2',
+        isSelf: false,
+        isLiked:true,
+        isLiking: false,
         firstName: 'Oussama',
         lastName: 'Khiar',
         userName: 'okhiar',
@@ -44,6 +53,9 @@ let dummyProfileInfos: ProfileInfos[] = [
     },
     {
         id: '3',
+        isSelf: true,
+        isLiked:true,
+        isLiking: false,
         firstName: 'Oyoub',
         lastName: 'Ben Hamou',
         userName: 'oben-ham',

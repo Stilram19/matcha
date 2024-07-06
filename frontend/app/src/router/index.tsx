@@ -75,7 +75,7 @@ const router = createBrowserRouter([
       element: <LoggedInLayout><Chat/></LoggedInLayout>
     },
     {
-      path: '/user-profile',
+      path: '/profile/:userId',
       element: <LoggedInLayout><UserProfile/></LoggedInLayout>
     },
     {

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { changePassword, isEmailValid, isLoginValid, saveResetPasswordToken } from '../services/authentication.js';
 import { sendForgetPasswordEmail } from '../services/mailService.js';
 import { generateRandomToken } from '../services/hashing.js';
-import { setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
+import { clearCSRFCookies, clearJwtCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
 
 export async function localStrategy(request: Request, response: Response): Promise<void> {
     const username = request.body.username as string;
@@ -57,4 +57,10 @@ export async function resetPassword(request: Request, response: Response) {
     // deconnect user from all sessions
 
     response.status(201).send( { msg: 'password changed!' } );
+}
+
+export async function logoutUser(request: Request, response: Response) {
+    clearJwtCookies(response);
+    clearCSRFCookies(response);
+    response.redirect(process.env.FRONTEND_LOGIN_PAGE_URL as string);
 }
