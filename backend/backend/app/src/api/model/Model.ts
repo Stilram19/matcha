@@ -126,26 +126,30 @@ import { isEmptyObject } from "../helpers/utils.js";
 //     AND: []
 // }
 
+// interface IModel {
+//     private table: string;
+//     find(options: any): void;
+//     create(data: any): void;
+//     update(data: any, options: any): void;
+//     hasMany(model: IModel): void;
+// }
+
 
 class Model<ModelSchema> {
-    private table: string;
     private queryValidator: QueryValidator<ModelSchema>;
     private queryBuilder: QueryBuilder<ModelSchema>;
+    // private hasManyEnds: Set<IModel>;
+    private table: string;
 
 
     constructor(table: string) {
         this.table = table;
         this.queryValidator = new QueryValidator();
         this.queryBuilder = new QueryBuilder(table);
+        // this.hasManyEnds = new Set();
     }
 
-    /*
-        {
-            username: 'oussama',
-            first_name: 'oussama',
 
-        }
-    */
     async create(data: Partial<ModelSchema>) {
         if (!data)
             return ;
@@ -153,9 +157,6 @@ class Model<ModelSchema> {
         // ? Execute here
     }
 
-    // async findById(id: number) {
-    //     this.find({where: {id: 1}})
-    // }
 
     async find(options: FindOptions<ModelSchema> = {}) {
         try {
@@ -169,6 +170,7 @@ class Model<ModelSchema> {
         console.log(this.queryBuilder.select(options))
     }
 
+
     async update(data: Partial<ModelSchema>, where: QueryCondition<ModelSchema>) {
         if (isEmptyObject(data))
             return ;
@@ -181,10 +183,22 @@ class Model<ModelSchema> {
     
     
         console.log(this.queryBuilder.update(data, where));
-        // UPDATE users SET username = $1
-        // execute=>postgers.execute(query, ['; OR 1=1']);
     }
+
+    // hasMany(model: IModel): void {
+    //     this.hasManyEnds.add(model);
+    // }
 }
+
+
+
+
+
+
+
+
+
+
 
 /*
     interface UserSchema {

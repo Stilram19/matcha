@@ -1,8 +1,9 @@
 import { Server, Socket } from "socket.io";
-import { extractUserId } from "./socket.service.js";
+import { extractUserId } from "../services/socket.service.js";
 import { EmittedMessage } from "../types/chat.type.js";
-import { validateMessageData } from "./socketEventValidator.js";
-import ioEmitter from './emitter.service.js';
+import { validateMessageData } from "../validators/socketEventValidator.js";
+import ioEmitter from '../services/emitter.service.js';
+import { EmittedEvents } from '../types/enums.js';
 
 
 function sendMessage(client: Socket, message: EmittedMessage) {
@@ -30,7 +31,7 @@ function sendMessage(client: Socket, message: EmittedMessage) {
 
 function    sendMessageHandler(client: Socket, data: any) {
     if (!validateMessageData(data)) { // Checking for the data type also
-        client.emit('error', {data: "Invalid Message Data"});
+        client.emit(EmittedEvents.ERROR, {data: "Invalid Message Data"});
         return ;
     }
 
@@ -42,8 +43,8 @@ function    sendMessageHandler(client: Socket, data: any) {
 }
 
 
-function registerChatHandlers(io: Server, client: Socket) {
-    io.on('chat:send', (data) => sendMessageHandler(client, data));
+function registerChatHandlers(client: Socket) {
+    client.on('chat:send', (data) => sendMessageHandler(client, data));
 }
 
 

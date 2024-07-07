@@ -1,12 +1,12 @@
+import { ApplicationError } from "./ApplicationError.js";
 
 
-class HttpError {
+class HttpError extends ApplicationError {
     public  status: number;
-    public  msg: string;
 
     constructor(status: number, msg: string) {
+        super(msg);
         this.status = status;
-        this.msg = msg;
     }
 }
 

@@ -1,28 +1,33 @@
 import { Server, Socket } from "socket.io";
 import registerChatHandlers from "./chat.gateway.js";
-import { authMiddleware } from "./socket.middleware.js";
-import socketManager from "./socket.manager.service.js";
-import ioEmitter from "./emitter.service.js";
-import { extractUserId } from "./socket.service.js";
+import { authMiddleware } from "../middlewares/socket.middleware.js";
+import socketManager from "../services/socketManager.service.js";
+import ioEmitter from "../services/emitter.service.js";
+import { extractUserId } from "../services/socket.service.js";
 import { registerNotificationHandlers } from "./notification.gateway.js";
 
 
-type RegisterHandler = (io: Server, client: Socket) => void;
+type RegisterHandler = (client: Socket) => void;
 
-function onConnection(io: Server, client: Socket) {
+function onConnection(client: Socket) {
     const userId = extractUserId(client);
-    const handlerRegisters: RegisterHandler[] = [registerChatHandlers, registerNotificationHandlers];
+    const registerHandlers: RegisterHandler[] = [registerChatHandlers, registerNotificationHandlers];
 
     socketManager.addSocket(userId, client);
     // Register all the socket listeners
     // registerChatHandlers(io, client);
 
     // Add more domain-specific handlers here
-    handlerRegisters.forEach((handlerRegister) => {
-        handlerRegister(io, client);
+    registerHandlers.forEach((registerHandler) => {
+        registerHandler(client);
     })
-
+    
     client.broadcast.emit("global:online-users", {online_users: socketManager.getConnectedUsers()});
+
+    client.on("disconnect", (reason) => {
+        console.log(reason);    
+        handleDisconnect(client);
+    });
 }
 
 
@@ -40,9 +45,9 @@ function createIoServer(server: any) {
     const io = new Server(server, {});
     ioEmitter.initIoServer = io; // intisalize io Server
 
-    io.use(authMiddleware)
-    io.on('connection', (socket) => onConnection(io, socket));
-    io.on("disconnect", handleDisconnect);
+
+    io.use(authMiddleware); // ? authetication middleware that gets executed for every incoming connection for checking auth (JWT token)
+    io.on('connection', (socket) => onConnection(socket));
 }
 
 
