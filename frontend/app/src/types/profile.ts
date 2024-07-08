@@ -1,6 +1,21 @@
-export enum ProfileButton {
-    editButton,
-    likeButton,
-    unlikeButton,
-    likeBackButton
+export type ProfileInfos = {
+    userInfos: UserInfos;
+    interests: Set<string>;
+    userPhotos: string[];
+}
+
+export type UserInfos = {
+    id: string;
+    isSelf: boolean;
+    isLiked: boolean;
+    isLiking: boolean;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    profilePicture: string; // URL
+    biography: string;
+    fameRating: number;
 };

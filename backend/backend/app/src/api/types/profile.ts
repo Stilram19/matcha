@@ -1,6 +1,6 @@
 export type ProfileInfos = {
     userInfos: UserInfos;
-    interests: Set<string>;
+    interests: string[];
     userPhotos: string[];
 }
 
@@ -18,4 +18,15 @@ export type UserInfos = {
     profilePicture: string; // URL
     biography: string;
     fameRating: number;
+};
+
+export type BriefProfileInfos = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    profilePicture: string;
 };

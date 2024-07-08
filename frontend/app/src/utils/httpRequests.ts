@@ -47,9 +47,13 @@ export async function sendLoggedInGetRequest(url: string) {
     let responseBody: any;
 
     try {
-        responseBody = await response.json();        
+        responseBody = await response.json();
     } catch (err) {
         responseBody = null;
+    }
+
+    if (response.status === 401) {
+        document.location.href = 'http://localhost:5173/login';
     }
 
     if (!response.ok) {

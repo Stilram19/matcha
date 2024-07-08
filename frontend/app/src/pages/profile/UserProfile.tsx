@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import dummyProfileInfos from "../../components/utils/dummyProfileInfos";
 import Gender from "../../components/utils/Gender";
 import SexualPreferences from "../../components/utils/SexualPreferences";
 import './style.css'
@@ -12,41 +11,27 @@ import EditInterestsOverlay from "../../components/profile/EditInterestsOverlay"
 import LikeProfileButton from "../../components/profile/LikeProfileButton";
 import UnlikeProfileButton from "../../components/profile/UnlikeProfileButton";
 import LikeBackProfileButton from "../../components/profile/LikeBackProfileButton";
-import { ProfileButton } from "../../types/profile";
+import { ProfileInfos } from "../../types/profile";
 import { sendLoggedInGetRequest } from "../../utils/httpRequests";
 
 function UserProfile() {
-    const profileInfos = dummyProfileInfos[1];
+    // const profileInfos = dummyProfileInfos[1];
+    let [profileInfos, setProfileInfos] = useState<ProfileInfos>();
     let { userId } = useParams();
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
     let [isInterestsEditOpen, setIsInterestsEditOpen] = useState(false);
-    let [profileMainButton, setProfileMainButton] = useState<ProfileButton>(ProfileButton.editButton);
-
-    function updateProfileMainButton() {
-        if (profileInfos.isSelf && profileMainButton != ProfileButton.editButton) {
-            setProfileMainButton(ProfileButton.editButton);
-            return ;
-        }
-
-        if (profileInfos.isLiked && profileMainButton != ProfileButton.unlikeButton) {
-            setProfileMainButton(ProfileButton.unlikeButton);
-            return ;
-        }
-
-        if (profileInfos.isLiking && profileMainButton != ProfileButton.likeBackButton) {
-            setProfileMainButton(ProfileButton.likeBackButton);
-            return ;
-        }
-
-        if (profileMainButton != ProfileButton.likeButton) {
-            setProfileMainButton(ProfileButton.likeButton);
-        }
-    }
 
     useEffect(() => {
         (async function initializeComponent() {
-            await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}`);
-            updateProfileMainButton();
+            try {
+                const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}`);
+
+                responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
+                setProfileInfos(responseBody.profileInfos);
+            } catch(err) {
+                console.log(err);
+                // navigate to a not found or error occured page
+            }
         })();
     }, []);
 
@@ -55,15 +40,37 @@ function UserProfile() {
     }
 
     function handleLikeButtonClick() {
+        if (profileInfos == undefined) {
+            return ;
+        }
 
+        // send like request
+
+        const profileInfosCopy = Object.create(profileInfos);
+
+        profileInfosCopy.userInfos.isLiked = true;
+
+        console.log('like click handler called!');
+
+        setProfileInfos(profileInfosCopy);
     }
 
     function handleUnlikeButtonClick() {
+        if (profileInfos == undefined) {
+            return ;
+        }
 
+        // send unlike request
+
+        const profileInfosCopy = Object.create(profileInfos);
+
+        profileInfosCopy.userInfos.isLiked = false;
+
+        setProfileInfos(profileInfosCopy);
     }
 
     function handleLikeBackButtonClick() {
-
+        handleLikeButtonClick();
     }
 
     function handleEditOverlayClose() {
@@ -75,10 +82,18 @@ function UserProfile() {
     }
 
     function handleInterestsOverlayClose(newSelectedInterests: Set<string>) {
-        // maybe update the selectedInterests in the user object infos && maybe not
-        profileInfos.interests = new Set(newSelectedInterests);
+        if (profileInfos == undefined) {
+            return ;
+        }
+
+        const profileInfosCopy: ProfileInfos = {userInfos: profileInfos.userInfos, interests: new Set(newSelectedInterests), userPhotos: profileInfos.userPhotos};
 
         setIsInterestsEditOpen(false);
+        setProfileInfos(profileInfosCopy);
+    }
+
+    if (profileInfos == undefined) {
+        return ;
     }
 
     return (
@@ -96,7 +111,7 @@ function UserProfile() {
                             <div className="relative">
                                 <Link to="#">
                                     <div className="mr-4 sm:mr-8 w-60 h-60 sm:w-80 sm:h-80 lg:w-40 lg:h-40 bg-cover bg-no-repeat bg-center rounded-full bg-gray-300"
-                                        style={{backgroundImage: `url(${profileInfos.profilePicture})`}}>
+                                        style={{backgroundImage: `url(${profileInfos.userInfos.profilePicture})`}}>
                                     </div>
                                         <div className="camera-icon cursor-pointer bg-gray-300 flex w-9 h-9 sm:w-12 sm:h-12 lg:w-9 lg:h-9 rounded-full justify-center items-center">
                                             <i className="icon sm:scale-125 lg:scale-100" style={{backgroundImage: 'url("/icons/facebook-camera-icon.png")', backgroundPosition: '0px -21px', width: '20px', height: '20px', backgroundRepeat: 'no-repeat', display: 'inline-block'}}></i>
@@ -105,34 +120,34 @@ function UserProfile() {
                             </div>
                             <div className="flex flex-col items-center sm:gap-2">
                                 <div className="flex justify-center">
-                                    <h3 className="text-center text-34px mr-8 font-bold">{profileInfos.firstName} {profileInfos.lastName}</h3>
+                                    <h3 className="text-center text-34px mr-8 font-bold">{profileInfos.userInfos.firstName} {profileInfos.userInfos.lastName}</h3>
                                 </div>
                                 <div className="flex">
-                                    <p className="text-24px" >@{profileInfos.userName}</p>
+                                    <p className="text-24px" >@{profileInfos.userInfos.userName}</p>
                                 </div>
                                 <div className="flex">
-                                    <p style={{marginRight: 4, marginBottom: 4}} className="text-25px playfair-display">{profileInfos.age}</p>
+                                    <p style={{marginRight: 4, marginBottom: 4}} className="text-25px playfair-display">{profileInfos.userInfos.age}</p>
                                     <img src="/icons/birthday-cake.svg" alt="birthday cake icon" className="mr-4 w-6 sm:w-8" />
                                     <div className="flex w-5 sm:w-7">
-                                        <Gender gender={profileInfos.gender} iconsFolder='/icons/gender'/>
+                                        <Gender gender={profileInfos.userInfos.gender} iconsFolder='/icons/gender'/>
                                     </div>
                                     <div className="flex w-6 sm:w-8">
-                                        <SexualPreferences sexualPreference={profileInfos.sexualPreferences} iconsFolder='/icons/sexual-preferences' />
+                                        <SexualPreferences sexualPreference={profileInfos.userInfos.sexualPreferences} iconsFolder='/icons/sexual-preferences' />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="flex justify-center lg:justify-normal gap-5 items-center pl-4 pr-4 lg:pl-9 lg:pr-9 mb-4 lg:mb-9">
-                            { profileMainButton === ProfileButton.editButton && <EditProfileButton handleEditButtonClick={handleEditButtonClick}/>}
-                            { profileMainButton === ProfileButton.likeButton && <LikeProfileButton handleLikeButtonClick={handleLikeButtonClick}/>}
-                            { profileMainButton === ProfileButton.unlikeButton && <UnlikeProfileButton handleUnlikeButtonClick={handleUnlikeButtonClick}/>}
-                            { profileMainButton === ProfileButton.likeBackButton && <LikeBackProfileButton handleLikeBackButtonClick={handleLikeBackButtonClick}/> }
-                            <FameRatingDisplay starsCount={profileInfos.fameRating}/>
+                            { profileInfos.userInfos.isSelf ? <EditProfileButton handleEditButtonClick={handleEditButtonClick}/>
+                            : profileInfos.userInfos.isLiked ? <UnlikeProfileButton handleUnlikeButtonClick={handleUnlikeButtonClick}/>
+                            : profileInfos.userInfos.isLiking ? <LikeBackProfileButton handleLikeBackButtonClick={handleLikeBackButtonClick}/>
+                            : <LikeProfileButton handleLikeButtonClick={handleLikeButtonClick}/> }
+                            <FameRatingDisplay starsCount={profileInfos.userInfos.fameRating}/>
                         </div>
                     </div>
                     <div className="shadow rounded-20px pb-6 pr-3 pl-3 w-boxx">
                         <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pl-2 sm:pt-6 pl-10 pb-6">Biography</h2>
-                        <p style={{fontSize: 20}} className="text-center">{profileInfos.biography}</p>
+                        <p style={{fontSize: 20}} className="text-center">{profileInfos.userInfos.biography}</p>
                     </div>
                 </div>
                 <div className="flex flex-col w-full lg:flex-row gap-6 bg-white">

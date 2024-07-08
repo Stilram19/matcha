@@ -1,15 +1,8 @@
 import { Request, Response } from 'express'
-import { retrieveProfileInfos } from '../services/profile.js';
+import { retrieveBriefProfileInfos, retrieveProfileInfos } from '../services/profile.js';
 
 export async function getProfileInfos(request: Request, response: Response) {
-    const { userIdParam } = request.params;
-
-    if (!userIdParam || typeof userIdParam != 'string') {
-        response.status(400).send( { msg: 'invalid userId' } );
-        return ;
-    }
-
-    const userId = Number(userIdParam);
+    const userId = Number(request.params.userId);
 
     const profileInfos = await retrieveProfileInfos(userId);
 
@@ -18,5 +11,25 @@ export async function getProfileInfos(request: Request, response: Response) {
         return ;
     }
 
-    return (profileInfos);
+    response.status(200).send( { profileInfos } );
 }
+
+export async function getBriefProfileInfos(request: Request, response: Response) {
+    const userId = Number(request.params.userId);
+
+    const profileInfos = await retrieveBriefProfileInfos(userId);
+
+    if (!profileInfos) {
+        response.status(404).send( { msg: 'user not found' } );
+        return ;
+    }
+
+    response.status(200).send( { profileInfos } );
+}
+
+// export async function updateInterests(request: Request, response: Response) {
+
+//     const { interests } = request.body;
+
+//     await updateUserInterests(userId);
+// }
