@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getChatHistory, getContactDetails, getFavoriteUsers, retrieveDms } from "../services/chat.service.js";
-import { getHttpError } from "../helpers/getHttpError.js";
+import { getHttpError } from '../helpers/getErrorObject.js';
 
 
 export async function getDirectMessageList(request: Request, response: Response) {
@@ -11,8 +11,8 @@ export async function getDirectMessageList(request: Request, response: Response)
         const dms = await retrieveDms(userId);
         response.json(dms);
     } catch (e) {
-        const {status, msg} = getHttpError(e);
-        response.status(status).json({status, msg});
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
     }
 }
 
@@ -27,8 +27,8 @@ export async function getDmHistory(request: Request, response: Response) {
         const chatHistory = await getChatHistory(userId, participantId);
         response.json(chatHistory);
     } catch (e) {
-        const {status, msg} = getHttpError(e);
-        response.status(status).json({status, msg});
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
     }
 }
 
@@ -39,8 +39,8 @@ export async function getConversationDetails(request: Request, response: Respons
         const conversationDetails = await getContactDetails(participantId);
         response.json(conversationDetails);
     } catch (e) {
-        const {status, msg} = getHttpError(e);
-        response.status(status).json({status, msg});
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
     }
 }
 
@@ -50,7 +50,7 @@ export async function getFavoritesChat(request: Request, response: Response) {
         const favorites = await getFavoriteUsers(request.user.id);
         response.json(favorites);
     } catch (e) {
-        const {status, msg} = getHttpError(e);
-        response.status(status).json({status, msg});
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
     }
 }

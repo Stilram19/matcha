@@ -1,3 +1,4 @@
+import { dummyDms } from "../helpers/dummyDms.js";
 import HttpError from "../helpers/HttpError.js";
 
 // type DmListType = {
@@ -23,7 +24,7 @@ export async function retrieveDms(userId: number) {
     dms.sort((a, b) => a.created_at - b.created_at)
     // filter out the blocked one by the userId
 
-    return [];
+    return dummyDms;
 }
 
 

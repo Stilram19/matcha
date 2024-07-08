@@ -1,9 +1,8 @@
 import ChatBox from "../../components/chat/ChatBox";
 import ChatList from "../../components/chat/ChatList";
 import ContactInfo from "../../components/chat/ContactInfo";
-// import messages from './messages.json'
-import dms from "../../data/data.json"
-import { useState, useEffect } from 'react';
+// import dms from "../../data/data.json"
+import { useState } from 'react';
 import { FaArrowLeft } from "react-icons/fa6";
 
 
@@ -31,7 +30,7 @@ const Chat = () => {
             <div className="w-[90%] m-5 border border-e0 rounded-xl shadow-md flex">
                 <div className={`w-full ${isDmActive ? "hidden" : ''} md:inline-block md:w-1/3 lg:w-1/4 h-full border-r`}>
                     {/* onClick event attached to every single dm Bar */}
-                    <ChatList dms={dms} onClick={(id) => setActiveDmId(id)}/> 
+                    <ChatList onClick={(id) => setActiveDmId(id)}/> 
                 </div>
             
                 <div className={`md:inline-block relative ${isDmActive ? 'inline-block w-full' : 'hidden'} md:w-2/3 lg:w-1/2 h-full md:border-r`}>

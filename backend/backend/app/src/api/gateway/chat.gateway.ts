@@ -44,6 +44,20 @@ function    sendMessageHandler(client: Socket, data: any) {
 
 
 function registerChatHandlers(client: Socket) {
+    // client.use(([event, ...args], next) => {
+    //     if (isUnauthorized(event)) {
+    //       return next(new Error("unauthorized event"));
+    //     }
+    //     // do not forget to call next
+    //     next();
+    //   })
+
+    // client.on("error", (err) => {
+    //     // if (err && err.message === "unauthorized event") {
+    //       client.disconnect();
+    //     // }
+    //   });
+    client.use
     client.on('chat:send', (data) => sendMessageHandler(client, data));
 }
 

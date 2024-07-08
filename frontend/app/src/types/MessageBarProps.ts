@@ -4,4 +4,5 @@ export type MessageBarProps = {
         lastName: string,
         profilePicture: string,
         lastMessage: string,
+        isFavorite: boolean,
 }

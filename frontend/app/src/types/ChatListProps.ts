@@ -1,6 +1,6 @@
-import { MessageBarProps } from "./MessageBarProps";
+// import { MessageBarProps } from "./MessageBarProps";
 
 export type ChatListProps = {
-    dms: MessageBarProps[];
-    onClick: (id: number) => void
+    // dms: MessageBarProps[];
+    onClick: (id: number) => void;
 }
