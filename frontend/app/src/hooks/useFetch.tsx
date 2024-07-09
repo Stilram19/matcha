@@ -6,6 +6,7 @@ const useFetch = ({url}: {url: string}) => {
     const [isLoading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
+    // console.log("trying to fetch");
     useEffect(() => {
         const fetchData =  async () => {
             try {
@@ -17,13 +18,14 @@ const useFetch = ({url}: {url: string}) => {
                 setData(data);
             } catch (error) {
                 // !!!!!!!!! bad idea
-                const err = error instanceof Error ? error : new Error(JSON.stringify(error)); 
+                const err = error instanceof Error ? error : new Error(JSON.stringify(error));
                 setError(err);
             }
             setLoading(false);
         }
 
         fetchData();
+        console.log("fetching.....");
     }, [url])
 
     return {data, isLoading, error};

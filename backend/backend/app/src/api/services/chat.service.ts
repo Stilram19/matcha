@@ -74,5 +74,5 @@ export async function getContactDetails(participant: number) {
 export async function getFavoriteUsers(userId: number) {
     // select * from favorites WHERE user_id = userId JOIN with users on favorite_user_id = users.id
 
-    return [];
+    return dummyDms.filter((value) => value.isFavorite);
 }

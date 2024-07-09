@@ -2,29 +2,25 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaHeart, FaUserFriends } from "react-icons/fa";
 import { MessageBarProps } from "../../types";
 import { ChatListProps } from "../../types/ChatListProps";
-import { FC, useState } from "react";
-import useFetch from "../../hooks/useFetch";
+import { ChangeEvent, FC, useState } from "react";
+import useFetch from '../../hooks/useFetch';
 import { IconType } from "react-icons";
+import { stringCapitalize } from "../../utils/stringCapitalize";
+import { SocketManager } from "../../socket/SocketManager";
 
-type TabsType = 'dms' | 'favorites' | 'matchs';
-interface ChatListHeaderType {
-    currentTab: TabsType;
-    onTabChange: (tab: TabsType) => void;
-}
-
-interface TabIconType {
-    currentTab: TabsType;
-    tab: TabsType;
-    onClick: (tab: TabsType) => void;
+// type TabsType = 'dms' | 'favorites' | 'matchs';
+interface TabType {
+    active: boolean;
+    title: string;
     Icon: IconType;
+    Component: FC<any>;
 }
 
-function getFilteredDms(dms: MessageBarProps[], tab: TabsType) {
-    if (tab === 'dms')
-        return (dms);
-    if (tab === 'favorites')
-        return dms.filter((element) => element.isFavorite);
-    return (dms);
+interface ChatListHeaderType {
+    currentTab: string;
+    tabs: TabType[];
+    onTabChange: (tab: string) => void;
+    onSearchChange: (textInput: string) => void;
 }
 
 // Dm bar
@@ -45,96 +41,66 @@ const   MessageBar = (props: MessageBarProps) => {
     )
 }
 
-const TabIcon = ({currentTab, onClick, tab, Icon} : TabIconType) => {
-    const active = currentTab === tab;
+
+const   SearchInput = ({onChange}: {onChange: (textInput: string) => void}) => {
+
+    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+        onChange(e.target.value);
+    }
 
     return (
-        <Icon
-            size={22}
-            title={tab}
-            className={`${active ? 'fill-pink' : ''} cursor-pointer hover:fill-pink`}
-            onClick={() => onClick(tab)}
-        />
-    )
-}
-
-
-const   ChatListHeader: FC<ChatListHeaderType> = ({onTabChange, currentTab}) => {
-    
-
-    return (
-        <div className="p-2 mb-2">
-            <div className="flex justify-between items-center mb-1">
-                <h1 className="text-lg font-semibold">{currentTab}</h1>
-                <div className="flex gap-2">
-                    <TabIcon currentTab={currentTab} tab="dms" onClick={onTabChange} Icon={AiFillMessage} />
-                    <TabIcon currentTab={currentTab} tab="favorites" onClick={onTabChange} Icon={FaHeart} />
-                    <TabIcon currentTab={currentTab} tab="matchs" onClick={onTabChange} Icon={FaUserFriends} />
-                </div>
+        <div className="relative">
+            <div className="absolute top-0 bottom-0 ps-3 flex items-center">
+                <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                </svg>
             </div>
-
-            <div className="relative">
-                <div className="absolute top-0 bottom-0 ps-3 flex items-center">
-                    <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                    </svg>
-                </div>
-                <input
-                    type="text"
-                    placeholder="search Chats"
-                    className="w-full outline-none p-2 border border-e0 placeholder:text-lg rounded-lg ps-10" />
-            </div>
+            <input
+                type="text"
+                placeholder="search Chats"
+                className="w-full outline-none p-2 border border-e0 placeholder:text-lg rounded-lg ps-10"
+                onChange={handleOnChange}
+            />
         </div>
     )
 }
 
-// const   ChatList: FC<ChatListProps> = ({onClick}) => {
-//     const [tab, setTab] = useState<TabsType>('dms');
-//     const tabMap = new Map<TabsType, any>([['dms', ChatListHeader]]);
 
-
-//     // for favorites section, when it gets clicked, i'll filter the messages by the isFavorite property
-//     return (
-//         <div className="w-full h-full pb-1">
-//             {/*  */}
-//                 <ChatListHeader currentTab={tab} onTabChange={onTabChange} />
-//             {/* </div> */}
-
-
-//             <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
-
-//             </div>
-
-//         </div>
-//     )
-// }
-
-
-const   ChatList: FC<ChatListProps> = ({onClick}) => {
-    const [tab, setTab] = useState<TabsType>('dms');
-
-    // for favorites section, when it gets clicked, i'll filter the messages by the isFavorite property
-
-    const {data, error} = useFetch({url: "http://localhost:3000/chat/dms"})// ! env var
-    if (error) {
-        console.log("error: ")
-        console.log(error);
-    }
-
-    let dms = data as MessageBarProps[];
-    const onTabChange = (tab: TabsType) => setTab(tab);
-    console.log(tab);
-
-    dms = getFilteredDms(dms, tab);
+const   ChatListHeader: FC<ChatListHeaderType> = ({onTabChange, onSearchChange, currentTab, tabs}) => {
 
     return (
-        <div className="w-full h-full pb-1">
-            {/*  */}
-                <ChatListHeader currentTab={tab} onTabChange={onTabChange} />
-            {/* </div> */}
+        <div className="p-2 mb-2">
+            <div className="flex justify-between items-center mb-1">
+                <h1 className="text-lg font-semibold">{stringCapitalize(currentTab)}</h1>
+                <div className="flex gap-2">
+                    {tabs.map((tab) => {
+                        const {active, title, Icon} = tab;
+                        return (
+                            <Icon
+                                key={title}
+                                size={22}
+                                title={title}
+                                className={`${active ? 'fill-pink' : ''} cursor-pointer hover:fill-pink`}
+                                onClick={() => onTabChange(title)}
+                            />
+                        )
+                    })}
+                </div>
+            </div>
+            <SearchInput onChange={onSearchChange} />
+        </div>
+    )
+}
 
+const   createChatList = (url: string) => {
+    return ({onClick, searchInput} : {onClick: (id: number) => void, searchInput: string}) => {
+        const {data, error} = useFetch({url: url});
+        const regEx = new RegExp(searchInput, 'i')
 
-            <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
+        const dms = (data as MessageBarProps[])?.filter((dm) =>  regEx.test(`${dm.firstName} ${dm.lastName}`));
+
+        return (
+            <div className="w-full h-full">
                 {(dms && !error) && dms.map((dm, index) => {
                     return (
                         <div key={index}  onClick={() => onClick(dm.id)}>
@@ -143,10 +109,57 @@ const   ChatList: FC<ChatListProps> = ({onClick}) => {
                     )
                 })}
             </div>
+        )
+    }
+}
 
+const ChatDmsList = createChatList("http://localhost:3000/chat/dms");
+const ChatMatchesList = createChatList("http://localhost:3000/chat/dms");
+const ChatFavoriteList = createChatList("http://localhost:3000/chat/favorites");
+
+const getTabs = (currentTab: string): TabType[] => {
+    const tabs: TabType[] = [
+        { title: 'dms', Component: ChatDmsList, Icon: AiFillMessage, active: currentTab === 'dms' },
+        { title: 'favorites', Component: ChatFavoriteList, Icon: FaHeart, active: currentTab === 'favorites' },
+        { title: 'matches', Component: ChatMatchesList, Icon: FaUserFriends, active: currentTab === 'matches' }
+    ];
+
+    return (tabs);
+};
+
+
+
+
+const   ChatList: FC<ChatListProps> = ({onClick}) => {
+    const   [tab, setTab] = useState<string>('dms');
+    const   [searchInput, setSearchInput] = useState<string>('');
+    const   tabs = getTabs(tab);
+
+    console.log("re-rendering")
+
+    const handleOnChange = (searchInput: string) => {
+        setSearchInput(searchInput);
+    }
+
+    return (
+        <div className="w-full h-full pb-1">
+            <SocketManager />
+            <ChatListHeader onSearchChange={handleOnChange} currentTab={tab} tabs={tabs} onTabChange={setTab} />
+
+            <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
+                {
+                    tabs.map((tab) => {
+                        const {active, Component, title} = tab;
+                        return (
+                            <div key={title} className={`${active ? "" : "hidden"} w-full h-full`}>
+                                <Component onClick={onClick} searchInput={searchInput}/>
+                            </div>
+                        )
+                    })
+                }
+            </div>
         </div>
     )
 }
-
 
 export default ChatList;

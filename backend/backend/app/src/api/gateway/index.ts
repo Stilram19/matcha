@@ -13,6 +13,8 @@ function onConnection(client: Socket) {
     const userId = extractUserId(client);
     const registerHandlers: RegisterHandler[] = [registerChatHandlers, registerNotificationHandlers];
 
+    console.log(`new Client userID ${userId} socketID ${client.id}`)
+
     socketManager.addSocket(userId, client);
     // Register all the socket listeners
     // registerChatHandlers(io, client);
@@ -42,7 +44,7 @@ function handleDisconnect(socket: Socket) {
 
 
 function createIoServer(server: any) {
-    const io = new Server(server, {});
+    const io = new Server(server, {cors: {origin: "*"}});
     ioEmitter.initIoServer = io; // intisalize io Server
 
 
