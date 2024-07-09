@@ -90,3 +90,37 @@
         width: 100vw;
     }
 }
+
+.btn {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 15px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn i {
+    margin-right: 10px;
+}
+
+.block-btn {
+    color: #dc3545;
+}
+
+.block-btn:hover {
+    color: #c82333;
+}
+
+.report-btn {
+    color: #ffc107;
+}
+
+.report-btn:hover {
+    color: #e0a800;
+}

@@ -1,4 +1,4 @@
-export function extractAuthToken(authHeader: any): string | undefined {
+export function extractAuthTokenService(authHeader: any): string | undefined {
     if (!authHeader || typeof authHeader != 'string') {
         return (undefined)
     }

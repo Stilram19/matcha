@@ -1,7 +1,7 @@
 import './style.css'
 import FormField from '../utils/FormField';
-import { ProfileInfos } from '../utils/dummyProfileInfos';
 import React from 'react';
+import { ProfileInfos } from '../../types/profile';
 
 type EditProfileOverlayProps = {
     profileInfos: ProfileInfos;
@@ -60,7 +60,7 @@ function EditProfileOverlay({profileInfos, handleEditOverlayClose}: EditProfileO
                         <input type="file" id="profilePicture" className="hidden" accept="image/*" onChange={handleImageChange}/>
                         <div>
                             <div onClick={handleImageClick} className="cursor-pointer sm:ml-8 mr-4 sm:mr-8 w-52 h-52 bg-cover bg-no-repeat bg-center rounded-full bg-gray-300"
-                                style={{backgroundImage: `url(${profileInfos.profilePicture})`}}>
+                                style={{backgroundImage: `url(${profileInfos.userInfos.profilePicture})`}}>
                             </div>
                             <div onClick={handleImageClick} className="relative">
                                 <div className="camera-icon-overlay cursor-pointer bg-gray-300 flex w-9 h-9 rounded-full justify-center items-center">
@@ -70,9 +70,9 @@ function EditProfileOverlay({profileInfos, handleEditOverlayClose}: EditProfileO
                         </div>
                     </div>
                     <div className="flex flex-col items-center mt-10 gap-2">
-                        <FormField id="fname" label="first name" placeholder={profileInfos.firstName} />
-                        <FormField id="lname" label="last name" placeholder={profileInfos.lastName} />
-                        <FormField id="username" label="username" placeholder={profileInfos.userName} />
+                        <FormField id="fname" label="first name" placeholder={profileInfos.userInfos.firstName} />
+                        <FormField id="lname" label="last name" placeholder={profileInfos.userInfos.lastName} />
+                        <FormField id="username" label="username" placeholder={profileInfos.userInfos.userName} />
                     </div>
                 </div>
                 <div className="flex justify-center mt-10 gap-2 sm:gap-8">
@@ -101,7 +101,7 @@ function EditProfileOverlay({profileInfos, handleEditOverlayClose}: EditProfileO
                 </div>
                 <div className="flex flex-col gap-1 mx-10 mt-10">
                     <label htmlFor="biography">biography</label>
-                    <textarea id="biography" name="biography" className="border outline-none p-2 rounded-lg focus:ring-2 h-48 resize-none" placeholder={profileInfos.biography} required/>
+                    <textarea id="biography" name="biography" className="border outline-none p-2 rounded-lg focus:ring-2 h-48 resize-none" placeholder={profileInfos.userInfos.biography} required/>
                 </div>
                 <div className="flex justify-end h-full mb-8">
                     <div className="flex justify-end gap-3 mt-10 mr-10">

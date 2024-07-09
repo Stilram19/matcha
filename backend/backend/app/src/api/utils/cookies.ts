@@ -1,10 +1,10 @@
 import { Response } from 'express'
-import { generateAccessToken, generateRefreshToken } from '../services/jwt.js';
-import { generateRandomToken } from '../services/hashing.js';
+import { generateAccessTokenService, generateRefreshTokenService } from '../services/jwt.js';
+import { generateRandomTokenService } from '../services/hashing.js';
 
 export function setJwtTokensAsHttpOnlyCookies(userId: number, response: Response) {
-    const accessToken = generateAccessToken(userId);
-    const refreshToken = generateRefreshToken(userId);
+    const accessToken = generateAccessTokenService(userId);
+    const refreshToken = generateRefreshTokenService(userId);
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
@@ -18,7 +18,7 @@ export function setJwtTokensAsHttpOnlyCookies(userId: number, response: Response
 }
 
 export function setCSRFcookies(response: Response) {
-    const csrfCookie = generateRandomToken(32);
+    const csrfCookie = generateRandomTokenService(32);
 
     response.cookie('csrfSecretCookie', csrfCookie, {
         httpOnly: true,
@@ -32,7 +32,7 @@ export function setCSRFcookies(response: Response) {
 }
 
 export function setAccessTokensCookie(userId: number, response: Response) {
-    const accessToken = generateAccessToken(userId);
+    const accessToken = generateAccessTokenService(userId);
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,

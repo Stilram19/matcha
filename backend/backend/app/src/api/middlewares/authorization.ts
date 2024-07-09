@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { clearCSRFCookies, clearJwtCookies, setAccessTokensCookie } from '../utils/cookies.js';
-import { validateJwtAccessToken, validateJwtRefreshToken } from '../services/jwt.js';
-import { extractAuthToken } from '../services/authToken.js';
+import { validateJwtAccessTokenService, validateJwtRefreshTokenService } from '../services/jwt.js';
+import { extractAuthTokenService } from '../services/authToken.js';
 
 export function validateJwtToken(request: Request, response: Response, next: NextFunction) {
     const accessToken = request.cookies['AccessToken'];
@@ -15,7 +15,7 @@ export function validateJwtToken(request: Request, response: Response, next: Nex
         return ;
     }
 
-    const accessTokenResult = validateJwtAccessToken(accessToken);
+    const accessTokenResult = validateJwtAccessTokenService(accessToken);
 
     if (accessTokenResult.error == 'invalid token') {
         clearJwtCookies(response);
@@ -27,7 +27,7 @@ export function validateJwtToken(request: Request, response: Response, next: Nex
     // console.log('expired access token!');
     
     if (accessTokenResult.error == 'expired token') {
-        const { userId } = validateJwtRefreshToken(refreshToken);
+        const { userId } = validateJwtRefreshTokenService(refreshToken);
         // console.log('refresh token id: ' + userId);
 
         if (userId === null) {
@@ -48,7 +48,7 @@ export function validateJwtToken(request: Request, response: Response, next: Nex
 export function validateCSRFCookies(request: Request, response: Response, next: NextFunction) {
     const secretCookie = request.cookies['csrfSecretCookie'];
     const authHeader = request.headers['authorization'];
-    const clientAccessibleCookie = extractAuthToken(authHeader);
+    const clientAccessibleCookie = extractAuthTokenService(authHeader);
 
     if (!secretCookie || !clientAccessibleCookie
         || typeof secretCookie != 'string' || typeof clientAccessibleCookie != 'string') {

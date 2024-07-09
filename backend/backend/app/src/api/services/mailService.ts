@@ -14,7 +14,7 @@ let transporter = nodemailer.createTransport({
 });
 
 // returns the verificationToken
-export async function sendEmailVerification(email: string, firstname: string, verificationToken: string) {
+export async function sendEmailVerificationService(email: string, firstname: string, verificationToken: string) {
     const verificationUrl = `${process.env.EMAIL_VERIFICATION_URL}?token=${verificationToken}`;
 
     console.log(`sending the email... URL: ${verificationUrl}`);
@@ -28,7 +28,7 @@ export async function sendEmailVerification(email: string, firstname: string, ve
     console.log('verification email sent!');
 }
 
-export async function sendForgetPasswordEmail(email: string, resetToken: string): Promise<void> {
+export async function sendForgetPasswordEmailService(email: string, resetToken: string): Promise<void> {
     const resetUrl = `${process.env.EMAIL_PASSWORD_RESET_URL}?token=${resetToken}`;
 
     console.log(`sending the email... URL: ${resetUrl}`);

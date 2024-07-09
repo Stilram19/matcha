@@ -13,7 +13,7 @@ async function getUserInfos(userId: number): Promise<UserInfos> {
     return (dummyProfileInfos[userId - 1].userInfos);
 }
 
-export async function retrieveProfileInfos(userId: number): Promise<ProfileInfos | undefined> {
+export async function retrieveProfileInfosService(userId: number): Promise<ProfileInfos | undefined> {
     if (userId < 1 || userId > 3) {
         return (undefined);
     }
@@ -25,9 +25,46 @@ export async function retrieveProfileInfos(userId: number): Promise<ProfileInfos
     return ({userInfos, interests, userPhotos});
 }
 
-export async function retrieveBriefProfileInfos(userId: number): Promise<BriefProfileInfos | undefined> {
+export async function retrieveBriefProfileInfosService(userId: number): Promise<BriefProfileInfos | undefined> {
     if (userId < 1 || userId > 3) {
         return (undefined);
     }
     return (dummyBriefProfileInfos[userId - 1]);
+}
+
+export async function updateUserInterestsService(userId: number, interests: string[]) {
+
+}
+
+export async function addUserInterestsService(userId: number, interests: string[]) {
+    
+}
+
+async function removeUserConnection(blockingUserId: number, blockedUserId: number) {
+
+}
+
+async function addBlockedUser(blockingUserId: number, blockedUserId: number) {
+
+}
+
+export async function blockUserService(blockingUserId: number, blockedUserId: number) {
+    await removeUserConnection(blockingUserId, blockedUserId);
+    await addBlockedUser(blockingUserId, blockedUserId);
+}
+
+export async function reportFakeAccountService(reportedUserId: number) {
+
+}
+
+export async function likeProfileService(likingUserId: number, likedUserId: number) {
+
+}
+
+export async function unlikeProfileService(unlikingUserId: number, unlikedUserId: number) {
+
+}
+
+export async function isBlockedService(blockingUserId: number, blockedUserId: number) {
+    return (false);
 }

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import { consumeEmailVerificationToken, isNewEmail, isNewUsername, saveEmailVerificationToken, saveUserSignUpCredentials } from '../services/registration.js';
-import { generateRandomToken, hashDataWithSalt } from '../services/hashing.js';
-import { sendEmailVerification } from '../services/mailService.js';
 import { formError } from '../helpers/errorFactory.js';
 import { clearJwtCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
+import { consumeEmailVerificationTokenService, isNewEmailService, isNewUsernameService, saveEmailVerificationTokenService, saveUserSignUpCredentialsService } from '../services/registration.js';
+import { generateRandomTokenService, hashDataWithSaltService } from '../services/hashing.js';
+import { sendEmailVerificationService } from '../services/mailService.js';
 
-export async function localStrategy(request: Request, response: Response): Promise<void> {
+export async function localStrategyController(request: Request, response: Response): Promise<void> {
     try {
         const email = request.body.email as string;
         const username = request.body.username as string;
@@ -18,31 +18,31 @@ export async function localStrategy(request: Request, response: Response): Promi
         clearJwtCookies(response);
 
         // checking that the email is not already in use
-        if (await isNewEmail(email) == false) {
+        if (await isNewEmailService(email) == false) {
             response.status(400).send( formError('email', 'Please use a different email address') );
             return ;
         }
 
         // checking that the username is not already in use
-        if (await isNewUsername(username) == false) {
+        if (await isNewUsernameService(username) == false) {
             response.status(400).send( formError('username', 'Please use a different username') );
             return ;
         }
 
         // hash password with salt and save user credentials
-        const [hashedPassword, salt] = await hashDataWithSalt(password);
+        const [hashedPassword, salt] = await hashDataWithSaltService(password);
 
-        saveUserSignUpCredentials(email, username, firstname, lastname, hashedPassword, salt);
+        saveUserSignUpCredentialsService(email, username, firstname, lastname, hashedPassword, salt);
 
-        const verificationToken = generateRandomToken(16);
+        const verificationToken = generateRandomTokenService(16);
 
         // wait until the token is stored
-        await saveEmailVerificationToken(verificationToken);
+        await saveEmailVerificationTokenService(verificationToken);
 
         console.log(`firstname: ${firstname}`);
 
         // send email verification without blocking the user
-        sendEmailVerification(email, firstname, verificationToken).catch(err => {
+        sendEmailVerificationService(email, firstname, verificationToken).catch(err => {
             console.log('error sending the verification email!');
         });
 
@@ -53,17 +53,15 @@ export async function localStrategy(request: Request, response: Response): Promi
     }
 }
 
-export async function emailVerficiation(request: Request, response: Response): Promise<void> {
+export async function emailVerficiationController(request: Request, response: Response): Promise<void> {
     try {
         // the token is already checked in the previous middleware
         const authHeader = request.headers['authorization'] as string;
         const token = authHeader.split(' ')[1] as string;
 
         // verifying the token, if it exists it will be deleted (consumed)
-        const userId = await consumeEmailVerificationToken(token);
+        const userId = await consumeEmailVerificationTokenService(token);
 
-        console.log('RETURNED VALUE: ' + userId)
-            
         if (userId === undefined) {
             console.log('user not verified');
             response.status(403).send( { msg: 'token not found or expired!' } );

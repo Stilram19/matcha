@@ -102,7 +102,7 @@ export let dummyProfileInfos: ProfileInfos[] = [
             id: '3',
             isSelf: false,
             isLiked: false,
-            isLiking: true,
+            isLiking: false,
             firstName: 'Oyoub',
             lastName: 'Ben Hamou',
             userName: 'oben-ham',

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getBriefProfileInfos, getProfileInfos } from "../controllers/profile.js";
-import { validateUserIdParam } from "../middlewares/profile.js";
+import { addInterestsController, blockUserController, getBriefProfileInfosController, getProfileInfosController, likeProfileController, reportFakeAccountController, unlikeProfileController, updateInterestsController, updateProfilePictureController } from "../controllers/profile.js";
+import { blockMiddleware, validateUserIdParam } from "../middlewares/profile.js";
 import { validateJwtToken, validateCSRFCookies } from "../middlewares/authorization.js";
 
 const router = Router();
@@ -8,13 +8,14 @@ const router = Router();
 router.use(validateJwtToken);
 router.use(validateCSRFCookies);
 
-router.get('/profileInfos/:userId', validateUserIdParam, getProfileInfos);
-router.get('/briefProfileInfos/:userId', validateUserIdParam, getBriefProfileInfos);
-// router.patch('/profileInterests', updateInterests);
-// router.patch('/profilePicture', updateProfilePicture);
-// router.post('/block/:userId', blockUser);
-// router.post('/reportFakeAccount/:userId', reportFakeAccount);
-// router.post('/likeProfile/:userId', likeProfile);
-// router.post('/unlikeProfile/:userId', unlikeProfile);
+router.get('/profileInfos/:userId', validateUserIdParam, blockMiddleware, getProfileInfosController);
+router.get('/briefProfileInfos/:userId', validateUserIdParam, blockMiddleware, getBriefProfileInfosController);
+router.patch('/profileInterests', updateInterestsController);
+router.post('/profileInterests', addInterestsController);
+router.patch('/profilePicture', updateProfilePictureController);
+router.post('/block/:userId', validateUserIdParam, blockMiddleware, blockUserController);
+router.post('/reportFakeAccount/:userId',validateUserIdParam, blockMiddleware, reportFakeAccountController);
+router.post('/likeProfile/:userId', validateUserIdParam, blockMiddleware, likeProfileController);
+router.post('/unlikeProfile/:userId', validateUserIdParam, blockMiddleware, unlikeProfileController);
 
 export default router;

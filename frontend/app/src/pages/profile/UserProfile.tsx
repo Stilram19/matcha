@@ -12,7 +12,8 @@ import LikeProfileButton from "../../components/profile/LikeProfileButton";
 import UnlikeProfileButton from "../../components/profile/UnlikeProfileButton";
 import LikeBackProfileButton from "../../components/profile/LikeBackProfileButton";
 import { ProfileInfos } from "../../types/profile";
-import { sendLoggedInGetRequest } from "../../utils/httpRequests";
+import { sendLoggedInActionRequest, sendLoggedInGetRequest } from "../../utils/httpRequests";
+import AreYouSureOverlay from "../../components/profile/AreYouSureOverlay";
 
 function UserProfile() {
     // const profileInfos = dummyProfileInfos[1];
@@ -20,6 +21,8 @@ function UserProfile() {
     let { userId } = useParams();
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
     let [isInterestsEditOpen, setIsInterestsEditOpen] = useState(false);
+    let [isFakeReportAreYouSureModelOpen, setIsFakeReportAreYouSureModelOpen] = useState(false);
+    let [isBlockAreYouSureModelOpen, setIsBlockAreYouSureModelOpen] = useState(false);
 
     useEffect(() => {
         (async function initializeComponent() {
@@ -39,34 +42,42 @@ function UserProfile() {
         setIsProfileEditOpen(true);
     }
 
-    function handleLikeButtonClick() {
+    async function handleLikeButtonClick() {
         if (profileInfos == undefined) {
             return ;
         }
 
         // send like request
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${userId}`);
 
-        const profileInfosCopy = Object.create(profileInfos);
+            const profileInfosCopy = Object.create(profileInfos);
 
-        profileInfosCopy.userInfos.isLiked = true;
-
-        console.log('like click handler called!');
-
-        setProfileInfos(profileInfosCopy);
+            profileInfosCopy.userInfos.isLiked = true;
+            setProfileInfos(profileInfosCopy);
+        }
+        catch (err) {
+            return ;
+        }
     }
 
-    function handleUnlikeButtonClick() {
+    async function handleUnlikeButtonClick() {
         if (profileInfos == undefined) {
             return ;
         }
 
-        // send unlike request
+        // send like request
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_UNLIKE_API_URL + `/${userId}`);
 
-        const profileInfosCopy = Object.create(profileInfos);
+            const profileInfosCopy = Object.create(profileInfos);
 
-        profileInfosCopy.userInfos.isLiked = false;
-
-        setProfileInfos(profileInfosCopy);
+            profileInfosCopy.userInfos.isLiked = false;
+            setProfileInfos(profileInfosCopy);
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
     function handleLikeBackButtonClick() {
@@ -81,15 +92,48 @@ function UserProfile() {
         setIsInterestsEditOpen(true);
     }
 
-    function handleInterestsOverlayClose(newSelectedInterests: Set<string>) {
+    async function handleInterestsOverlayClose(newSelectedInterests: Set<string>) {
         if (profileInfos == undefined) {
             return ;
         }
 
         const profileInfosCopy: ProfileInfos = {userInfos: profileInfos.userInfos, interests: new Set(newSelectedInterests), userPhotos: profileInfos.userPhotos};
 
-        setIsInterestsEditOpen(false);
-        setProfileInfos(profileInfosCopy);
+        try {
+            await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...newSelectedInterests]});
+
+            setProfileInfos(profileInfosCopy);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setIsInterestsEditOpen(false);
+        }
+    }
+
+    async function handleBlock() {
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_BLOCK_API_URL + `/${userId}`);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setIsBlockAreYouSureModelOpen(false);
+        }
+    }
+
+    async function handleFakeAccountReport() {
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_REPORT_FAKE_API_URL + `/${userId}`);
+        }
+        catch (err) {
+            console.log(err);
+        }
+        finally {
+            setIsFakeReportAreYouSureModelOpen(false);
+        }
     }
 
     if (profileInfos == undefined) {
@@ -109,13 +153,13 @@ function UserProfile() {
                     <div className="shadow  rounded-20px w-boxx">
                         <div className="flex gap-11 lg:gap-0 flex-col lg:flex-row items-center mb-8 mt-6 pl-4 pr-4 lg:pl-9 lg:pr-9 rounded-7px round-7px">
                             <div className="relative">
-                                <Link to="#">
+                                <Link to={profileInfos.userInfos.profilePicture} target="_blank" rel="noopener noreferrer">
                                     <div className="mr-4 sm:mr-8 w-60 h-60 sm:w-80 sm:h-80 lg:w-40 lg:h-40 bg-cover bg-no-repeat bg-center rounded-full bg-gray-300"
                                         style={{backgroundImage: `url(${profileInfos.userInfos.profilePicture})`}}>
                                     </div>
-                                        <div className="camera-icon cursor-pointer bg-gray-300 flex w-9 h-9 sm:w-12 sm:h-12 lg:w-9 lg:h-9 rounded-full justify-center items-center">
-                                            <i className="icon sm:scale-125 lg:scale-100" style={{backgroundImage: 'url("/icons/facebook-camera-icon.png")', backgroundPosition: '0px -21px', width: '20px', height: '20px', backgroundRepeat: 'no-repeat', display: 'inline-block'}}></i>
-                                        </div>
+                                    <div className={`camera-icon cursor-pointer bg-gray-300 flex w-9 h-9 sm:w-12 sm:h-12 lg:w-9 lg:h-9 rounded-full justify-center items-center ${profileInfos.userInfos.isSelf == false ? 'hidden' : ''}`}>
+                                        <i className="icon sm:scale-125 lg:scale-100" style={{backgroundImage: 'url("/icons/facebook-camera-icon.png")', backgroundPosition: '0px -21px', width: '20px', height: '20px', backgroundRepeat: 'no-repeat', display: 'inline-block'}}></i>
+                                    </div>
                                 </Link>
                             </div>
                             <div className="flex flex-col items-center sm:gap-2">
@@ -172,7 +216,7 @@ function UserProfile() {
                     <div className="shadow rounded-20px w-boxx">
                         <div className="flex justify-between">
                             <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-10 pb-6">Interests</h2>
-                            <div className="cursor-pointer" onClick={handleEditInterestsClick}>
+                            <div className={`cursor-pointer ${profileInfos.userInfos.isSelf == false ? 'hidden' : ''}`} onClick={handleEditInterestsClick}>
                                 <img src="/icons/pencil.svg" width={50} height={50} alt="pencil icon" className="pt-8 pr-6"/>
                             </div>
                         </div>
@@ -189,6 +233,12 @@ function UserProfile() {
                         </div>
                     </div>
                 </div>
+                <div className={`flex justify-center ${profileInfos.userInfos.isSelf ? 'hidden' : ''}`}>
+                    <button className="btn" onClick={ () => setIsBlockAreYouSureModelOpen(true) }><i className="fa-solid fa-user-slash"></i>block</button>
+                    <button className="btn" onClick={ () => setIsFakeReportAreYouSureModelOpen(true) }><i className="fa-solid fa-masks-theater"></i>fakeAccount</button>
+                </div>
+                {isBlockAreYouSureModelOpen && <AreYouSureOverlay actionType="Block" onContinue={handleBlock} onCancel={() => setIsBlockAreYouSureModelOpen(false)}/>}
+                {isFakeReportAreYouSureModelOpen && <AreYouSureOverlay actionType="ReportFakeAccout" onContinue={handleFakeAccountReport} onCancel={() => setIsFakeReportAreYouSureModelOpen(false)}/>}
             </div>
         </div>
     )
