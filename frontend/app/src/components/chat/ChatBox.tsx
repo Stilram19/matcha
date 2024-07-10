@@ -29,11 +29,6 @@ const   ChatInputField: FC<{onSend: (msg: string) => void}> = ({onSend}) => {
         inputRef.current.value = '';
     }
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter')
-            sendHandler();
-    }
-
     return (
         <div className="relative pt-2">
             <div className="absolute bottom-2 w-full px-3">
@@ -42,8 +37,9 @@ const   ChatInputField: FC<{onSend: (msg: string) => void}> = ({onSend}) => {
                     type="text"
                     placeholder="Enter your message"
                     className="outline-none border w-full p-3 px-3 pr-20 rounded-lg"
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={(e: KeyboardEvent) => e.key === 'Enter' && sendHandler()}
                 />
+
                 <div className="absolute bottom-0 top-0 right-5 flex items-center gap-2">
                     <button className="">
                         <AiOutlineAudio size={25} className="fill-gray-500 hover:fill-black" />

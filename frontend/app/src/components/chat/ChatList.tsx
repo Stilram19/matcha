@@ -2,18 +2,17 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaHeart, FaUserFriends } from "react-icons/fa";
 import { MessageBarProps } from "../../types";
 import { ChatListProps } from "../../types/ChatListProps";
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import useFetch from '../../hooks/useFetch';
+import { ChangeEvent, FC, useState } from "react";
 import { IconType } from "react-icons";
 import { stringCapitalize } from "../../utils/stringCapitalize";
-import { useSocket } from "../../context/SocketProvider";
+import useFetchDms from "../../hooks/useFetchDms";
 
 // type TabsType = 'dms' | 'favorites' | 'matchs';
 interface TabType {
     active: boolean;
     title: string;
     Icon: IconType;
-    Component: FC<any>;
+    Component?: FC<any>;
 }
 
 interface ChatListHeaderType {
@@ -65,7 +64,6 @@ const   SearchInput = ({onChange}: {onChange: (textInput: string) => void}) => {
     )
 }
 
-
 const   ChatListHeader: FC<ChatListHeaderType> = ({onTabChange, onSearchChange, currentTab, tabs}) => {
 
     return (
@@ -92,96 +90,151 @@ const   ChatListHeader: FC<ChatListHeaderType> = ({onTabChange, onSearchChange, 
     )
 }
 
-const   createChatList = (url: string) => {
-    return ({onClick, searchInput} : {onClick: (id: number) => void, searchInput: string}) => {
-        const {data, error} = useFetch({url: url});
-        const regEx = new RegExp(searchInput, 'i')
+const   DmsList = ({dms, onClick, searchInput} : {dms: MessageBarProps[], onClick: (id: number) => void, searchInput: string}) => {
+    const regEx = new RegExp(searchInput, 'i')
 
-        const dms = (data as MessageBarProps[])?.filter((dm) =>  regEx.test(`${dm.firstName} ${dm.lastName}`));
+    // ! the data should arrive in the way that it gonne be displayed, no need for filtering
+    const data = dms?.filter((dm) =>  regEx.test(`${dm.firstName} ${dm.lastName}`));
 
-        return (
-            <div className="w-full h-full">
-                {(dms && !error) && dms.map((dm, index) => {
-                    return (
-                        <div key={index}  onClick={() => onClick(dm.id)}>
-                            <MessageBar {...dm}/>
-                        </div>
-                    )
-                })}
-            </div>
-        )
-    }
+    return (
+        <div className="w-full h-full">
+            {(data) && data.map((dm, index) => {
+                return (
+                    <div key={index}  onClick={() => onClick(dm.id)}>
+                        <MessageBar {...dm}/>
+                    </div>
+                )
+            })}
+        </div>
+    )
 }
 
-const ChatDmsList = createChatList("http://localhost:3000/chat/dms");
-const ChatMatchesList = createChatList("http://localhost:3000/chat/dms");
-const ChatFavoriteList = createChatList("http://localhost:3000/chat/favorites");
 
 const getTabs = (currentTab: string): TabType[] => {
     const tabs: TabType[] = [
-        { title: 'dms', Component: ChatDmsList, Icon: AiFillMessage, active: currentTab === 'dms' },
-        { title: 'favorites', Component: ChatFavoriteList, Icon: FaHeart, active: currentTab === 'favorites' },
-        { title: 'matches', Component: ChatMatchesList, Icon: FaUserFriends, active: currentTab === 'matches' }
+        { title: 'dms', Icon: AiFillMessage, active: currentTab === 'dms' },
+        { title: 'favorites', Icon: FaHeart, active: currentTab === 'favorites' },
+        { title: 'matches', Icon: FaUserFriends, active: currentTab === 'matches' }
     ];
 
     return (tabs);
 };
 
 
-
-
 const   ChatList: FC<ChatListProps> = ({onClick}) => {
     const   [tab, setTab] = useState<string>('dms');
     const   [searchInput, setSearchInput] = useState<string>('');
-    const   socket = useSocket();
+    const   {dms, favorites, matchs} = useFetchDms();
     const   tabs = getTabs(tab);
 
     console.log("re-rendering")
-
-    const handleOnChange = (searchInput: string) => {
-        setSearchInput(searchInput);
+    const   tabMap: {[key: string]: any} = {
+        dms,
+        favorites,
+        matchs,
     }
 
-    useEffect(() => {
-        console.log('useefctectetc');
-        console.log(socket);
-        const handler = (data: any) => {
-            console.log('helloooooooo');
-            console.log(data);
-        }    
-        socket?.on('global:online-users', handler)
+    const   data = tabMap[tab] || [];
 
-        const handleMessages = (data: any) => {
-            console.log(data);
-        };
-        socket?.on('chat:message', handleMessages);
-        
-        return () => {
-            console.log('unmount ChatList');
-            socket?.removeListener('global:online-users', handler)
-            socket?.removeListener('chat:message', handleMessages);
-        }
-    }, [socket])
+    // const tabChange = (tab) => {
+    //     const tabsMap = {
+    //         dms,
+    //         favorites,
+    //         matchs,
+    //     }
+
+    //     setTab(tabsMap[tab]);
+    // }
 
     return (
         <div className="w-full h-full pb-1">
             {/* <SocketManager /> */}
-            <ChatListHeader onSearchChange={handleOnChange} currentTab={tab} tabs={tabs} onTabChange={setTab} />
+            <ChatListHeader onSearchChange={(searchInput: string) => setSearchInput(searchInput)} currentTab={tab} tabs={tabs} onTabChange={setTab} />
 
             <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
-                {
-                    tabs.map((tab) => {
-                        const {active, Component, title} = tab;
-                        return (
-                            <div key={title} className={`${active ? "" : "hidden"} w-full h-full`}>
-                                <Component onClick={onClick} searchInput={searchInput}/>
-                            </div>
-                        )
-                    })
-                }
+                <DmsList onClick={onClick} dms={data} searchInput={searchInput} />
             </div>
         </div>
     )
 }
+
+
+
+
+
+
+// const   createChatList = (url: string) => {
+//     return ({onClick, searchInput} : {onClick: (id: number) => void, searchInput: string}) => {
+//         const {data, error} = useFetch({url: url});
+//         const regEx = new RegExp(searchInput, 'i')
+
+//         const dms = (data as MessageBarProps[])?.filter((dm) =>  regEx.test(`${dm.firstName} ${dm.lastName}`));
+
+//         return (
+//             <div className="w-full h-full">
+//                 {(dms && !error) && dms.map((dm, index) => {
+//                     return (
+//                         <div key={index}  onClick={() => onClick(dm.id)}>
+//                             <MessageBar {...dm}/>
+//                         </div>
+//                     )
+//                 })}
+//             </div>
+//         )
+//     }
+// }
+
+// const ChatDmsList = createChatList("http://localhost:3000/chat/dms");
+// const ChatMatchesList = createChatList("http://localhost:3000/chat/dms");
+// const ChatFavoriteList = createChatList("http://localhost:3000/chat/favorites");
+
+// const   ChatList: FC<ChatListProps> = ({onClick}) => {
+//     const   [tab, setTab] = useState<string>('dms');
+//     const   [searchInput, setSearchInput] = useState<string>('');
+//     const   socket = useSocket();
+//     const   tabs = getTabs(tab);
+    
+//     console.log("re-rendering")
+
+//     useEffect(() => {
+//         console.log(socket);
+//         const handler = (data: any) => {
+//             console.log('helloooooooo');
+//             console.log(data);
+//         }
+//         socket?.on('global:online-users', handler)
+
+//         const handleMessages = (data: any) => {
+//             console.log(data);
+//         };
+//         socket?.on('chat:message', handleMessages);
+        
+//         return () => {
+//             console.log('unmount ChatList');
+//             socket?.removeListener('global:online-users', handler)
+//             socket?.removeListener('chat:message', handleMessages);
+//         }
+//     }, [socket])
+
+//     return (
+//         <div className="w-full h-full pb-1">
+//             {/* <SocketManager /> */}
+//             <ChatListHeader onSearchChange={(searchInput: string) => setSearchInput(searchInput)} currentTab={tab} tabs={tabs} onTabChange={setTab} />
+
+//             <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
+//                 {
+//                     tabs.map((tab) => {
+//                         const {active, Component, title} = tab;
+//                         return (
+//                             <div key={title} className={`${active ? "" : "hidden"} w-full h-full`}>
+//                                 <Component onClick={onClick} searchInput={searchInput}/>
+//                             </div>
+//                         )
+//                     })
+//                 }
+//             </div>
+//         </div>
+//     )
+// }
 
 export default ChatList;
