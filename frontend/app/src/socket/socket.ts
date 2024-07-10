@@ -1,3 +1,17 @@
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";getSockets
 
-export const socket = io("http://localhost:3000", {autoConnect: false, auth: {token: 1}});
+import { Socket } from "socket.io-client";
+
+export let socket: Socket | null = null;
+
+export function setSocket(s: Socket) {
+    socket = s;
+    socket.on('global:online-users', (data) => {
+        console.log('helloooooooo');
+        console.log(data);
+    })
+}
+
+// export function getSocket(): Socket | null {
+//     return (socket);
+// }

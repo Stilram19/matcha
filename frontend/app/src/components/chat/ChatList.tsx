@@ -2,11 +2,11 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaHeart, FaUserFriends } from "react-icons/fa";
 import { MessageBarProps } from "../../types";
 import { ChatListProps } from "../../types/ChatListProps";
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import useFetch from '../../hooks/useFetch';
 import { IconType } from "react-icons";
 import { stringCapitalize } from "../../utils/stringCapitalize";
-import { SocketManager } from "../../socket/SocketManager";
+import { useSocket } from "../../context/SocketProvider";
 
 // type TabsType = 'dms' | 'favorites' | 'matchs';
 interface TabType {
@@ -133,6 +133,7 @@ const getTabs = (currentTab: string): TabType[] => {
 const   ChatList: FC<ChatListProps> = ({onClick}) => {
     const   [tab, setTab] = useState<string>('dms');
     const   [searchInput, setSearchInput] = useState<string>('');
+    const   socket = useSocket();
     const   tabs = getTabs(tab);
 
     console.log("re-rendering")
@@ -141,9 +142,30 @@ const   ChatList: FC<ChatListProps> = ({onClick}) => {
         setSearchInput(searchInput);
     }
 
+    useEffect(() => {
+        console.log('useefctectetc');
+        console.log(socket);
+        const handler = (data: any) => {
+            console.log('helloooooooo');
+            console.log(data);
+        }    
+        socket?.on('global:online-users', handler)
+
+        const handleMessages = (data: any) => {
+            console.log(data);
+        };
+        socket?.on('chat:message', handleMessages);
+        
+        return () => {
+            console.log('unmount ChatList');
+            socket?.removeListener('global:online-users', handler)
+            socket?.removeListener('chat:message', handleMessages);
+        }
+    }, [socket])
+
     return (
         <div className="w-full h-full pb-1">
-            <SocketManager />
+            {/* <SocketManager /> */}
             <ChatListHeader onSearchChange={handleOnChange} currentTab={tab} tabs={tabs} onTabChange={setTab} />
 
             <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">

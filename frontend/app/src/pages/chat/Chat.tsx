@@ -4,6 +4,7 @@ import ContactInfo from "../../components/chat/ContactInfo";
 // import dms from "../../data/data.json"
 import { useState } from 'react';
 import { FaArrowLeft } from "react-icons/fa6";
+// import { SocketManager } from "../../socket/SocketManager";
 
 
 const Chat = () => {
@@ -11,21 +12,11 @@ const Chat = () => {
 
     const isDmActive = activeDmId !== -1;
 
-    // useEffect(() => {
-    //     const fetch_data = async () => {
-    //         const response = await fetch("http://localhost:3000/chat/dms");
-    //         if (!response.ok) {
-    //             return ;
-    //         }
-
-    //         const data = await response.json();
-    //         console.log(data);
-    //     }
-    //     fetch_data();
-    // })
-
+    console.log("chat render")
     return (
         // pt-[80px]
+        <>
+                {/* <SocketManager /> */}
         <div className="flex justify-around w-screen h-[calc(100vh-80px)]">
             <div className="w-[90%] m-5 border border-e0 rounded-xl shadow-md flex">
                 <div className={`w-full ${isDmActive ? "hidden" : ''} md:inline-block md:w-1/3 lg:w-1/4 h-full border-r`}>
@@ -49,6 +40,7 @@ const Chat = () => {
                 </div>
             </div>
         </div>
+        </>
     )
 }
 

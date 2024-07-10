@@ -24,7 +24,7 @@ class   IoEmitter {
     emitToClientSockets(userId: number, event:string, data: any) {
         if (!this.io_server)
             throw Error("Socket.IO server is not initialized yet");
-        const sockets = socketService.getSockets(userId);
+        const sockets = socketService.getSocketsById(userId);
         const server: Server = this.io_server;
     
         sockets?.forEach((socket) => {

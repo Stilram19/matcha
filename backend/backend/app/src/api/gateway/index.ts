@@ -23,11 +23,16 @@ function onConnection(client: Socket) {
     registerHandlers.forEach((registerHandler) => {
         registerHandler(client);
     })
-    
-    client.broadcast.emit("global:online-users", {online_users: socketManager.getConnectedUsers()});
+
+    console.log("broadcasting....");
+    // client.broadcast.emit("global:online-users", {online_users: socketManager.getConnectedUsers()});
+    console.log(socketManager.getSockets().length);
+    socketManager.getSockets().forEach((socket) => {
+        socket.emit('global:online-users', {onlineUsers: socketManager.getConnectedUsers()});
+    })
 
     client.on("disconnect", (reason) => {
-        console.log(reason);    
+        console.log(`disconnect ${reason}`);    
         handleDisconnect(client);
     });
 }

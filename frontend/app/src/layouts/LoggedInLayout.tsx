@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
 import LoggedInHeader from "../components/header/LoggedInHeader";
+import SocketProvider from '../context/SocketProvider';
 
 type Props = {
     children: ReactNode;
@@ -9,8 +10,10 @@ const LoggedInLayout: FC<Props> = ({children}) =>  {
 
     return (
         <>
-            <LoggedInHeader />
-            {children}
+            <SocketProvider>
+                <LoggedInHeader />
+                {children}
+            </SocketProvider>
         </>
     )
 }

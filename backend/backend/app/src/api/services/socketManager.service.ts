@@ -26,8 +26,18 @@ class SocketManager {
         }
     }
 
-    getSockets(userId: number) {
+    getSocketsById(userId: number) {
         return this.sockets.get(userId);
+    }
+
+    getSockets() : Socket[] {
+        let sockets: Socket[] = [];
+    
+        this.sockets.forEach((value, key) => {
+            sockets.push(...value);   
+        })
+
+        return (sockets);
     }
 
     getConnectedUsers(): number[] {
@@ -36,7 +46,7 @@ class SocketManager {
 
     isUserOnline(userId: number) {
         return (this.sockets.has(userId));
-    } 
+    }
 }
 
 
