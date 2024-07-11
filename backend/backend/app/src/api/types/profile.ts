@@ -1,0 +1,32 @@
+export type ProfileInfos = {
+    userInfos: UserInfos;
+    interests: string[];
+    userPhotos: string[];
+}
+
+export type UserInfos = {
+    id: string;
+    isSelf: boolean;
+    isLiked: boolean;
+    isLiking: boolean;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    profilePicture: string; // URL
+    biography: string;
+    fameRating: number;
+};
+
+export type BriefProfileInfos = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    profilePicture: string;
+};

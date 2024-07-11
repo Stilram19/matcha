@@ -1,11 +1,14 @@
 import { Router } from "express";
-import { validateLocalLoginBody } from "../middlewares/authentication.js";
-import { localStrategy } from "../controllers/authentication.js";
+import { validateForgotPassword, validateLocalLoginBody, validateResetPassword } from "../middlewares/authentication.js";
+import { forgetPasswordController, localStrategyController, logoutUserController, resetPasswordController } from "../controllers/authentication.js";
+import { validateAuthToken } from "../middlewares/validateAuthToken.js";
 
 const router = Router();
 
-router.post('/login/local', validateLocalLoginBody, localStrategy);
+router.post('/login/local', validateLocalLoginBody, localStrategyController);
 router.post('/login/google');
-router.get('/logout');
+router.post('/forgotPassword', validateForgotPassword, forgetPasswordController);
+router.patch('/resetPassword', validateAuthToken, validateResetPassword, resetPasswordController);
+router.get('/logout', validateAuthToken, validateResetPassword, logoutUserController);
 
 export default router;

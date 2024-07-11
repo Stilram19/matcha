@@ -1,14 +1,26 @@
 // export default SignUp;
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import * as Yup from 'yup';
-import { sendPostRequest } from '../../utils/httpRequests';
+import { sendActionRequest } from '../../utils/httpRequests';
+import { getFormError } from '../../utils/errorHandling';
 
 const SignupSchema = Yup.object().shape({
     email: Yup.string()
         .email('Invalid email')
         .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email')
         .required('Email is required'),
+
+    username: Yup.string()
+        .min(4, 'Username must be at least 4 characters')
+        .max(12, 'Username must be at most 12 characters')
+        .matches(/^(?!_)/, 'Username cannot start with an underscore')
+        .matches(/^(?!.*__)/, 'Username cannot contain consecutive underscores')
+        .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
+        .matches(/(?<!_)$/, 'Username cannot end with an underscore')
+        .required('username is required'),
+    firstname: Yup.string().required('first name is required'),
+    lastname: Yup.string().required('last name is required'),
     password: Yup.string()
         .min(12, 'Password must be at least 12 characters')
         .max(28, 'Password must be at most 28 characters')
@@ -20,34 +32,51 @@ const SignupSchema = Yup.object().shape({
         .required('Password is required'),
 });
 
+type FormValues = {
+    email: string;
+    username: string;
+    firstname: string;
+    lastname: string;
+    password: string;
+};
+
 const SignUp = () => {
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    // const [formData, setFormData] = useState({ email: '', username: '', firstname: '', lastname: '', password: '' });
     const [showVerificationMessage, setShowVerificationMessage] = useState(false);
 
-    useEffect(() => {
-        const sendDataToServer = async () => {
-            if (!formData.email || !formData.password) {
-                return;
+    const handleSignupWithEmailSubmit = async (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => {
+        const { setSubmitting, setErrors } = formikHelpers;
+
+        try {
+            await sendActionRequest('POST', import.meta.env.VITE_LOCAL_SIGNUP_API_URL as string, values);
+
+            setShowVerificationMessage(true);
+        } catch (error) {
+            let formError = getFormError(error);
+
+            if (formError === undefined) {
+                console.log('Unexpected error structure: ' + error);
+                return ;
             }
 
-            try {
-                const response = await sendPostRequest(import.meta.env.VITE_LOCAL_SIGNUP_API_URL as string, formData);
-                console.log('API response:', response);
-                setShowVerificationMessage(true);
-            } catch (error) {
-                console.error('Error sending POST request:', error);
+            const message = formError.message as string;
+            const field = formError.field as string;
+
+            if (field === 'email') {
+                setErrors({ email: message });
+                return ;
             }
-        };
 
-        sendDataToServer();
-    }, [formData]);
+            if (field === 'username') {
+                setErrors({ username: message });
+                return ;
+            }
 
+            console.error('Unhandled field: ', field);
 
-    const handleSignupWithEmailSubmit = async (values: { email: string, password: string }, formikHelpers: FormikHelpers<{ email: string, password: string }>) => {
-        const { setSubmitting } = formikHelpers;
-
-        setFormData({ email: values.email, password: values.password });
-        setSubmitting(false);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -56,12 +85,12 @@ const SignUp = () => {
                 <h1 className="text-5xl poetsen-one-regular">Sign up!</h1>
                 <h1 className="mb-4 text-5xl poetsen-one-regular text-center">and find your partner</h1>
                 <Formik
-                    initialValues={{ email: '', password: '' }}
+                    initialValues={{ email: '', username: '', firstname: '', lastname: '', password: '' }}
                     validationSchema={SignupSchema}
                     onSubmit={handleSignupWithEmailSubmit}
                     >
                     {({ isSubmitting }) => (
-                        <Form className="flex flex-col justify-start">
+                        <Form className="flex flex-col justify-start" noValidate>
                             <div className="mb-4">
                                 <label htmlFor="email" className="block mb-2">Email</label>
                                 <Field
@@ -70,8 +99,45 @@ const SignUp = () => {
                                 type="text"
                                 className="p-3 bg-light-gray border border-e0 w-96 rounded-lg outline-none focus:ring focus:ring-blue-300 mb-1"
                                 placeholder="john@example.com"
+                                autoComplete="off"
                                 />
                                 <ErrorMessage name="email" component="div" className="text-red-600 text-sm mt-1" />
+                            </div>
+
+                            <div className="mb-4">
+                                <label htmlFor="username" className="block mb-2">username</label>
+                                <Field
+                                id="username"
+                                name="username"
+                                type="text"
+                                className="p-3 bg-light-gray border border-e0 w-96 rounded-lg outline-none focus:ring focus:ring-blue-300 mb-1"
+                                placeholder="username"
+                                />
+                                <ErrorMessage name="username" component="div" className="text-red-600 text-sm mt-1" />
+                            </div>
+
+                            <div className="mb-4">
+                                <label htmlFor="firstname" className="block mb-2">first name</label>
+                                <Field
+                                id="firstname"
+                                name="firstname"
+                                type="text"
+                                className="p-3 bg-light-gray border border-e0 w-96 rounded-lg outline-none focus:ring focus:ring-blue-300 mb-1"
+                                placeholder="firstname"
+                                />
+                                <ErrorMessage name="firstname" component="div" className="text-red-600 text-sm mt-1" />
+                            </div>
+
+                            <div className="mb-4">
+                                <label htmlFor="lastname" className="block mb-2">last name</label>
+                                <Field
+                                id="lastname"
+                                name="lastname"
+                                type="text"
+                                className="p-3 bg-light-gray border border-e0 w-96 rounded-lg outline-none focus:ring focus:ring-blue-300 mb-1"
+                                placeholder="lastname"
+                                />
+                                <ErrorMessage name="lastname" component="div" className="text-red-600 text-sm mt-1" />
                             </div>
 
                             <div className="mb-4">

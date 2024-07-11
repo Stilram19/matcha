@@ -1,5 +1,5 @@
 export function isUsernameValid(username: string): boolean {
-    const usernameRegexp = /^(?!_)(?!.*__)[a-zA-Z0-9_]{8,12}(?<!_)$/
+    const usernameRegexp = /^(?!_)(?!.*__)[a-zA-Z0-9_]{4,12}(?<!_)$/
 
     if (usernameRegexp.test(username) === false) {
         console.log('invalid username');
@@ -33,4 +33,12 @@ export function isIdValid(id: string) {
     const idRegxp = /^[0-9]+$/;
 
     return (idRegxp.test(id));
+}
+
+export function isFirstNameValid(firstName: string): boolean {
+    return (firstName.length > 0);
+}
+
+export function isLastNameValid(firstName: string): boolean {
+    return (firstName.length > 0);
 }

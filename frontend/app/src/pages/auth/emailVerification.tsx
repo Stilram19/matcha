@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { sendActionRequest } from '../../utils/httpRequests';
 
 function VerifyEmail() {
   const location = useLocation();
@@ -8,43 +9,35 @@ function VerifyEmail() {
   
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const verifyEmail = async () => {
-        
-        if (!token) {
+  const verifyEmail = async () => {
+      
+      if (!token) {
         setMessage('Invalid or missing token.');
         setIsLoading(false);
         return;
-        }
+      }
 
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/emailVerification`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ token }),
-            });
+      try {
+        await sendActionRequest('POST', import.meta.env.VITE_VERIFY_EMAIL_API_URL as string, { token }, token);
 
-            const msg = await response.json();
-
-            if (response.ok) {
-                setMessage('Email verified successfully.');
-            } else {
-                console.log('Error Message' + msg);
-                setMessage('Failed to verify email.');
-            }
-        } catch (error) {
-        console.error('Error verifying email:', error);
-        setMessage('An error occurred while verifying the email.');
-        } finally {
+        setTimeout(() => {
+          navigate('/complete-info/1');
+        }, 2000);
+        setMessage('Email verified successfully.');
+      } catch (error) {
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+        setMessage('Failed to verify email.');
+      } finally {
         setIsLoading(false);
-        }
-    };
+      }
+  };
 
-    verifyEmail();
+  verifyEmail();
   }, [token]);
 
   return (

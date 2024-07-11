@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import routes from './api/routers/index.js'
 import cors from 'cors'
 import createIoServer from './api/gateway/index.js';
+import cookieParser from 'cookie-parser'
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(routes);
 
