@@ -1,10 +1,8 @@
-import ChatBox from "../../components/chat/ChatBox";
-import ChatList from "../../components/chat/ChatList";
-import ContactInfo from "../../components/chat/ContactInfo";
-// import dms from "../../data/data.json"
 import { useState } from 'react';
-import { FaArrowLeft } from "react-icons/fa6";
-// import { SocketManager } from "../../socket/SocketManager";
+import { FaArrowLeft } from "react-icons/fa6";;
+import ChatList from "../../components/chat/ChatList";
+import ChatWindow from '../../components/chat/ChatWindow';
+import ContactInfo from "../../components/chat/ContactInfo";
 
 
 const Chat = () => {
@@ -13,6 +11,7 @@ const Chat = () => {
     const isDmActive = activeDmId !== -1;
 
     console.log("chat render")
+    console.log(activeDmId)
     return (
         // pt-[80px]
         <>
@@ -30,7 +29,7 @@ const Chat = () => {
                                 <span className="md:hidden absolute top-7 cursor-pointer" onClick={() => setActiveDmId(-1)}>
                                     <FaArrowLeft className="hover:fill-slate-400" size={25} />
                                 </span>
-                                <ChatBox dmId={activeDmId} />
+                                <ChatWindow dmId={activeDmId} />
                             </>
                         )}
                 </div>

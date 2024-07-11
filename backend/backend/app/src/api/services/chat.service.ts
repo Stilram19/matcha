@@ -29,9 +29,10 @@ export async function retrieveDms(userId: number) {
 
 
 export async function getChatHistory(userId: number, participantId: number) {
-    if (!await checkIdExists(participantId)) {
-        throw new HttpError(404, 'User Id not found');
-    }
+    // ! this should be in its own middleware, (maybe checking it when checking the is it blocked)
+    // if (!await checkIdExists(participantId)) {
+    //     throw new HttpError(404, 'User Id not found');
+    // }
 
     const records: any[] = [];
     const chat_history = records.map((record) => {
@@ -68,6 +69,19 @@ export async function getContactDetails(participant: number) {
         profile_picture: '/imgs/okhiar.jpg',
         status: 'online',
         biography: 'Blah blah'
+    }
+}
+
+export async function getParticipantInfoById(participant: number) {
+    // checking user existance
+
+    return {
+        id: 1,
+        username: 'okhiar',
+        first_name: 'oussama',
+        last_name: 'khiar',
+        profile_picture: '/imgs/okhiar.jpg',
+        status: 'online',
     }
 }
 

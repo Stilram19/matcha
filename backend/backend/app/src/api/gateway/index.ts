@@ -25,11 +25,11 @@ function onConnection(client: Socket) {
     })
 
     console.log("broadcasting....");
-    // client.broadcast.emit("global:online-users", {online_users: socketManager.getConnectedUsers()});
+    client.broadcast.emit("global:online-users", socketManager.getConnectedUsers());
     console.log(socketManager.getSockets().length);
-    socketManager.getSockets().forEach((socket) => {
-        socket.emit('global:online-users', {onlineUsers: socketManager.getConnectedUsers()});
-    })
+    // socketManager.getSockets().forEach((socket) => {
+    //     socket.emit('global:online-users', {onlineUsers: socketManager.getConnectedUsers()});
+    // })
 
     client.on("disconnect", (reason) => {
         console.log(`disconnect ${reason}`);    
@@ -44,7 +44,7 @@ function handleDisconnect(socket: Socket) {
     socketManager.removeSocket(userId, socket);
 
     if (!socketManager.isUserOnline(userId))
-        socket.broadcast.emit('global:online-users', {online_users: socketManager.getConnectedUsers()})
+        socket.broadcast.emit('global:online-users', socketManager.getConnectedUsers())
 }
 
 

@@ -29,12 +29,6 @@ export function isEmailFormatValid(email: string): boolean {
 }
 
 
-export function isIdValid(id: string) {
-    const idRegxp = /^[0-9]+$/;
-
-    return (idRegxp.test(id));
-}
-
 export function isFirstNameValid(firstName: string): boolean {
     return (firstName.length > 0);
 }

@@ -8,8 +8,8 @@ const router = Router();
 
 router.use(authenticationRouter);
 router.use(registrationRouter);
-router.use(profileRouter);
 
 router.use(protectedRouter);
+router.use(profileRouter);
 
 export default router;
