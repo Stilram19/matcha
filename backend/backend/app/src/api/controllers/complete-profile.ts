@@ -2,6 +2,9 @@ import { Request, Response } from 'express'
 import { getUserIdFromJwtService } from "../services/jwt.js";
 import { addUserInterestsService } from '../services/profile.js';
 import { addUserPhotosService, updatePersonalInfosService } from '../services/complete-profile.js';
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 export async function completeInterestsController(request: Request, response: Response) {
     const accessToken = request.cookies['AccessToken'] as string;
@@ -45,6 +48,13 @@ export async function completePhotosController(request: Request, response: Respo
 }
 
 export async function completePersonalInfosController(request: Request, response: Response) {
+    const completeInfosCookie = request.cookies['CompleteProfile'];
+
+    if (completeInfosCookie) {
+        response.status(403).send( { url: process.env.FRONTENT_PROFILE_URL } );
+        return ;
+    }
+
     const file = request.file as Express.Multer.File;
 
     let profilePicturePath = null;

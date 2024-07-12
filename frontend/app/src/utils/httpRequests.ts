@@ -54,7 +54,11 @@ export async function sendFormDataRequest(method: string, url: string, formData:
     }
 
     if (response.status === 401) {
-        document.location.href = 'http://localhost:5173/login';
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
     }
 
     if (!response.ok) {
@@ -97,7 +101,11 @@ export async function sendLoggedInActionRequest(method: string, url: string, dat
     }
 
     if (response.status === 401) {
-        document.location.href = 'http://localhost:5173/login';
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
     }
 
     if (!response.ok) {
@@ -129,7 +137,11 @@ export async function sendLoggedInGetRequest(url: string) {
     }
 
     if (response.status === 401) {
-        document.location.href = 'http://localhost:5173/login';
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
     }
 
     if (!response.ok) {

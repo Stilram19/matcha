@@ -12,6 +12,11 @@
   width: 550px;
 }
 
+.divider {
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
 .camera-icon-overlay {
     bottom: 25px;
     right: 40px;

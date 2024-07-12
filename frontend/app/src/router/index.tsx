@@ -10,7 +10,6 @@ import PersonalInfo from "../pages/profile_setup/PersonalInfo";
 import CompleteInfo from "../pages/profile_setup/CompleteInfo";
 import InterestTag from "../pages/profile_setup/InterestTag";
 import Explore from "../pages/explore/Explore";
-import ExploreV2 from "../pages/explore/Explore1";
 import UserProfile from "../pages/profile/UserProfile";
 import LoggedInLayout from "../layouts/LoggedInLayout";
 import SearchResults from "../pages/searchResults/SearchResults";
@@ -66,16 +65,20 @@ const router = createBrowserRouter([
       path: '/explore',
       element: <LoggedInLayout><Explore /></LoggedInLayout>
     },
-    {
-      path: '/explore1',
-      element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
-    },
+    // {
+    //   path: '/explore1',
+    //   element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
+    // },
     {
       path: '/chat',
       element: <LoggedInLayout><Chat/></LoggedInLayout>
     },
     {
       path: '/profile/:userId',
+      element: <LoggedInLayout><UserProfile/></LoggedInLayout>
+    },
+    {
+      path: '/profile',
       element: <LoggedInLayout><UserProfile/></LoggedInLayout>
     },
     {

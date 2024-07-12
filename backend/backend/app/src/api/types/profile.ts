@@ -28,6 +28,7 @@ export type BriefProfileInfos = {
     age: number;
     gender: string;
     sexualPreferences: string;
+    biography: string;
     profilePicture: string;
 };
 

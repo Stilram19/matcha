@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { sendFormDataRequest } from "../../utils/httpRequests";
+import { sendFormDataRequest, sendLoggedInGetRequest } from "../../utils/httpRequests";
 import { getFormError } from "../../utils/errorHandling";
+import { BriefProfileInfos } from "../../types/profile";
 
 type SelectOptions = {
     value: string;
@@ -37,7 +38,27 @@ type FormValues = {
 
 const PersonalInfo = () => {
     const [image, setImage] = useState<File>();
+    const [defaultProfileInfos, setDefaultProfileInfos] = useState<BriefProfileInfos>();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        (async function fetchDefaultPersonalInfos() {
+            try {
+                const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_CURR_USER_BRIEF_INFOS_API_URL)
+
+                if (responseBody && responseBody.profileInfos) {
+                    setDefaultProfileInfos(responseBody.profileInfos);
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        })();
+    }, [])
+
+    if (!defaultProfileInfos) {
+        return ;
+    }
 
     const validationSchema = Yup.object({
         firstname: Yup.string()
@@ -126,12 +147,12 @@ const PersonalInfo = () => {
 
             <Formik
                 initialValues={{
-                    firstname: '',
-                    lastname: '',
-                    username: '',
-                    biography: '',
-                    gender: '',
-                    sexualPreference: '',
+                    firstname: defaultProfileInfos.firstName,
+                    lastname: defaultProfileInfos.lastName,
+                    username: defaultProfileInfos.userName,
+                    biography: defaultProfileInfos.biography,
+                    gender: defaultProfileInfos.gender,
+                    sexualPreference: defaultProfileInfos.sexualPreferences,
                 }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}

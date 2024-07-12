@@ -41,3 +41,7 @@ export function validateCompleteProfileBody(request: Request, response: Response
 
     next();
 }
+
+export async function checkIfAlreadyCompleted(request: Request, response: Response, next: NextFunction) {
+    
+}

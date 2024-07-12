@@ -42,7 +42,7 @@ function interestsInput({initialySelectedInterests, handleInterestsSave}: intere
                     )
                 }
             </div>
-            <div className="mr-4">
+            <div className="mt-4 mr-4">
                 <ApplyCancelButtons width={90} height={40} handleCancel={handleCancel} handleApply={handleApply} />
             </div>
         </div>

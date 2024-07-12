@@ -4,14 +4,6 @@ import interests from "../../utils/interests";
 import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 import { useNavigate } from "react-router-dom";
 
-
-// const tags = [
-//     "anime", "movies", "gaming", "music", "cats", "singing", "travel",
-//     "science", "history", "learning", "fantasy", "pop", "animals", "culture",
-//     "baking", "comedy", "drawing", "languages", "concerts", "art", "philosophy",
-//     "meditation", "books", "dance", "writing", "mystery"
-// ];
-
 const InterestTag = () => {
     const   [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
     const navigate = useNavigate();
@@ -33,7 +25,7 @@ const InterestTag = () => {
             await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PROFILE_INTERESTS_API_URL, {interests: [...selectedTags]}, 'application/json');
 
             setTimeout(() => {
-                navigate('/complete-info/2');
+                navigate('/complete-info/3');
             }, 1000);
         }
         catch (err) {
@@ -71,6 +63,5 @@ const InterestTag = () => {
     )
 
 }
-
 
 export default InterestTag;

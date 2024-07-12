@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { blockUserController, getBriefProfileInfosController, getProfileInfosController, likeProfileController, reportFakeAccountController, unlikeProfileController, updateInterestsController, updatePersonalInfosController, updateProfilePictureController } from "../controllers/profile.js";
+import { blockUserController, getBriefProfileInfosController, getCurrProfileInfosController, getCurrUserBriefProfileInfosController, getProfileInfosController, likeProfileController, reportFakeAccountController, unlikeProfileController, updateInterestsController, updatePersonalInfosController, updateProfilePictureController } from "../controllers/profile.js";
 import { blockMiddleware, validateUserIdParam } from "../middlewares/profile.js";
 import { validateJwtToken, validateCSRFCookies } from "../middlewares/authorization.js";
 import { validateCompleteProfileBody } from "../middlewares/complete-info.js";
@@ -11,6 +11,8 @@ router.use(validateJwtToken);
 router.use(validateCSRFCookies);
 
 router.get('/profileInfos/:userId', validateUserIdParam, blockMiddleware, getProfileInfosController);
+router.get('/currUserProfileInfos', getCurrProfileInfosController);
+router.get('/currUserBriefProfileInfos', getCurrUserBriefProfileInfosController);
 router.get('/briefProfileInfos/:userId', validateUserIdParam, blockMiddleware, getBriefProfileInfosController);
 router.patch('/profileInterests', updateInterestsController);
 router.patch('/profilePicture', upload.single('profilePicture'), updateProfilePictureController);
