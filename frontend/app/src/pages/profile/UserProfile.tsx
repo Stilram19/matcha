@@ -84,7 +84,10 @@ function UserProfile() {
         handleLikeButtonClick();
     }
 
-    function handleEditOverlayClose() {
+    function handleEditOverlayClose(newProfileInfos: ProfileInfos | null) {
+        if (newProfileInfos) {
+            setProfileInfos(newProfileInfos);
+        }
         setIsProfileEditOpen(false);
     }
 
@@ -100,8 +103,9 @@ function UserProfile() {
         const profileInfosCopy: ProfileInfos = {userInfos: profileInfos.userInfos, interests: new Set(newSelectedInterests), userPhotos: profileInfos.userPhotos};
 
         try {
-            await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...newSelectedInterests]});
+            await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...newSelectedInterests]}, 'application/json');
 
+            // console.log('new selected interests: ' + newSelectedInterests);
             setProfileInfos(profileInfosCopy);
         }
         catch (err) {

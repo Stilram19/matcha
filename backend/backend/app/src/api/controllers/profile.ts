@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { likeProfileService, blockUserService, reportFakeAccountService, retrieveBriefProfileInfosService, retrieveProfileInfosService, updateUserInterestsService, unlikeProfileService, addUserInterestsService } from '../services/profile.js';
 import { getUserIdFromJwtService } from '../services/jwt.js';
+import { updatePersonalInfosService } from '../services/complete-profile.js';
 
 export async function getProfileInfosController(request: Request, response: Response) {
     const userId = Number(request.params.userId);
@@ -68,10 +69,6 @@ export async function addInterestsController(request: Request, response: Respons
     catch (err) {
         response.sendStatus(500);
     }
-}
-
-export async function updateProfilePictureController(request: Request, response: Response) {
-
 }
 
 export async function blockUserController(request: Request, response: Response) {
@@ -161,6 +158,38 @@ export async function unlikeProfileController(request: Request, response: Respon
         await unlikeProfileService(userId as number, unlikedUserId);
 
         response.sendStatus(201);
+    }
+    catch (err) {
+        response.sendStatus(500);
+    }
+}
+
+export async function updateProfilePictureController(request: Request, response: Response) {
+
+}
+
+export async function updatePersonalInfosController(request: Request, response: Response) {
+    const file = request.file as Express.Multer.File;
+
+    let profilePicturePath = null;
+    const username = request.body.username as string;
+    const firstname = request.body.firstname as string;
+    const lastname = request.body.lastname as string;
+    const gender = request.body.gender as string;
+    const biography = request.body.biography as string;
+    const sexualPreference = request.body.sexualPreference as string;
+
+    if (file) {
+        profilePicturePath = file.path;
+    }
+
+    try {
+        const personalInfos = {profilePicturePath, username, firstname, lastname, gender, sexualPreference, biography}
+        const imageUrl = await updatePersonalInfosService(personalInfos);
+
+        console.log(imageUrl);
+
+        response.status(201).send( { msg: 'personal infos completed!', imageUrl } );
     }
     catch (err) {
         response.sendStatus(500);

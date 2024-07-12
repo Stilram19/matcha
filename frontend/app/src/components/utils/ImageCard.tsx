@@ -32,5 +32,4 @@ const ImageCard = ({imageSrc, onRemove}: ImageCardProps) => {
     )
 }
 
-
 export default ImageCard;

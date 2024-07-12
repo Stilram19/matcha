@@ -30,8 +30,11 @@ const InterestTag = () => {
     const handleContinue = async () => {
         console.log([...selectedTags]);
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...selectedTags]});
-            navigate('/complete-info/3');
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PROFILE_INTERESTS_API_URL, {interests: [...selectedTags]}, 'application/json');
+
+            setTimeout(() => {
+                navigate('/complete-info/2');
+            }, 1000);
         }
         catch (err) {
             console.log(err);

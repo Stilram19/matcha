@@ -30,3 +30,13 @@ export type BriefProfileInfos = {
     sexualPreferences: string;
     profilePicture: string;
 };
+
+export type updateProfilePersonalInfos = {
+    profilePicturePath: string | null;
+    username: string;
+    firstname: string;
+    lastname: string;
+    gender: string;
+    biography: string;
+    sexualPreference: string;
+};

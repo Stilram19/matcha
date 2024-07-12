@@ -8,12 +8,12 @@ export function setJwtTokensAsHttpOnlyCookies(userId: number, response: Response
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'strict'
     });
 
     response.cookie('RefreshToken', refreshToken, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'strict'
     });
 }
 
@@ -22,12 +22,12 @@ export function setCSRFcookies(response: Response) {
 
     response.cookie('csrfSecretCookie', csrfCookie, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'strict' 
     });
 
     response.cookie('csrfClientExposedCookie', csrfCookie, {
         httpOnly: false,
-        sameSite: 'none'
+        sameSite: 'strict'
     });
 }
 
@@ -36,7 +36,7 @@ export function setAccessTokensCookie(userId: number, response: Response) {
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'strict'
     });
 }
 

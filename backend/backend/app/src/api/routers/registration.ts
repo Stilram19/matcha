@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { validateLocalSignupBody } from "../middlewares/registration.js";
 import { validateAuthToken } from "../middlewares/validateAuthToken.js";
-import { localStrategyController } from "../controllers/authentication.js";
-import { emailVerficiationController } from "../controllers/registration.js";
+import { emailVerficiationController, localStrategyController } from "../controllers/registration.js";
 
 const router = Router();
 

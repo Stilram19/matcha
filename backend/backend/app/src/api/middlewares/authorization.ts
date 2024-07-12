@@ -9,6 +9,7 @@ export function validateJwtToken(request: Request, response: Response, next: Nex
 
     if (!accessToken || !refreshToken
         || typeof accessToken != 'string' || typeof refreshToken != 'string') {
+        console.log('invalid jwt tokens: ' + accessToken + ' ' + refreshToken);
         clearJwtCookies(response);
         clearCSRFCookies(response);
         response.status(401).send({ err: 'not authorized' });
