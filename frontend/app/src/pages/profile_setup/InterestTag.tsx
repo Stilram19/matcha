@@ -61,7 +61,7 @@ const InterestTag = () => {
             <div className="flex justify-end">
                 <button
                     disabled={selectedTags.size < 5}
-                    className={`mt-6 px-6 py-2 bg-pastel-pink-100 ${selectedTags.size < 5 ? 'bg-opacity-75' : ''} rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring`}
+                    className={`mt-6 mb-4 px-6 py-2 bg-pastel-pink-100 ${selectedTags.size < 5 ? 'bg-opacity-75' : ''} rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring`}
                     onClick={handleContinue}>
 
                     Continue
