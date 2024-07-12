@@ -1,5 +1,5 @@
 export function isUsernameValid(username: string): boolean {
-    const usernameRegexp = /^(?!_)(?!.*__)[a-zA-Z0-9_]{8,12}(?<!_)$/
+    const usernameRegexp = /^(?!_)(?!.*__)[a-zA-Z0-9_]{4,12}(?<!_)$/
 
     if (usernameRegexp.test(username) === false) {
         console.log('invalid username');
@@ -26,4 +26,35 @@ export function isEmailFormatValid(email: string): boolean {
     }
 
     return (emailRegexp.test(email));
+}
+
+export function isFirstNameValid(firstName: string): boolean {
+    const firstnameRegexp = /^[a-zA-Z]{2,20}$/;
+
+    return (firstnameRegexp.test(firstName));
+}
+
+export function isLastNameValid(firstName: string): boolean {
+    const lastnameRegexp = /^[a-zA-Z]{2,20}$/;
+
+    return (lastnameRegexp.test(firstName));
+}
+
+export function isGenderAndSexualPreferenceValid(gender: string, sexualPreference: string): boolean {
+    const handledGenders = new Set(['male', 'female', 'transgender']);
+    const handledSexualPreferences = new Set(['heterosexual', 'bisexual-male', 'bisexual-female', 'homosexual', 'lesbian']);
+
+    if (!handledGenders.has(gender) || !handledSexualPreferences.has(sexualPreference)) {
+        return (false);
+    }
+
+    if (gender == 'male' && (sexualPreference == 'lesbian' || sexualPreference == 'bisexual-female')) {
+        return (false);
+    }
+
+    if (gender == 'female' && (sexualPreference == 'homosexual' || sexualPreference == 'bisexual-male')) {
+        return (false);
+    }
+
+    return (true);
 }

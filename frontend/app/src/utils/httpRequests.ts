@@ -1,42 +1,140 @@
-export async function sendPostRequest(url: string, data: any) {
+import { getCookie } from "./generalPurpose";
+
+export async function sendActionRequest(method: string, url: string, data: any, token?: string) {
+    const headers: { [key: string]: string } = {
+        'Content-Type': 'application/json',
+    }
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers: headers,
+        body: JSON.stringify(data)
+    });
+
+    let responseBody: any;
+
     try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            console.log(result.msg);
-            throw new Error(`HTTP error! Msg: ${result.msg}`);
-        }
-
-        const responseData = await response.json();
-        return (responseData);
+        responseBody = await response.json();        
+    } catch (err) {
+        responseBody = null;
     }
-    catch (err) {
-        throw err;
+
+    if (!response.ok) {
+        throw (responseBody?.error ?? responseBody ?? 'uknown error occurred');
     }
+
+    return (responseBody);
 }
 
-export async function sendGetRequest(url: string) {
+export async function sendFormDataRequest(method: string, url: string, formData: FormData) {
+    const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
+
+    const headers: { [key: string]: string } = {
+        'Authorization': `Bearer ${csrfClientExposedCookie}`
+    }
+
+    const response = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers: headers,
+        body: formData
+    });
+
+    let responseBody: any;
+
     try {
-        const response = await fetch(url, {
-            method: "GET",
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-        return (responseData);
+        responseBody = await response.json();        
+    } catch (err) {
+        responseBody = null;
     }
-    catch (err) {
-        throw err;
+
+    if (response.status === 401) {
+        document.location.href = 'http://localhost:5173/login';
     }
+
+    if (!response.ok) {
+        throw (responseBody?.error ?? responseBody ?? 'uknown error occurred');
+    }
+
+    return (responseBody);
+}
+
+export async function sendLoggedInActionRequest(method: string, url: string, data?: any, contentType?: string) {
+    const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
+
+    const headers: { [key: string]: string } = {
+        'Authorization': `Bearer ${csrfClientExposedCookie}`
+    }
+
+    let body = null;
+
+    if (data) {
+        body = JSON.stringify(data);
+    }
+
+    if (contentType) {
+        headers['Content-Type'] = contentType;
+    }
+
+    const response = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers: headers,
+        body
+    });
+
+    let responseBody: any;
+
+    try {
+        responseBody = await response.json();        
+    } catch (err) {
+        responseBody = null;
+    }
+
+    if (response.status === 401) {
+        document.location.href = 'http://localhost:5173/login';
+    }
+
+    if (!response.ok) {
+        throw (responseBody?.error ?? responseBody ?? 'uknown error occurred');
+    }
+
+    return (responseBody);
+}
+
+export async function sendLoggedInGetRequest(url: string) {
+    const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
+
+    console.log(csrfClientExposedCookie);
+
+    const response = await fetch(url, {
+        method: "GET",
+        credentials: 'include',
+        headers: {
+            'Authorization': `Bearer ${csrfClientExposedCookie}`
+        },
+    });
+
+    let responseBody: any;
+
+    try {
+        responseBody = await response.json();
+    } catch (err) {
+        responseBody = null;
+    }
+
+    if (response.status === 401) {
+        document.location.href = 'http://localhost:5173/login';
+    }
+
+    if (!response.ok) {
+        throw (responseBody?.error ?? responseBody ?? 'uknown error occurred');
+    }
+
+    return (responseBody);
 }

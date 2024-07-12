@@ -1,18 +1,20 @@
 import { useState } from "react";
 import Tag from "../../components/Tag";
+import interests from "../../utils/interests";
+import { sendLoggedInActionRequest } from "../../utils/httpRequests";
+import { useNavigate } from "react-router-dom";
 
 
-const tags = [
-    "anime", "movies", "gaming", "music", "cats", "singing", "travel",
-    "science", "history", "learning", "fantasy", "pop", "animals", "culture",
-    "baking", "comedy", "drawing", "languages", "concerts", "art", "philosophy",
-    "meditation", "books", "dance", "writing", "mystery"
-];
-
-
+// const tags = [
+//     "anime", "movies", "gaming", "music", "cats", "singing", "travel",
+//     "science", "history", "learning", "fantasy", "pop", "animals", "culture",
+//     "baking", "comedy", "drawing", "languages", "concerts", "art", "philosophy",
+//     "meditation", "books", "dance", "writing", "mystery"
+// ];
 
 const InterestTag = () => {
     const   [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+    const navigate = useNavigate();
 
     const handleOnClick = (tag: string) => {
         setSelectedTags((prev) => {
@@ -25,12 +27,19 @@ const InterestTag = () => {
         })
     }
 
-    const   handleContinue = () => {
-        console.log(selectedTags);
+    const handleContinue = async () => {
+        console.log([...selectedTags]);
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PROFILE_INTERESTS_API_URL, {interests: [...selectedTags]}, 'application/json');
 
-        // send tags to the server...
+            setTimeout(() => {
+                navigate('/complete-info/2');
+            }, 1000);
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
-
 
     return (
         <div className="w-full">
@@ -41,7 +50,7 @@ const InterestTag = () => {
             </p>
         
 
-            {tags.map((tag, index) => {
+            {interests.map((tag, index) => {
                 return (
                 <div key={index} className="ml-4 mb-2 inline-block" onClick={() => handleOnClick(tag)}>
                     <Tag tag={tag} bgColor={selectedTags.has(tag) ? 'bg-green-light' : 'bg-white'}/>

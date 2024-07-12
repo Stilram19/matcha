@@ -32,7 +32,7 @@ function LoggedInHeader() {
             <nav className={`hidden md:inline-flex flex gap-4 lg:gap-6 ${isSearchOpen ? 'hidden md:hidden' : ''}`}>
                 <ul className="flex items-center">
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/explore'>explore</NavLink></li>
-                    <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/user-profile'>profile</NavLink></li>
+                    <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/profile'>profile</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/chat'>chat</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/history'>history</NavLink></li>
                 </ul>
@@ -41,7 +41,7 @@ function LoggedInHeader() {
                     <div className="p-3 lg:p-5">
                         <img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/>
                     </div>
-                    <div className="p-3 lg:p-5 hover:text-pastel-pink">logout</div>
+                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
                 </div>
             </nav>
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>

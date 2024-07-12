@@ -1,65 +1,86 @@
 import { Request, Response } from 'express'
-import { consumeEmailVerificationToken, isNewEmail, isNewUsername, saveEmailVerificationToken, saveUserSignUpCredentials } from '../services/registration.js';
-import { generateRandomToken, hashDataWithSalt } from '../services/hashing.js';
-import { sendEmailVerification } from '../services/mailService.js';
+import { formError } from '../helpers/errorFactory.js';
+import { clearJwtCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
+import { consumeEmailVerificationTokenService, isNewEmailService, isNewUsernameService, saveEmailVerificationTokenService, saveUserSignUpCredentialsService } from '../services/registration.js';
+import { generateRandomTokenService, hashDataWithSaltService } from '../services/hashing.js';
+import { sendEmailVerificationService } from '../services/mailService.js';
 
-export async function localStrategy(request: Request, response: Response): Promise<void> {
+export async function localStrategyController(request: Request, response: Response): Promise<void> {
     try {
         const email = request.body.email as string;
+        const username = request.body.username as string;
+        const firstname = request.body.firstname as string;
+        const lastname = request.body.lastname as string;
         const password = request.body.password as string;
 
+        console.log('cookies: ' + request.cookies['AccessToken']);
+
+        clearJwtCookies(response);
+
         // checking that the email is not already in use
-        if (await isNewEmail(email) == false) {
-            response.status(400).send( { msg: 'Please use a different email address.' } );
+        if (await isNewEmailService(email) == false) {
+            response.status(400).send( formError('email', 'Please use a different email address') );
+            return ;
+        }
+
+        // checking that the username is not already in use
+        if (await isNewUsernameService(username) == false) {
+            response.status(400).send( formError('username', 'Please use a different username') );
             return ;
         }
 
         // hash password with salt and save user credentials
-        const [hashedPassword, salt] = await hashDataWithSalt(password);
+        const [hashedPassword, salt] = await hashDataWithSaltService(password);
 
-        saveUserSignUpCredentials(email, hashedPassword, salt);
+        saveUserSignUpCredentialsService(email, username, firstname, lastname, hashedPassword, salt);
 
-        const verificationToken = generateRandomToken(16);
+        const verificationToken = generateRandomTokenService(16);
 
         // wait until the token is stored
-        await saveEmailVerificationToken(verificationToken);
+        await saveEmailVerificationTokenService(verificationToken);
+
+        console.log(`firstname: ${firstname}`);
 
         // send email verification without blocking the user
-        sendEmailVerification(email, verificationToken).catch(err => {
+        sendEmailVerificationService(email, firstname, verificationToken).catch(err => {
             console.log('error sending the verification email!');
         });
 
         response.status(201).send( { msg: 'Registration successful. Please check your email to verify your account.' } );
     }
     catch (err) {
-        response.status(500).send( { msg: err } );
+        // response.sendStatus(500);
     }
 }
 
-export async function emailVerficiation(request: Request, response: Response): Promise<void> {
+export async function emailVerficiationController(request: Request, response: Response): Promise<void> {
     try {
         // the token is already checked in the previous middleware
         const authHeader = request.headers['authorization'] as string;
         const token = authHeader.split(' ')[1] as string;
 
         // verifying the token, if it exists it will be deleted (consumed)
-        const userId = await consumeEmailVerificationToken(token);
+        const userId = await consumeEmailVerificationTokenService(token);
 
-        console.log();
-
-        if (!userId) {
+        if (userId === undefined) {
+            console.log('user not verified');
             response.status(403).send( { msg: 'token not found or expired!' } );
             return ;
         }
 
-        // const accessToken = generateAccessToken();
-        // const refreshToken = generateRefreshToken();
+        // set user as validated
 
-        // validateUserRegistration(userId, refreshToken);
+        // set jwt tokens in httpOnly cookies to mitigate XSS attacks
+        setJwtTokensAsHttpOnlyCookies(1, response);
+
+        // set CSRF cookies to mitigate CSRF attacks
+        setCSRFcookies(response);
+
+        console.log('user verified successfully');
 
         response.sendStatus(201);
     }
     catch (err) {
-        response.status(500).send( { msg: err } );        
+        // response.status(500).send( { msg: err } );  
     }
 }

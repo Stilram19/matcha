@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { validateLocalSignupBody } from "../middlewares/registration.js";
-import { emailVerficiation, localStrategy } from "../controllers/registration.js";
 import { validateAuthToken } from "../middlewares/validateAuthToken.js";
+import { emailVerficiationController, localStrategyController } from "../controllers/registration.js";
 
 const router = Router();
 
-router.post('/signup/local', validateLocalSignupBody, localStrategy);
-router.post('/emailVerification', validateAuthToken, emailVerficiation);
+router.post('/signup/local', validateLocalSignupBody, localStrategyController);
+router.post('/emailVerification', validateAuthToken, emailVerficiationController);
 
 export default router;
