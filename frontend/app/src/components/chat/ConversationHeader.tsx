@@ -3,7 +3,7 @@ import { ParticipantUser } from "../../types";
 
 
 const ConversationHeader = ({id, firstName, lastName, profilePicture, status, isFavorite}: ParticipantUser) => {
-    console.log("render conv header")
+    console.log("render conv header");
 
     // useEffect(() => {
         

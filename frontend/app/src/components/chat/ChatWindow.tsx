@@ -1,13 +1,13 @@
-import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
+import ChatBox from "./ChatBox";
+import { IoSend } from "react-icons/io5";
+import useFetch from "../../hooks/useFetch";
+import { AiOutlineAudio } from "react-icons/ai";
+import ConversationHeader from "./ConversationHeader";
 import { useSocket } from "../../context/SocketProvider";
-import { sendLoggedInGetRequest } from "../../utils/httpRequests";
-import { MessageProps } from "../../types";
+import { MessageProps, ParticipantUser } from "../../types";
+import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
 import users from '../../data/users.json' // dummy data , previwing rendering
 import dmMessages from '../../data/messages.json' // dummy data , previwing rendering
-import ConversationHeader from "./ConversationHeader";
-import { AiOutlineAudio } from "react-icons/ai";
-import { IoSend } from "react-icons/io5";
-import ChatBox from "./ChatBox";
 
 
 
@@ -57,26 +57,19 @@ const   ChatInputField: FC<{onSend: (msg: string) => void}> = ({onSend}) => {
 
 const   ChatWindow: FC<{dmId: number}> = ({dmId}) => {
     const   [messages, setMessages] = useState<any[]>(dmMessages);
-    // const   [participant, setParticipant] = useState<any>();
-    const   socket = useSocket();  
+    const   [participant, setParticipant] = useState<ParticipantUser>({
+        id: dmId as number,
+        firstName: users[dmId - 1].firstName,
+        lastName: users[dmId - 1].lastName,
+        isFavorite: users[dmId - 1].isFavorite,
+        status: users[dmId - 1].status as 'online' | 'offline',
+        profilePicture: users[dmId - 1].profilePicture
+    });
 
-    // const fetchData = async (url: string, cb: (data: any) => void) => {
-    //     let data;
-    //     try {
-    //         data = await sendLoggedInGetRequest(url);
-    //     } catch (e) {
-    //         // ? do something with the error
-    //         return ;
-    //     }
+    const   socket = useSocket();
 
-    //     cb(data);
-    // }
-
-    // useEffect(() => {
-    //     console.log('chat window side effect');
-    //     fetchData(import.meta.env.VITE_LOCAL_CHAT_DMS, setMessages);
-    //     fetchData(import.meta.env.VITE_LOCAL_CHAT_DM_PARTICIPANT, setParticipant);
-    // }, [dmId]);
+    // useFetch(import.meta.env.VITE_LOCAL_CHAT_DMS, setMessages, [dmId]);
+    // useFetch(import.meta.env.VITE_LOCAL_CHAT_DMS, setParticipant, [dmId]);
 
 
     const receiveMessage = (message: any) => {
@@ -94,8 +87,17 @@ const   ChatWindow: FC<{dmId: number}> = ({dmId}) => {
         setMessages((prev) => [...prev, messageDetails])
     }
 
+    // instead of using this, integrate the same method as in useFetchAllDms
+    // using useSocketEventRegiester hook
     useEffect(() => {
-        socket?.on('chat:message', receiveMessage)
+        socket?.on('chat:message', receiveMessage);
+        socket?.on('global:online-users', (data: number[]) => {
+            const status = data.indexOf(dmId) !== -1 ? 'online' : 'offline';
+            if (status !== participant.status)
+                setParticipant((prev) => {
+                    return {...prev, status}
+                })
+        })
 
         return () => {
             console.log("unmount ChatBox");
@@ -103,19 +105,11 @@ const   ChatWindow: FC<{dmId: number}> = ({dmId}) => {
         };
     }, [socket, dmId]) // the dmId dependency necessary for re-register the receiveMessage callback
 
-    const dummyUser = {
-        id: dmId as number,
-        firstName: users[dmId - 1].firstName,
-        lastName: users[dmId - 1].lastName,
-        isFavorite: users[dmId - 1].isFavorite,
-        status: users[dmId - 1].status as 'online' | 'offline',
-        profilePicture: users[dmId - 1].profilePicture
-    }
 
     return (
         <div className="w-full h-full flex flex-col">
             {/* normally the passed user will be the participant in user in the conversation */}
-            <ConversationHeader {...dummyUser} />
+            <ConversationHeader {...participant} />
             <ChatBox messages={messages} />
             <ChatInputField onSend={onSendHandler} />
         </div>

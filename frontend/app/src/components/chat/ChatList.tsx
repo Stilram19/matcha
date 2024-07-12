@@ -1,7 +1,7 @@
 import { DmListType } from "../../types";
 import { ChatListProps } from "../../types";
 import { FC, useState } from "react";
-import useFetchDms from "../../hooks/useFetchDms";
+import useFetchAllDms from "../../hooks/useFetchAllDms";
 import MessageBar from "./MessageBar";
 import ChatListHeader from "./ChatListHeader";
 
@@ -29,7 +29,7 @@ const   DmsList = ({dms, onClick, searchInput} : {dms: DmListType[], onClick: (i
 const   ChatList: FC<ChatListProps> = ({onClick}) => {
     const   [tab, setTab] = useState<string>('dms');
     const   [searchInput, setSearchInput] = useState<string>('');
-    const   {dms, favorites, matches} = useFetchDms();
+    const   {dms, favorites, matches} = useFetchAllDms();
 
     console.log("re-rendering")
     const   tabMap: {[key: string]: DmListType[] | undefined} = {

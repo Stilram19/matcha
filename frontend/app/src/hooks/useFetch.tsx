@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { sendLoggedInGetRequest } from "../utils/httpRequests";
 
 
-const useFetch = ({url, dependency}: {url: string, dependency?: any[]}) => {
-    const [data, setData] = useState<any>()
-    const [isLoading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
-
+const useFetch = (url: string, setData: (data: any) => void, dependency?: any[]) => {
     // console.log("trying to fetch");
     // define which function to call sendLoggedInGetRequest if it get request, using it by default
     useEffect(() => {
@@ -16,50 +12,25 @@ const useFetch = ({url, dependency}: {url: string, dependency?: any[]}) => {
                 console.log(data);
                 setData(data);
             } catch (error) {
-                console.log('error');
+                console.log(`fetch error: ${error}`);
+                // ! latter error handling
             }
-            setLoading(false);
         }
+
+        // const fetchData = async () => {
+        //     try {
+        //         const response = await fetch(url);
+        //         const data = await response.json();
+
+        //         setData(data);
+        //     } catch (e) {
+        //         console.log(e);
+        //     }
+        // }
 
         fetchData();
         console.log("fetching.....");
     }, [url, ...(dependency ? dependency : [])])
-
-    return {data, isLoading, error};
 }
-
-
-// const useFetch = ({url}: {url: string}) => {
-//     const [data, setData] = useState<any>()
-//     const [isLoading, setLoading] = useState<boolean>(true);
-//     const [error, setError] = useState<Error | null>(null);
-
-//     // console.log("trying to fetch");
-//     useEffect(() => {
-//         const fetchData =  async () => {
-//             try {
-//                 const response = await fetch(url);
-//                 if (!response.ok)
-//                     return new Error(`HTTP Error status code ${response.status} ${response.statusText}`);
-//                 const data = await response.json();
-//                 console.log(data);
-//                 setData(data);
-//             } catch (error) {
-//                 // !!!!!!!!! bad idea
-//                 const err = error instanceof Error ? error : new Error(JSON.stringify(error));
-//                 setError(err);
-//             }
-//             setLoading(false);
-//         }
-
-//         fetchData();
-//         console.log("fetching.....");
-//     }, [url])
-
-//     return {data, isLoading, error};
-// }
-
-
-
 
 export default useFetch;
