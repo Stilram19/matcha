@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { sendFormDataRequest, sendLoggedInGetRequest } from "../../utils/httpRequests";
 import { getFormError } from "../../utils/errorHandling";
 import { BriefProfileInfos } from "../../types/profile";
+import { getCookie } from "../../utils/generalPurpose";
 
 type SelectOptions = {
     value: string;
@@ -42,9 +43,21 @@ const PersonalInfo = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const completeProfileCookie = getCookie('CompleteProfile');
+
+        if (completeProfileCookie) {
+            const navRoute = completeProfileCookie == '1' ? '/complete-info/2'
+                : completeProfileCookie == '2' ? '/complete-info/3' : '/profile'
+
+            setTimeout(() => {
+                navigate(navRoute);
+            }, 500);
+        }
+        // console.log('completeProfileCookie: ' + completeProfileCookie);
+
         (async function fetchDefaultPersonalInfos() {
             try {
-                const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_CURR_USER_BRIEF_INFOS_API_URL)
+                const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_CURR_USER_BRIEF_INFOS_API_URL);
 
                 if (responseBody && responseBody.profileInfos) {
                     setDefaultProfileInfos(responseBody.profileInfos);

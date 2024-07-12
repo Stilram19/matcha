@@ -42,7 +42,7 @@ export async function getBriefProfileInfosController(request: Request, response:
     response.status(200).send( { profileInfos } );
 }
 
-export async function getCurrUserBriefProfileInfosController(request: Request, response: Response) {
+export async function getCurrBriefProfileInfosController(request: Request, response: Response) {
     const accessToken = request.cookies['AccessToken'] as string;
     const { userId } = getUserIdFromJwtService(accessToken);
 
