@@ -2,6 +2,8 @@ import { ChangeEvent, useState } from "react";
 import { MdCloudUpload } from "react-icons/md";
 import ImageCard from "../../components/utils/ImageCard";
 import { sendFormDataRequest } from "../../utils/httpRequests";
+import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../utils/generalPurpose";
 
 type ImageCardsProps = {
     images: File[];
@@ -37,7 +39,19 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
 
 export default function ProfileSetup() {
     const   [images, setImages] = useState<File[]>([]);
+    const   navigate = useNavigate();
     const   MAX_PICTURES = 4;
+
+    const completeProfileCookie = getCookie('CompleteProfile');
+
+    if (completeProfileCookie != '2') {
+        const navRoute = completeProfileCookie == undefined ? '/complete-info/1'
+            : completeProfileCookie == '1' ? '/complete-info/2' : '/profile'
+
+        setTimeout(() => {
+            navigate(navRoute);
+        }, 500);
+    }
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -72,6 +86,10 @@ export default function ProfileSetup() {
 
         try {
             await sendFormDataRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PROFILE_PHOTOS_API_URL as string, formData);
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 1000);
         }
         catch (err) {
             console.log(err);

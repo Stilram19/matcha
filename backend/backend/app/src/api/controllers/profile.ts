@@ -16,10 +16,37 @@ export async function getProfileInfosController(request: Request, response: Resp
     response.status(200).send( { profileInfos } );
 }
 
+export async function getCurrProfileInfosController(request: Request, response: Response) {
+    const accessToken = request.cookies['AccessToken'] as string;
+    const { userId } = getUserIdFromJwtService(accessToken);
+    const profileInfos = await retrieveProfileInfosService(userId as number);
+
+    if (!profileInfos) {
+        response.status(404).send( { msg: 'user not found' } );
+        return ;
+    }
+
+    response.status(200).send( { profileInfos } );
+}
+
 export async function getBriefProfileInfosController(request: Request, response: Response) {
     const userId = Number(request.params.userId);
 
     const profileInfos = await retrieveBriefProfileInfosService(userId);
+
+    if (!profileInfos) {
+        response.status(404).send( { msg: 'user not found' } );
+        return ;
+    }
+
+    response.status(200).send( { profileInfos } );
+}
+
+export async function getCurrBriefProfileInfosController(request: Request, response: Response) {
+    const accessToken = request.cookies['AccessToken'] as string;
+    const { userId } = getUserIdFromJwtService(accessToken);
+
+    const profileInfos = await retrieveBriefProfileInfosService(userId as number);
 
     if (!profileInfos) {
         response.status(404).send( { msg: 'user not found' } );

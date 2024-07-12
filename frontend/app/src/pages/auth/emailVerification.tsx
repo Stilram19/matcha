@@ -25,12 +25,12 @@ function VerifyEmail() {
 
         setTimeout(() => {
           navigate('/complete-info/1');
-        }, 2000);
+        }, 1000);
         setMessage('Email verified successfully.');
       } catch (error) {
         setTimeout(() => {
           navigate('/login');
-        }, 2000);
+        }, 1000);
         setMessage('Failed to verify email.');
       } finally {
         setIsLoading(false);

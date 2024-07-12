@@ -16,7 +16,6 @@ import { sendLoggedInActionRequest, sendLoggedInGetRequest } from "../../utils/h
 import AreYouSureOverlay from "../../components/profile/AreYouSureOverlay";
 
 function UserProfile() {
-    // const profileInfos = dummyProfileInfos[1];
     let [profileInfos, setProfileInfos] = useState<ProfileInfos>();
     let { userId } = useParams();
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
@@ -27,10 +26,15 @@ function UserProfile() {
     useEffect(() => {
         (async function initializeComponent() {
             try {
-                const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}`);
+                const profileInfosUrl = (userId ? import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}` : import.meta.env.VITE_LOCAL_CURR_PROFILE_INFOS_API_URL);
+                const responseBody = await sendLoggedInGetRequest(profileInfosUrl);
 
-                responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
-                setProfileInfos(responseBody.profileInfos);
+                console.log(responseBody.profileInfos);
+
+                if (responseBody && responseBody.profileInfos) {
+                    responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
+                    setProfileInfos(responseBody.profileInfos);
+                }
             } catch(err) {
                 console.log(err);
                 // navigate to a not found or error occured page

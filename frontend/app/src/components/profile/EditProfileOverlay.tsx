@@ -132,7 +132,7 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
     return (
         <div onClick={handleBackgroundClick} className="fixed z-10 flex justify-center items-center inset-0 bg-black bg-opacity-40">
             <div className="bg-white overflow-y-auto scrollbar rounded-18px flex flex-col h-full w-550px overlay-slide" style={{ maxHeight: 813 }}>
-                <div className="flex justify-between items-center w-full mt-4">
+                <div className="flex justify-between items-center w-full mt-4 mb-4">
                     <h2 style={{ fontSize: '30px' }} className="ml-5">Edit profile</h2>
                     <img
                         src="/icons/overlay-cross-icon.svg"
@@ -143,9 +143,7 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
                         onClick={() => handleEditOverlayClose(null)}
                     />
                 </div>
-                <div className="mt-3">
-                    <img src="/icons/overlay-divider.svg" className="w-full" alt="overlay divider" />
-                </div>
+                <hr className="divider"></hr>
                 <Formik
                     initialValues={{
                         firstname: profileInfos.userInfos.firstName,
@@ -221,7 +219,7 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
                                 <Field as="textarea" id="biography" name="biography" className="border outline-none p-2 rounded-lg focus:ring-2 h-48 resize-none" placeholder="Biography" />
                                 <ErrorMessage name="biography" component="div" className="text-red-500" />
                             </div>
-                            <div className="flex justify-end h-full mb-8">
+                            <div className="flex justify-end mb-8">
                                 <div className="flex justify-end gap-3 mt-10 mr-10">
                                     <button type="button" onClick={() => handleEditOverlayClose(null)} className="bg-cancel-gray" style={buttonStyle}>Cancel</button>
                                     <button type="submit" disabled={isSubmitting} className="text-white bg-button-pink hover:scale-105 focus:ring font-bold" style={buttonStyle}>Submit</button>

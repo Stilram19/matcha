@@ -89,13 +89,13 @@ const   MatchedProfile = () => {
         <div className="flex flex-row gap-10 w-full h-full max-h-full md:max-h-screen w-full pb-20 md:w-11/12 lg:w-9/12 2xl:w-8/12">
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden">
                 <div className="relative aspect-[2/3] mb-10 pr-1 md:pr-4 pt-1 md:pt-3">
-                    <img src={profileInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
+                    <img src={profileInfos.userInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
                     <div className="absolute bottom-4 left-7 w-[50%]">
-                        <MatchedUserSummary firstName={profileInfos.firstName} lastName={profileInfos.lastName} gender={profileInfos.gender}/>
+                        <MatchedUserSummary firstName={profileInfos.userInfos.firstName} lastName={profileInfos.userInfos.lastName} gender={profileInfos.userInfos.gender}/>
                     </div>
                 </div>
                 <div className="md:hidden md:w-1/2 overflow-x-hidden overflow-y-hidden md:overflow-y-auto md:scrollbar mb-10">
-                    <BioAndInterests biography={profileInfos.biography} userInterests={profileInfos.interests}/>
+                    <BioAndInterests biography={profileInfos.userInfos.biography} userInterests={profileInfos.interests}/>
                 </div>
                 <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-6 pb-6">Photos</h2>
                 {
@@ -109,7 +109,7 @@ const   MatchedProfile = () => {
             </div>
 
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden hidden md:inline-flex">
-                <BioAndInterests biography={profileInfos.biography} userInterests={profileInfos.interests}/>
+                <BioAndInterests biography={profileInfos.userInfos.biography} userInterests={profileInfos.interests}/>
             </div>
         </div>
     )

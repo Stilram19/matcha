@@ -30,7 +30,7 @@ function EditInterestsOverlay({userInterests, handleInterestsOverlayClose}: Edit
     return (
         <div onClick={handleBackgroundClick} className="fixed z-10 flex justify-center items-center inset-0 bg-black bg-opacity-40">
             <div className="bg-white overflow-y-auto scollbar rounded-18px flex flex-col h-full w-550px overlay-slide" style={{maxHeight: 813}}>
-                <div className="flex justify-between items-center w-full mt-4">
+                <div className="flex justify-between items-center w-full mt-4 mb-4">
                     <h2 style={{ fontSize: '30px' }} className="ml-5">Edit Interests</h2>
                     <img
                         src="/icons/overlay-cross-icon.svg"
@@ -41,9 +41,7 @@ function EditInterestsOverlay({userInterests, handleInterestsOverlayClose}: Edit
                         onClick={handleClose}
                     />
                 </div>
-                <div className="mt-3">
-                    <img src="/icons/overlay-divider.svg" className="w-full" alt="overlay divider"/>
-                </div>
+                <hr className="divider"></hr>
                 
                 <div className="ml-4 flex flex-col gap-10 mt-20">
                     <InterestsInput initialySelectedInterests={userInterests} handleInterestsSave={handleInterestsApply}/>
