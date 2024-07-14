@@ -16,7 +16,7 @@ export type ParticipantUser = {
     status: 'online' | 'offline',
 }
 
-export type DmListType = ParticipantUser & {lastMessage: string}
+export type DmListType = ParticipantUser & {lastMessage: string, unreadCount: number}
 
 export type MessageProps = {
     isSender: boolean,

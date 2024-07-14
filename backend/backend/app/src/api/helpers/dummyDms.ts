@@ -6,7 +6,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/test.jpg",
         "lastMessage": "Hello, I just wanna tell that your task has been done and you should contact",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 1
     },
     {
         "id": 2,
@@ -16,6 +17,8 @@ export const dummyDms = [
         "lastMessage": "Are we still on for the meeting tomorrow?",
         isFavorite: true,
         status: 'offline',
+        unreadCount: 0,
+
     },
     {
         "id": 3,
@@ -24,7 +27,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder1.jpg",
         "lastMessage": "Don't forget to check the report I sent you.",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
     {
         "id": 4,
@@ -33,7 +37,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder.jpg",
         "lastMessage": "Great job on the presentation today!",
         isFavorite: true,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
     {
         "id": 5,
@@ -42,7 +47,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/test.jpg",
         "lastMessage": "I'll send over the documents by EOD.",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 4
     },
     {
         "id": 6,
@@ -51,7 +57,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder2.jpg",
         "lastMessage": "Looking forward to our lunch meeting.",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
     {
         "id": 7,
@@ -60,7 +67,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder3.jpg",
         "lastMessage": "Could you review the latest draft?",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
     {
         "id": 8,
@@ -69,7 +77,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder2.jpg",
         "lastMessage": "Looking forward to our lunch meeting.",
         isFavorite: true,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 1
     },
     {
         "id": 9,
@@ -78,7 +87,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder3.jpg",
         "lastMessage": "Could you review the latest draft?",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
     {
         "id": 10,
@@ -87,7 +97,8 @@ export const dummyDms = [
         "profilePicture": "/imgs/man_placeholder3.jpg",
         "lastMessage": "Could you review the latest draft?",
         isFavorite: true,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
     {
         "id": 11,
@@ -96,6 +107,7 @@ export const dummyDms = [
         "profilePicture": "/imgs/Avatar.png",
         "lastMessage": "Can we reschedule our call?",
         isFavorite: false,
-        status: 'offline'
+        status: 'offline',
+        unreadCount: 0
     },
 ]

@@ -8,6 +8,7 @@ import { FC } from "react";
 const   ChatBox: FC<ChatBoxProps> = ({messages}) => {
     const   lastMessageRef = useScrollInto(messages);
 
+    // ! this callback i should accepted in the props of this component.
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         if (e.currentTarget.scrollTop === 0)
             console.log("Top");
@@ -23,7 +24,7 @@ const   ChatBox: FC<ChatBoxProps> = ({messages}) => {
                         messages.map((message, index, arr) => {
                             return (
                                 <div
-                                    key={index}
+                                    key={index} // ! add the id of the message instead of the array index
                                     className={`mr-1 my-2 md:my-3 lg:my-5 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-5 md:mt-7 lg:mt-10' : '')} ${index == messages.length - 1 ? 'mb-5' : ''}`}
                                 >
                                     <Message  {...message}  />

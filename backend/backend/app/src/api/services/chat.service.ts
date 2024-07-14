@@ -34,6 +34,9 @@ export async function getChatHistory(userId: number, participantId: number) {
     //     throw new HttpError(404, 'User Id not found');
     // }
 
+
+    // get Conversation history with the participant id, and set the unread messages to read
+
     const records: any[] = [];
     const chat_history = records.map((record) => {
         return {

@@ -41,16 +41,18 @@ const   useFetchAllDms = () => {
 
 
     const   messageEventHandler = (data: MessageEvent) => {
-        console.log(`i'm not pure`)
-        console.log(dms);
+        // ? checking if the sended message, was already in the list, if so need to re-order the dms list
+        // ? if not i need just to insert it in the first of the array, & the unseen counter should incerement 
+
         const   msg: DmListType = {
-            id: data.from,
+            id: data.from + (Math.floor(Math.random() * 1000000)),
             firstName: 'blah',
             lastName: 'blah',
             lastMessage: data.message,
             profilePicture: '',
             isFavorite: false,
             status: 'online',
+            unreadCount: 1,
         }
         setDms((prev: any) => [msg, ...prev]);
     }

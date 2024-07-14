@@ -15,6 +15,7 @@ export const delayData = (then: (data: any) => void) => {
                     "profilePicture": "/imgs/test.jpg",
                     "lastMessage": "Hello, I just wanna tell that your task has been done and you should contact",
                     isFavorite: false,
+                    unreadCount: 1
                 },
                 {
                     "id": 1,
@@ -23,6 +24,7 @@ export const delayData = (then: (data: any) => void) => {
                     "profilePicture": "/imgs/Avatar.png",
                     "lastMessage": "Are we still on for the meeting tomorrow?",
                     isFavorite: true,
+                    unreadCount: 0
                 },
                 {
                     "id": 2,
@@ -31,6 +33,7 @@ export const delayData = (then: (data: any) => void) => {
                     "profilePicture": "/imgs/man_placeholder1.jpg",
                     "lastMessage": "Don't forget to check the report I sent you.",
                     isFavorite: false,
+                    unreadCount: 0
                 }
             ])
         })

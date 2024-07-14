@@ -18,8 +18,8 @@ export async function getDirectMessageList(request: Request, response: Response)
 
 
 export async function getDmHistory(request: Request, response: Response) {
-    const   participantId: number = +request.params.id;
     const   userId = request.user.id;
+    const   participantId: number = +request.params.id;
 
     // console.log(participantId);
     // assert(userId not blocking or blocked by participantId)

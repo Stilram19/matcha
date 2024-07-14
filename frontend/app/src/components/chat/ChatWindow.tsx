@@ -99,11 +99,25 @@ const   ChatWindow: FC<{dmId: number}> = ({dmId}) => {
                 })
         })
 
+        setParticipant({id: dmId as number,
+            firstName: users[dmId - 1].firstName,
+            lastName: users[dmId - 1].lastName,
+            isFavorite: users[dmId - 1].isFavorite,
+            status: users[dmId - 1].status as 'online' | 'offline',
+            profilePicture: users[dmId - 1].profilePicture
+        })
+
+
         return () => {
             console.log("unmount ChatBox");
             socket?.removeListener('chat:message', receiveMessage)
         };
     }, [socket, dmId]) // the dmId dependency necessary for re-register the receiveMessage callback
+
+
+    const   handleScrollToTop = () => {
+        
+    }
 
 
     return (

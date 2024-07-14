@@ -24,7 +24,7 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
                 ) : (
                     images.map((image, index) => (
                         <ImageCard
-                            key={index}
+                            key={image.name} // i shouldn't use index as key here
                             imageSrc={URL.createObjectURL(image)}
                             onRemove={() => handleRemove(index)}
                         />
