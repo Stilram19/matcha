@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { clearCSRFCookies, clearJwtCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
-import { changePasswordService, isEmailValidService, isLoginValidService, saveResetPasswordTokenService } from '../services/authentication.js';
+import { clearAllCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
+import { changePasswordService, isEmailValidService, saveResetPasswordTokenService } from '../services/authentication.js';
 import { generateRandomTokenService } from '../services/hashing.js';
 import { sendForgetPasswordEmailService } from '../services/mailService.js';
 
@@ -60,7 +60,7 @@ export async function resetPasswordController(request: Request, response: Respon
 }
 
 export async function logoutUserController(request: Request, response: Response) {
-    clearJwtCookies(response);
-    clearCSRFCookies(response);
-    response.status(401); // return unauthorized to make the client redirect to the login page
+    console.log('hellooo');
+    clearAllCookies(response);
+    response.status(401).send( { msg: 'logged out' } ); // return unauthorized to make the client redirect to the login page
 }
