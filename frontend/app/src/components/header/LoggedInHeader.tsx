@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import './style.css'
 import { useState } from "react";
 import Search from "./Search";
+import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 
 function LoggedInHeader() {
     let [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -18,6 +19,15 @@ function LoggedInHeader() {
 
     function handleSmallViewSearchClick(): void {
         setIsSmallSearchOpen(true);
+    }
+
+    async function handleLogout() {
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_FRONTENT_LOGOUT_URL);
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
     return (
@@ -41,7 +51,7 @@ function LoggedInHeader() {
                     <div className="p-3 lg:p-5">
                         <img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/>
                     </div>
-                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
+                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink" onClick={handleLogout} >logout</div>
                 </div>
             </nav>
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>
