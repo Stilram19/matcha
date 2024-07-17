@@ -32,6 +32,7 @@ type FormValues = {
     firstname: string;
     lastname: string;
     username: string;
+    age: number;
     biography: string;
     gender: string;
     sexualPreference: string;
@@ -89,10 +90,15 @@ const PersonalInfo = () => {
             .matches(/^(?!.*__)/, 'Username cannot contain consecutive underscores')
             .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
             .matches(/(?<!_)$/, 'Username cannot end with an underscore'),
+        age: Yup.number()
+            .min(18, 'Must be at least 18')
+            .max(30, 'Must be 30 or less')
+            .required('age required!'),
         biography: Yup.string()
             .max(150, 'Biography must be no more than 150 characters'),
-        gender: Yup.string(),
-        SexualPreferences: Yup.string(),
+        gender: Yup.string()
+            .required('gender required'),
+        SexualPreferences: Yup.string()
     });
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,25 +110,25 @@ const PersonalInfo = () => {
 
     const handleSubmit = async (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => {
         const { setSubmitting, setErrors } = formikHelpers;
-
         const formData = new FormData();
+
         formData.append('firstname', values.firstname);
         formData.append('lastname', values.lastname);
         formData.append('username', values.username);
+        formData.append('age', String(values.age));
         formData.append('biography', values.biography);
         formData.append('gender', values.gender);
         formData.append('sexualPreference', values.sexualPreference);
         if (image) {
             formData.append('profilePicture', image);
         }
-        console.log(...formData);
+        // console.log(...formData);
 
         try {
             await sendFormDataRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PERSONAL_INFOS_API_URL as string, formData);
 
             // pass to next complete-info page
             setTimeout(() => {
-                setSubmitting(false);
                 navigate('/complete-info/2');
             }, 1000);
         } catch (error) {
@@ -163,6 +169,7 @@ const PersonalInfo = () => {
                     firstname: defaultProfileInfos.firstName,
                     lastname: defaultProfileInfos.lastName,
                     username: defaultProfileInfos.userName,
+                    age: defaultProfileInfos.age,
                     biography: defaultProfileInfos.biography,
                     gender: defaultProfileInfos.gender,
                     sexualPreference: defaultProfileInfos.sexualPreferences,
@@ -206,6 +213,11 @@ const PersonalInfo = () => {
                                         placeholder="username"
                                     />
                                     <ErrorMessage name="username" component="div" className="text-red-600 text-sm mt-1" />
+                                </div>
+                                <div className="w-full">
+                                    <label htmlFor="username" className="block">Age</label>
+                                    <Field id="age" name="age" className="border p-2 rounded-lg outline-none w-full" placeholder="Age" />
+                                    <ErrorMessage name="age" component="div" className="text-red-500" />
                                 </div>
                             </div>
 
