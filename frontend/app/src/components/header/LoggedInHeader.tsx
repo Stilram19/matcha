@@ -3,10 +3,12 @@ import './style.css'
 import { useState } from "react";
 import Search from "./Search";
 import { sendLoggedInActionRequest } from "../../utils/httpRequests";
+import HamburgerMenuOverlay from "./HamburgerMenuOverlay";
 
 function LoggedInHeader() {
     let [isSearchOpen, setIsSearchOpen] = useState(false);
     let [isSmallSeachOpen, setIsSmallSearchOpen] = useState(false);
+    let [isHidden, setIsHidden] = useState(false);
     let navigate = useNavigate();
 
     function handleSearchOpen(): void {
@@ -35,6 +37,18 @@ function LoggedInHeader() {
         }
     }
 
+    function handleHamburgerMenuOverlayClose(navigateTo: string) {
+        setIsHidden(false);
+
+        if (!navigateTo) {
+            return ;
+        }
+
+        setTimeout(() => {
+            navigate(navigateTo);
+        }, 300);
+    }
+
     return (
         <div className="flex justify-between shadow bg-white lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44" style={isSearchOpen ? {paddingLeft: 20, paddingRight: 20} : {}} >
             <div className="flex gap-3 lg:gap-12">
@@ -59,11 +73,21 @@ function LoggedInHeader() {
                     <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink" onClick={handleLogout} >logout</div>
                 </div>
             </nav>
+            {/* <div className={`md:hidden py-2 absolute z-10 top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
+                <ul className='w-full flex flex-col items-center justify-center list-none'>
+                    <li className="w-full"><NavLink to="/explore" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">explore</NavLink></li>
+                    <li className="w-full"><NavLink to="/profile" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">profile</NavLink></li>
+                    <li className="w-full"><NavLink to="/chat" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">chat</NavLink></li>
+                    <li className="w-full"><NavLink to="/history" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">history</NavLink></li>
+                    <li className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg" onClick={handleLogout} >logout</li>
+                </ul>
+            </div> */}
+            {isHidden && <HamburgerMenuOverlay handleLogout={handleLogout} handleHamburgerMenuOverlayClose={handleHamburgerMenuOverlayClose} />}
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>
                 <div className="p-2">
                     <img src="/icons/notification-bell.svg" alt="notification bell" style={{width: 24}}/>
                 </div>
-                <div style={{overflow: 'hidden'}}><i className="p-2 scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
+                <div className="cursor-pointer" onClick={() => { setIsHidden(!isHidden) }} style={{overflow: 'hidden'}}><i className="p-2 scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
             </div>
         </div>
     )
