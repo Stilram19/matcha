@@ -58,3 +58,7 @@ export function isGenderAndSexualPreferenceValid(gender: string, sexualPreferenc
 
     return (true);
 }
+
+export function isAgeValid(age: number) {
+    return (age >= 18 && age <= 30);
+}

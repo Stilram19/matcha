@@ -191,10 +191,6 @@ export async function unlikeProfileController(request: Request, response: Respon
     }
 }
 
-export async function updateProfilePictureController(request: Request, response: Response) {
-
-}
-
 export async function updatePersonalInfosController(request: Request, response: Response) {
     const file = request.file as Express.Multer.File;
 
@@ -203,6 +199,7 @@ export async function updatePersonalInfosController(request: Request, response: 
     const firstname = request.body.firstname as string;
     const lastname = request.body.lastname as string;
     const gender = request.body.gender as string;
+    const age = Number(request.body.age as string);
     const biography = request.body.biography as string;
     const sexualPreference = request.body.sexualPreference as string;
 
@@ -211,10 +208,8 @@ export async function updatePersonalInfosController(request: Request, response: 
     }
 
     try {
-        const personalInfos = {profilePicturePath, username, firstname, lastname, gender, sexualPreference, biography}
+        const personalInfos = {profilePicturePath, username, firstname, lastname, age, gender, sexualPreference, biography}
         const imageUrl = await updatePersonalInfosService(personalInfos);
-
-        console.log(imageUrl);
 
         response.status(201).send( { msg: 'personal infos completed!', imageUrl } );
     }
