@@ -62,5 +62,5 @@ export async function resetPasswordController(request: Request, response: Respon
 export async function logoutUserController(request: Request, response: Response) {
     console.log('hellooo');
     clearAllCookies(response);
-    response.status(401).send( { msg: 'logged out' } ); // return unauthorized to make the client redirect to the login page
+    response.status(201).send( { msg: 'logged out' } );
 }

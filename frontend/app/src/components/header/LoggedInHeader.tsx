@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import './style.css'
 import { useState } from "react";
 import Search from "./Search";
@@ -7,6 +7,7 @@ import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 function LoggedInHeader() {
     let [isSearchOpen, setIsSearchOpen] = useState(false);
     let [isSmallSeachOpen, setIsSmallSearchOpen] = useState(false);
+    let navigate = useNavigate();
 
     function handleSearchOpen(): void {
         setIsSearchOpen(true);
@@ -23,7 +24,11 @@ function LoggedInHeader() {
 
     async function handleLogout() {
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_FRONTENT_LOGOUT_URL);
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_LOGOUT_API_URL);
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 300);
         }
         catch (err) {
             console.log(err);

@@ -51,7 +51,7 @@ const PersonalInfo = () => {
 
             setTimeout(() => {
                 navigate(navRoute);
-            }, 500);
+            }, 300);
         }
         // console.log('completeProfileCookie: ' + completeProfileCookie);
 

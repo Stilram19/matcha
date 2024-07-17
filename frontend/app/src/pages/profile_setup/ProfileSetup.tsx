@@ -50,7 +50,7 @@ export default function ProfileSetup() {
 
         setTimeout(() => {
             navigate(navRoute);
-        }, 500);
+        }, 300);
     }
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {

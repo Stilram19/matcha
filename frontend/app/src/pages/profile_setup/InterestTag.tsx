@@ -17,7 +17,7 @@ const InterestTag = () => {
 
         setTimeout(() => {
             navigate(navRoute);
-        }, 500);
+        }, 300);
     }
 
     const handleOnClick = (tag: string) => {
