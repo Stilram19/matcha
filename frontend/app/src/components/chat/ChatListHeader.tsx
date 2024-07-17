@@ -45,7 +45,7 @@ const getTabs = (currentTab: string): TabType[] => {
     const tabs: TabType[] = [
         { title: 'dms', Icon: AiFillMessage, active: currentTab === 'dms' },
         { title: 'favorites', Icon: FaHeart, active: currentTab === 'favorites' },
-        { title: 'matches', Icon: FaUserFriends, active: currentTab === 'matches' }
+        { title: 'matched', Icon: FaUserFriends, active: currentTab === 'matched' }
     ];
 
     return (tabs);

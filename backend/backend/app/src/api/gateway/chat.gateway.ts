@@ -59,6 +59,16 @@ function registerChatHandlers(client: Socket) {
     //   });
     client.use
     client.on('chat:send', (data) => sendMessageHandler(client, data));
+
+
+    // ! testing => remove later
+    client.on('chat:error', () => {
+        const senderId = extractUserId(client);
+    
+        ioEmitter.emitToClientSockets(senderId, 'error', {
+            error: "blahblahbl jsgdk"
+        })
+    });
 }
 
 

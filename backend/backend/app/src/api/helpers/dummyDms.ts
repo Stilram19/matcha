@@ -5,7 +5,7 @@ export const dummyDms = [
         "lastName": "Smith",
         "profilePicture": "/imgs/test.jpg",
         "lastMessage": "Hello, I just wanna tell that your task has been done and you should contact",
-        isFavorite: false,
+        isFavorite: true,
         status: 'offline',
         unreadCount: 1
     },
@@ -15,7 +15,7 @@ export const dummyDms = [
         "lastName": "Smith",
         "profilePicture": "/imgs/Avatar.png",
         "lastMessage": "Are we still on for the meeting tomorrow?",
-        isFavorite: true,
+        isFavorite: false,
         status: 'offline',
         unreadCount: 0,
 
@@ -26,7 +26,7 @@ export const dummyDms = [
         "lastName": "Smith",
         "profilePicture": "/imgs/man_placeholder1.jpg",
         "lastMessage": "Don't forget to check the report I sent you.",
-        isFavorite: false,
+        isFavorite: true,
         status: 'offline',
         unreadCount: 0
     },
@@ -96,7 +96,7 @@ export const dummyDms = [
         "lastName": "Smith",
         "profilePicture": "/imgs/man_placeholder3.jpg",
         "lastMessage": "Could you review the latest draft?",
-        isFavorite: true,
+        isFavorite: false,
         status: 'offline',
         unreadCount: 0
     },

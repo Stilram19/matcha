@@ -50,7 +50,7 @@ function handleDisconnect(socket: Socket) {
 
 function createIoServer(server: any) {
     const io = new Server(server, {cors: {origin: "*"}});
-    ioEmitter.initIoServer = io; // intisalize io Server
+    ioEmitter.initIoServer = io; // * intisalize io Server
 
 
     io.use(authMiddleware); // ? authetication middleware that gets executed for every incoming connection for checking auth (JWT token)

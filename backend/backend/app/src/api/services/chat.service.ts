@@ -67,11 +67,11 @@ export async function getContactDetails(participant: number) {
     return {
         id: 1,
         username: 'okhiar',
-        first_name: 'oussama',
-        last_name: 'khiar',
-        profile_picture: '/imgs/okhiar.jpg',
+        firstName: 'oussama',
+        lastName: 'khiar',
+        profilePicture: '/imgs/man_placeholder.jpg',
         status: 'online',
-        biography: 'Blah blah'
+        biography: 'Sed tempor purus eu nibh tempor iaculis. Aenean accumsan, orci at maximus euismod, est nisi blandit nibh, 😆'
     }
 }
 
@@ -83,7 +83,7 @@ export async function getParticipantInfoById(participant: number) {
         username: 'okhiar',
         first_name: 'oussama',
         last_name: 'khiar',
-        profile_picture: '/imgs/okhiar.jpg',
+        profile_picture: '/imgs/man_placeholder.jpg',
         status: 'online',
     }
 }

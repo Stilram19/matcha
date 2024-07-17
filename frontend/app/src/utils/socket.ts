@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client";
-import { DmListType } from "../types";
+import { DmListType, PresenceType } from "../types";
+import { Dispatch, SetStateAction } from "react";
 
 type    EventHandlerType = [event: string, (data: any) => void];
 
@@ -36,6 +37,26 @@ export function changeParticipantPresence(data: DmListType[], onlineUser: number
 
     return (ret);
 }
+
+// type UserPresenceType = (any & {status: PresenceType}) | undefined;
+
+/**
+ * this function will create a handler to mutate the status field of a data that is related to a user
+ * @param activeDmId 
+ * @param setData 
+ */
+// export function createPresenceChangeHandler(userId: number, setData: any) : (onlineUsers: number[]) => void {
+
+//     return (onlineUsers: number[]) => {
+//         const status = onlineUsers.indexOf(userId) !== -1 ? 'online' : 'offline';
+//         setData((prev: any) => {
+//             if (!prev || prev.status != status)
+//                 return (prev);
+//             return {...prev, status};
+//         })
+//     }
+// }
+
 
 /*
     return (socket: Socket) => {

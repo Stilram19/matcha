@@ -1,5 +1,7 @@
 import { createContext, KeyboardEvent, ReactNode, useContext, useState } from 'react';
 import { io, Socket } from "socket.io-client";
+// import eventObserver from '../utils/eventObserver';
+// import { GlobalEventEnum } from '../types/globalEventEnum';
 
 type Props = {
     children: ReactNode;
@@ -19,6 +21,12 @@ const   SocketProvider = ({children}: Props) => {
             setUserId(+input.value);
         }
     }
+
+    // // ! testing
+    // socket.on('error', () => {
+    //     console.log('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+    //     eventObserver.publish(GlobalEventEnum.ERROR_OCCURED, 'something went wrong with socket')
+    // })
 
     return (
         <SocketContext.Provider value={socket}>
