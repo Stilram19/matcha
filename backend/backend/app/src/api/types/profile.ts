@@ -37,6 +37,7 @@ export type updateProfilePersonalInfos = {
     username: string;
     firstname: string;
     lastname: string;
+    age: number;
     gender: string;
     biography: string;
     sexualPreference: string;

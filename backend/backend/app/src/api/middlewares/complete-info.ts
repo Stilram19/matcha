@@ -1,11 +1,16 @@
 import { Request, Response, NextFunction } from 'express'
 import { formError } from '../helpers/errorFactory.js';
-import { isFirstNameValid, isGenderAndSexualPreferenceValid, isLastNameValid, isUsernameValid } from '../validators/userCredentials.js';
+import { isAgeValid, isFirstNameValid, isGenderAndSexualPreferenceValid, isLastNameValid, isUsernameValid } from '../validators/userCredentials.js';
 
 export function validateCompleteProfileBody(request: Request, response: Response, next: NextFunction): void {
-    const { username, firstname, biography, lastname, gender, sexualPreference } = request.body;
+    const { username, firstname, age, biography, lastname, gender, sexualPreference } = request.body;
 
     const requiredFields = { username, firstname, lastname, gender, biography, sexualPreference };
+
+    if (age == undefined || typeof age != 'string') {
+        response.status(400).send(formError('age', 'invalid age'));
+        return ; 
+    }
 
     for (const field in requiredFields) {
         if (requiredFields[field as keyof typeof requiredFields] == undefined || typeof requiredFields[field as keyof typeof requiredFields] !== 'string') {
@@ -28,7 +33,12 @@ export function validateCompleteProfileBody(request: Request, response: Response
         response.status(400).send(formError('lastname', 'invalid lastname'));
         return ;
     }
- 
+
+    if (!isAgeValid(Number(age))) {
+        response.status(400).send(formError('age', 'invalid age'));
+        return ;
+    }
+
     if (!isGenderAndSexualPreferenceValid(gender, sexualPreference)) {
         response.status(400).send(formError('sexualPreference', 'invalid gender and sexual preference combination'))
         return ;

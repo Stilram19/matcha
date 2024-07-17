@@ -102,6 +102,7 @@ export async function completePersonalInfosController(request: Request, response
     const username = request.body.username as string;
     const firstname = request.body.firstname as string;
     const lastname = request.body.lastname as string;
+    const age = Number(request.body.age as string);
     const gender = request.body.gender as string;
     const biography = request.body.biography as string;
     const sexualPreference = request.body.sexualPreference as string;
@@ -111,7 +112,7 @@ export async function completePersonalInfosController(request: Request, response
     }
 
     try {
-        const personalInfos = {profilePicturePath, username, firstname, lastname, gender, biography, sexualPreference}
+        const personalInfos = {profilePicturePath, username, firstname, lastname, age, gender, biography, sexualPreference}
         await updatePersonalInfosService(personalInfos);
 
         setCompleteProfileInfosCookie(1, response);

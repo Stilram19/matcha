@@ -14,6 +14,7 @@ export async function updatePersonalInfosService(profileInfos: updateProfilePers
     console.log('gender: ' + profileInfos.gender);
     console.log('sexualPreferences: ' + profileInfos.sexualPreference);
     console.log('biography: ' + profileInfos.biography);
+    console.log('age: ' + profileInfos.age);
 
     if (profileInfos.profilePicturePath) {
         console.log('profilePictureUrl: ' + process.env.BASE_URL + `/${profileInfos.profilePicturePath}`);

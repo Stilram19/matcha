@@ -33,6 +33,9 @@ const validationSchema = Yup.object({
         .matches(/^(?!.*__)/, 'Username cannot contain consecutive underscores')
         .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
         .matches(/(?<!_)$/, 'Username cannot end with an underscore'),
+    age: Yup.number()
+        .min(18, 'Must be at least 18')
+        .max(30, 'Must be 30 or less'),
     biography: Yup.string()
         .max(150, 'Biography must be no more than 150 characters'),
     gender: Yup.string(),
@@ -43,6 +46,7 @@ type FormValues = {
     firstname: string;
     lastname: string;
     username: string;
+    age: number;
     biography: string;
     gender: string;
     sexualPreference: string;
@@ -79,6 +83,7 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
         formData.append('biography', values.biography);
         formData.append('gender', values.gender);
         formData.append('sexualPreference', values.sexualPreference);
+        formData.append('age', String(values.age));
         if (image) {
             formData.append('profilePicture', image);
         }
@@ -92,6 +97,7 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
             newProfileInfos.userInfos.firstName = values.firstname;
             newProfileInfos.userInfos.lastName = values.lastname;
             newProfileInfos.userInfos.userName = values.username;
+            newProfileInfos.userInfos.age = values.age;
             newProfileInfos.userInfos.biography = values.biography;
             newProfileInfos.userInfos.gender = values.gender;
             newProfileInfos.userInfos.sexualPreferences = values.sexualPreference;
@@ -149,6 +155,7 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
                         firstname: profileInfos.userInfos.firstName,
                         lastname: profileInfos.userInfos.lastName,
                         username: profileInfos.userInfos.userName,
+                        age: profileInfos.userInfos.age,
                         gender: profileInfos.userInfos.gender,
                         sexualPreference: profileInfos.userInfos.sexualPreferences,
                         biography: profileInfos.userInfos.biography
@@ -174,19 +181,32 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
                                 </div>
                                 <div className="flex flex-col items-center mt-10 gap-2">
                                     <div>
-                                        <label htmlFor="firstname">First Name</label>
-                                        <Field id="firstname" name="firstname" className="border p-2 rounded" placeholder="First Name" />
+                                        <div className="flex flex-col">
+                                            <label htmlFor="firstname">First Name</label>
+                                            <Field id="firstname" name="firstname" className="border p-2 rounded" placeholder="First Name" />
+                                        </div>
                                         <ErrorMessage name="firstname" component="div" className="text-red-500" />
                                     </div>
                                     <div>
-                                        <label htmlFor="lastname">Last Name</label>
-                                        <Field id="lastname" name="lastname" className="border p-2 rounded" placeholder="Last Name" />
+                                        <div className="flex flex-col">
+                                            <label htmlFor="lastname">Last Name</label>
+                                            <Field id="lastname" name="lastname" className="border p-2 rounded" placeholder="Last Name" />
+                                        </div>
                                         <ErrorMessage name="lastname" component="div" className="text-red-500" />
                                     </div>
                                     <div>
-                                        <label htmlFor="username">Username</label>
-                                        <Field id="username" name="username" className="border p-2 rounded" placeholder="Username" />
+                                        <div className="flex flex-col">
+                                            <label htmlFor="username">Username</label>
+                                            <Field id="username" name="username" className="border p-2 rounded" placeholder="Username" />
+                                        </div>
                                         <ErrorMessage name="username" component="div" className="text-red-500" />
+                                    </div>
+                                    <div>
+                                        <div className="flex flex-col">
+                                            <label htmlFor="username">Age</label>
+                                            <Field id="age" name="age" className="border p-2 rounded" placeholder="Age" />
+                                        </div>
+                                        <ErrorMessage name="age" component="div" className="text-red-500" />
                                     </div>
                                 </div>
                             </div>
