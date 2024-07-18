@@ -1,6 +1,9 @@
 export type MatchedUserSummaryProps = {
+    id: string;
     firstName: string;
     lastName: string;
+    age: number;
+    fameRating: number;
     gender: string;
 }
 

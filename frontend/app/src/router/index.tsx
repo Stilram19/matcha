@@ -12,16 +12,21 @@ import InterestTag from "../pages/profile_setup/InterestTag";
 import Explore from "../pages/explore/Explore";
 import UserProfile from "../pages/profile/UserProfile";
 import LoggedInLayout from "../layouts/LoggedInLayout";
-import SearchResults from "../pages/searchResults/SearchResults";
+import SearchResults from "../pages/search_results/SearchResults";
 import History from "../pages/history/History";
 import VerifyEmail from "../pages/auth/emailVerification";
 import ResetPassword from "../pages/auth/resetVerification";
+import CommonLayout from "../layouts/CommonLayout";
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <GuestLayout><LandingPage /></GuestLayout>
+        element: <CommonLayout><LandingPage /></CommonLayout>
     },
+    // {
+    //     path: '/about',
+    //     element: <CommonLayout><AboutPage /></CommonLayout>
+    // },
     {
       path: '/login',
       element: <GuestLayout><Login /></GuestLayout>

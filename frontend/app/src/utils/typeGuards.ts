@@ -1,0 +1,61 @@
+import { BriefProfileInfos } from "../types/profile";
+import { isArray } from "./generalPurpose";
+
+export function getFormError(error: unknown): FormError | undefined {
+    if (error != null && typeof error == 'object'
+        && 'field' in error && 'message' in error
+        && typeof error.message == 'string' && typeof error.field == 'string') {
+        return (
+            {
+                message: error.message,
+                field: error.field
+            }
+        );
+    }
+
+    return (undefined);
+}
+
+function isOfUserInfosType(obj: any) {
+    return (
+    obj !== null && typeof obj === 'object' &&
+    typeof obj.id === 'string' &&
+    typeof obj.isSelf === 'boolean' &&
+    typeof obj.isLiked === 'boolean' &&
+    typeof obj.isLiking === 'boolean' &&
+    typeof obj.firstName === 'string' &&
+    typeof obj.lastName === 'string' &&
+    typeof obj.userName === 'string' &&
+    typeof obj.age === 'number' &&
+    typeof obj.gender === 'string' &&
+    typeof obj.sexualPreferences === 'string' &&
+    typeof obj.profilePicture === 'string' &&
+    typeof obj.biography === 'string' &&
+    typeof obj.fameRating === 'number'
+    );
+}
+
+export function isOfProfileInfosType(obj: any) {
+    return (
+        obj !== null && typeof obj === 'object'
+        && isArray(obj.interests, undefined, 'string')
+        && isArray(obj.userPhotos, undefined, 'string')
+        && obj.userPhotos.length <= 4
+        && isOfUserInfosType(obj.userInfos)
+    );
+}
+
+export function isOfBriefProfileInfosType(obj: any): obj is BriefProfileInfos {
+    return (
+    obj !== null && typeof obj === 'object' &&
+    typeof obj.id === 'string' &&
+    typeof obj.firstName === 'string' &&
+    typeof obj.lastName === 'string' &&
+    typeof obj.userName === 'string' &&
+    typeof obj.age === 'number' &&
+    typeof obj.gender === 'string' &&
+    typeof obj.sexualPreferences === 'string' &&
+    typeof obj.biography === 'string' &&
+    typeof obj.profilePicture === 'string'
+    );
+}

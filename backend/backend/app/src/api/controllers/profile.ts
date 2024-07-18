@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { likeProfileService, blockUserService, reportFakeAccountService, retrieveBriefProfileInfosService, retrieveProfileInfosService, updateUserInterestsService, unlikeProfileService, addUserInterestsService } from '../services/profile.js';
 import { getUserIdFromJwtService } from '../services/jwt.js';
 import { updatePersonalInfosService } from '../services/complete-profile.js';
+import { isArray } from '../validators/generalPurpose.js';
 
 export async function getProfileInfosController(request: Request, response: Response) {
     const userId = Number(request.params.userId);
@@ -61,7 +62,7 @@ export async function updateInterestsController(request: Request, response: Resp
     const { userId } = getUserIdFromJwtService(accessToken);
     const { interests } = request.body;
 
-    if (!interests || !Array.isArray(interests)) {
+    if (!isArray(interests, undefined, 'string')) {
         response.status(400).send( { msg: 'bad interests request body' } );
         return ;
     }
@@ -82,7 +83,7 @@ export async function addInterestsController(request: Request, response: Respons
     const { userId } = getUserIdFromJwtService(accessToken);
     const { interests } = request.body;
 
-    if (!interests || !Array.isArray(interests)) {
+    if (!isArray(interests, undefined, 'string')) {
         response.status(400).send( { msg: 'bad interests request body' } );
         return ;
     }

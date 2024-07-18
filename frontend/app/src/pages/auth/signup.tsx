@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
 import { sendActionRequest } from '../../utils/httpRequests';
-import { getFormError } from '../../utils/errorHandling';
+import { getFormError } from '../../utils/typeGuards';
 
 const SignupSchema = Yup.object().shape({
     email: Yup.string()

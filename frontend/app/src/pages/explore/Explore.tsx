@@ -1,56 +1,35 @@
 import { FaArrowRight, FaHeart } from "react-icons/fa"
 import { GrMapLocation } from "react-icons/gr"
-import { ImCross, ImFilter } from "react-icons/im"
-import { TbGenderMale } from "react-icons/tb"
+import { ImFilter } from "react-icons/im"
+import { TbGenderAndrogyne, TbGenderFemme, TbGenderMale } from "react-icons/tb"
 import interests from "../../utils/interests"
-import dummyProfileInfos from "../../components/utils/dummyProfileInfos"
 import FameRatingDisplay from "../../components/utils/FameRatingDisplay"
 import { BioAndInterestsProps, MatchedUserSummaryProps } from "./types"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import FilterOverlay from "../../components/explore/FilterOverlay"
+import { ProfileInfos } from "../../types/profile"
+import { sendLoggedInActionRequest } from "../../utils/httpRequests"
+import NoResult from "../../components/utils/no-results/NoResults"
+import ErrorOccurred from "../../components/utils/error-occurred/ErrorOccurred"
+import { isOfProfileInfosType } from "../../utils/typeGuards"
+import { FaArrowLeft } from "react-icons/fa6"
+import { Link } from "react-router-dom"
 
-const CheckBox = ({label}: {label: string}) => {
-    return (
-        <div className="flex items-center gap-2">
-            <input
-                type="checkbox"
-                className="w-5 h-5 focus:ring-2  rounded-lg"
-            />
-            <label htmlFor="" className=" text-gray-600">{label}</label>
-        </div>
-    )
-}
-
-// const ExploreSideBar = () => {
-//     return (
-//         <div className="w-full h-full p-4">
-//             <div className="w-full">
-//                 <h1 className="text-lg font-semibold">Sort by</h1>
-//                 <div className="flex flex-wrap gap-5">
-//                     <CheckBox label="Age" />
-//                     <CheckBox label="Fame rating" />
-//                     <CheckBox label="Location" />
-//                     <CheckBox label="Common tags" />
-//                 </div>
-            
-//                 <h1 className="text-lg font-semibold mt-5">Match with</h1>
-//             </div>
-//         </div>
-//     )
-// }
-
-const   MatchedUserSummary = ({firstName, lastName, gender}: MatchedUserSummaryProps) => {
+const   MatchedUserSummary = ({firstName, lastName, fameRating, age, gender}: MatchedUserSummaryProps) => {
     return (
         <div className="flex flex-col sm:gap-1">
             <h1 className="text-2xl lg:text-3xl text-white font-semibold whitespace-nowrap">{firstName} {lastName}</h1>
             <div className="w-28 sm:w-36">
-                <FameRatingDisplay starsCount={5} size={30}/>
+                <FameRatingDisplay starsCount={fameRating} size={30}/>
             </div>
             <div className="flex items-center gap-1 mb-3">
                 <GrMapLocation className="stroke-sky-300" size={20}/>
-                <h2 className="text-lg lg:text-xl text-sky-300 font-semibold whitespace-nowrap">6 Km, Morroco</h2>
+                {/* <h2 className="text-lg lg:text-xl text-sky-300 font-semibold whitespace-nowrap">6 Km, Morroco</h2> */}
                 <span className="px-2 bg-sky-950 flex items-center gap-1 w-max text-white font-semibold rounded-full">
-                    <TbGenderMale size={20} />22
+                    {gender == 'male' ? <TbGenderMale size={20} />
+                    : gender == 'female' ? <TbGenderFemme size={20}/>
+                    : <TbGenderAndrogyne />}
+                   {age}
                 </span>
             </div>
         </div>
@@ -58,6 +37,7 @@ const   MatchedUserSummary = ({firstName, lastName, gender}: MatchedUserSummaryP
 }
 
 function BioAndInterests({biography, userInterests}: BioAndInterestsProps) {
+
     return (
         <div className="flex-col md:pr-4 shadow md:overflow-y-auto md:scrollbar rounded-20px md:aspect-[2/3]">
             <div className="pb-6 pr-3 pl-3">
@@ -82,16 +62,15 @@ function BioAndInterests({biography, userInterests}: BioAndInterestsProps) {
     )
 }
 
-const   MatchedProfile = () => {
-    const profileInfos = dummyProfileInfos[2];
+const   MatchedProfile = ({ profileInfos }: { profileInfos: ProfileInfos }) => {
 
     return (
         <div className="flex flex-row gap-10 w-full h-full max-h-full md:max-h-screen w-full pb-20 md:w-11/12 lg:w-9/12 2xl:w-8/12">
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden">
                 <div className="relative aspect-[2/3] mb-10 pr-1 md:pr-4 pt-1 md:pt-3">
-                    <img src={profileInfos.userInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
+                    <Link to={`/profile/${profileInfos.userInfos.id}`}><img src={profileInfos.userInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" /></Link>
                     <div className="absolute bottom-4 left-7 w-[50%]">
-                        <MatchedUserSummary firstName={profileInfos.userInfos.firstName} lastName={profileInfos.userInfos.lastName} gender={profileInfos.userInfos.gender}/>
+                        <MatchedUserSummary id={profileInfos.userInfos.id} firstName={profileInfos.userInfos.firstName} lastName={profileInfos.userInfos.lastName} age={profileInfos.userInfos.age} fameRating={profileInfos.userInfos.fameRating} gender={profileInfos.userInfos.gender}/>
                     </div>
                 </div>
                 <div className="md:hidden md:w-1/2 overflow-x-hidden overflow-y-hidden md:overflow-y-auto md:scrollbar mb-10">
@@ -117,35 +96,132 @@ const   MatchedProfile = () => {
 
 const Explore = () => {
     let [isFilterOverlayOpen, setIsFilterOverlayOpen] = useState(false);
+    let [fameRatingRange, setFameRatingRange] = useState([0, 5]);
+    let [ageRange, setAgeRange] = useState([18, 30]);
+    let [interests, setInterests] = useState<Set<string>>();
+    let [currIndex, setCurrIndex] = useState(0);
+    let [recommendedProfiles, setRecommendedProfiles] = useState<ProfileInfos[]>();
+    let [isLoading, setIsLoading] = useState(true);
+    let [errorOccurred, setErrorOccurred] = useState(false);
+    let [noResult, setNoResult] = useState(false);
 
-    function handleFilterOverlayClose() {
+    async function fetchProfiles() {
+        setIsLoading(true);
+        setErrorOccurred(false);
+        setNoResult(false);
+        try {
+            const requestBody: {[key: string]: any} = { fameRatingRange, ageRange };
+
+            if (interests) {
+                requestBody['interests'] = [...interests];
+            }
+
+            const responseBody = await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_RECOMMENDED_PROFILES_API_URL, requestBody);
+
+            if (!responseBody || !responseBody.recommendedProfiles 
+                || !Array.isArray(responseBody.recommendedProfiles)
+                && !responseBody.recommendedProfiles.every( (recommendedProfile: any) => isOfProfileInfosType(recommendedProfile))) {
+                    console.log('heloooooo');
+                setErrorOccurred(true);
+                return ;
+            }
+
+            if (responseBody.recommendedProfiles.length == 0) {
+                setNoResult(true)
+                return ;
+            }
+
+            responseBody.recommendedProfiles.forEach((item: any) => item.interests = new Set(item.interests));
+            setRecommendedProfiles(responseBody.recommendedProfiles);
+            setCurrIndex(0);
+        }
+        catch (err) {
+            setErrorOccurred(true);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchProfiles();
+    }, [fameRatingRange, ageRange, interests]);
+
+    if (isLoading || !recommendedProfiles) {
+        return ;
+    }
+
+    function handleFilterOverlayClose(newFameRatingRange: number[], newAgeRange: number[], newInterests: Set<string>) {
         setIsFilterOverlayOpen(false);
+        setFameRatingRange(newFameRatingRange);
+        setAgeRange(newAgeRange);
+        setInterests(newInterests);
     }
 
     function handleFilterButtonClick() {
         setIsFilterOverlayOpen(true);
     }
 
+    function handleRightArrowClick() {
+        if (!recommendedProfiles) {
+            return ;
+        }
+
+        if (currIndex === recommendedProfiles.length - 1) {
+            fetchProfiles();
+            return ;
+        }
+
+        setCurrIndex(currIndex + 1);
+    }
+
+    function handleLeftArrowClick() {
+        if (!recommendedProfiles) {
+            return ;
+        }
+
+        if (currIndex == 0) {
+            setCurrIndex(recommendedProfiles.length - 1);
+            return ;
+        }
+
+        setCurrIndex(currIndex - 1);
+    }
+
+    async function handleLikeButtonClick() {
+        if (!recommendedProfiles) {
+            return ;
+        }
+
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${recommendedProfiles[currIndex].userInfos.id}`);
+        }
+        catch (err) {
+            setErrorOccurred(true);
+        }
+    }
+
     return (
         <div className="flex justify-center w-screen pl-4 pr-4 md:pl-6 md:pr-6 lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44">
-            <div className={isFilterOverlayOpen == false ? 'hidden' : ''}>
+            { noResult && <NoResult />}
+            { errorOccurred && <ErrorOccurred />}
+            <div className={isFilterOverlayOpen == false || errorOccurred || noResult ? 'hidden' : ''}>
                 <FilterOverlay handleFilterOverlayClose={handleFilterOverlayClose}/>
             </div>
-            <div className="pt-4 flex justify-center md:pt-6 w-screen">
-                <MatchedProfile />
+            <div className={`pt-4 flex justify-center md:pt-6 w-screen ${errorOccurred || noResult ? 'hidden' : ''}`}>
+                <MatchedProfile profileInfos={recommendedProfiles[currIndex]}/>
             </div>
             <div className="fixed z-20 pb-4 bottom-1 flex justify-center gap-2 sm:gap-4">
+                <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
+                    <FaArrowLeft onClick={handleLeftArrowClick} className="fill-white" size={34} />
+                </button>
                 <button  onClick={handleFilterButtonClick} className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
                     <ImFilter className="fill-white" size={30} />
                 </button>
                 <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
-                    <ImCross className="fill-white" size={24} />
+                    <FaHeart onClick={handleLikeButtonClick} className="fill-white" size={30} />
                 </button>
                 <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
-                    <FaHeart className="fill-white" size={30} />
-                </button>
-                <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">
-                    <FaArrowRight className="fill-white" size={34} />
+                    <FaArrowRight onClick={handleRightArrowClick} className="fill-white" size={34} />
                 </button>
             </div>
         </div>

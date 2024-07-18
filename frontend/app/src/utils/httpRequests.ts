@@ -72,6 +72,7 @@ export async function sendLoggedInActionRequest(method: string, url: string, dat
     const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
 
     const headers: { [key: string]: string } = {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${csrfClientExposedCookie}`
     }
 

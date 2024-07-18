@@ -1,0 +1,26 @@
+/* ErrorOccurred.css */
+.error-occurred-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  color: #b00020;
+}
+
+.error-occurred-icon {
+  font-size: 50px;
+  color: #b00020;
+  margin-bottom: 20px;
+}
+
+.error-occurred-container h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.error-occurred-container p {
+  font-size: 16px;
+  color: #888;
+}

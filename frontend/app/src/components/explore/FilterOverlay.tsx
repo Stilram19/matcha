@@ -4,7 +4,7 @@ import InterestsInput from "../utils/InterestsInput";
 import AgeGapFilter from "./age-gap-filter/AgeGapFilter";
 
 type FilterOverlayProps = {
-    handleFilterOverlayClose: () => void;
+    handleFilterOverlayClose: (fameRatingRange: number[], ageRange: number[], interests: Set<string>) => void;
 };
 
 function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
@@ -17,12 +17,12 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
     function handleBackgroundClick(e: React.MouseEvent<HTMLDivElement>) {
         const classes = (e.target as HTMLElement).classList;
         if (classes.contains('bg-black') && classes.contains('bg-opacity-40')) {
-            handleFilterOverlayClose();
+            handleFilterOverlayClose([minFameRating, maxFameRating], [minAge, maxAge], selectedInterests);
         }
     }
 
     function handleClose() {
-        handleFilterOverlayClose();
+        handleFilterOverlayClose([minFameRating, maxFameRating], [minAge, maxAge], selectedInterests);
     }
 
     // function handleSubmit() {
