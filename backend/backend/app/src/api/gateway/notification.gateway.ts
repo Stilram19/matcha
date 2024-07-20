@@ -1,26 +1,11 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { profileVisitNotificationHandler, userLikeNotificationHandler, userUnlikedNotificationHandler } from '../services/notification.service.js';
-import { getApplicationError } from '../helpers/getErrorObject.js';
+import { eventHandlerWithErrorHandler } from '../services/socket.service.js';
 
 
-
-type EventHandler = (client: Socket, data: any) => void;
-
-function withErrorHandler(fn: EventHandler) {
-    return (client: Socket, data: any) => {
-        try {
-            fn(client, data);
-        } catch (e) {
-            const { message } = getApplicationError(e);
-            client.emit('error', {message: message});
-        }
-    }
-}
-
-
-const profileVisitNotification = withErrorHandler(profileVisitNotificationHandler);
-const userLikeNotification = withErrorHandler(userLikeNotificationHandler);
-const userUnlikedNotification = withErrorHandler(userUnlikedNotificationHandler);
+const profileVisitNotification = eventHandlerWithErrorHandler(profileVisitNotificationHandler);
+const userLikeNotification = eventHandlerWithErrorHandler(userLikeNotificationHandler);
+const userUnlikedNotification = eventHandlerWithErrorHandler(userUnlikedNotificationHandler);
 
 
 

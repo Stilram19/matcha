@@ -49,7 +49,12 @@ function handleDisconnect(socket: Socket) {
 
 
 function createIoServer(server: any) {
-    const io = new Server(server, {cors: {origin: "*"}});
+    const corsOptions = {
+        origin: process.env.FRONTEND_ORIGIN,
+        credentials: true
+    }
+
+    const io = new Server(server, {cors: corsOptions});
     ioEmitter.initIoServer = io; // * intisalize io Server
 
 

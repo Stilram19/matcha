@@ -17,3 +17,4 @@ export function isValidUserEventData(data: UserEventData) {
         return (false);
     return (true);
 }
+

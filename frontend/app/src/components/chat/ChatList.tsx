@@ -10,11 +10,10 @@ import ChatListHeader from "./ChatListHeader";
 // to make the rendering more efficient, because sometimes i'm inserting new Dms in the front
 // it will be naive to mutate every dm in the DOM redundantly (lastly i understand why the index of the array should not be used as a key)
 const   DmsList = ({dms, onClick, searchInput} : {dms: DmListType[], onClick: (id: number) => void, searchInput: string}) => {
-    const regEx = new RegExp(searchInput, 'i')
 
     // ! the data should arrive in the way that it gonne be displayed, no need for filtering
     console.log(dms);
-    const data = dms?.filter((dm) =>  regEx.test(`${dm.firstName} ${dm.lastName}`));
+    const data = dms?.filter((dm) =>  `${dm.firstName} ${dm.lastName}`.toLowerCase().includes(searchInput));
 
     return (
         <div className="w-full h-full">
@@ -45,13 +44,13 @@ const   ChatList: FC<ChatListProps> = ({onClick}) => {
     const   [searchInput, setSearchInput] = useState<string>('');
     const   allData = useFetchAllDms();
     const   [dms, setDms] = allData.dms;
-    const   [matched] = allData.matched;
+    const   [contacts] = allData.contacts;
 
     // this maps the a tab to its data, to be listed
     const   tabMap: Record<string, DmListType[] | undefined> = {
         dms,
         favorites: dms?.filter((dm) => dm.isFavorite),
-        matched,
+        contacts,
     }
 
     const conversationOnClick = (dmId: number) => {

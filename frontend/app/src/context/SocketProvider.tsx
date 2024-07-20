@@ -12,7 +12,7 @@ const   IO_SERVER_URL = "http://localhost:3000"
 
 const   SocketProvider = ({children}: Props) => {
     const   [userId, setUserId] = useState(0);
-    const   socket = io(IO_SERVER_URL, {auth: {token: userId}})
+    const   socket = io(IO_SERVER_URL, {auth: {token: userId}, withCredentials: true})
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         const input = e.target as HTMLInputElement;

@@ -2,6 +2,8 @@ import { Link, NavLink } from "react-router-dom";
 import './style.css'
 import { useState } from "react";
 import Search from "./Search";
+import Notification from "./Notification";
+import { FaBell } from "react-icons/fa6";
 
 function LoggedInHeader() {
     let [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -20,6 +22,7 @@ function LoggedInHeader() {
         setIsSmallSearchOpen(true);
     }
 
+
     return (
         <div className="flex justify-between shadow bg-white lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44" style={isSearchOpen ? {paddingLeft: 20, paddingRight: 20} : {}} >
             <div className="flex gap-3 lg:gap-12">
@@ -35,18 +38,17 @@ function LoggedInHeader() {
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/profile'>profile</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/chat'>chat</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/history'>history</NavLink></li>
+                    <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/test'>history</NavLink></li>
                 </ul>
                 <img src="/icons/nav-bar-divider.svg" alt="nav bar divider" className="h-34px mt-5" />
                 <div className="flex items-center">
-                    <div className="p-3 lg:p-5">
-                        <img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/>
-                    </div>
+                    <Notification />
                     <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
                 </div>
             </nav>
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>
                 <div className="p-2">
-                    <img src="/icons/notification-bell.svg" alt="notification bell" style={{width: 24}}/>
+                    <Link to="/notifications"><FaBell size={28}  className="cursor-pointer hover:text-pastel-pink"/></Link>
                 </div>
                 <div style={{overflow: 'hidden'}}><i className="p-2 scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
             </div>

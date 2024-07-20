@@ -9,6 +9,11 @@ export async function getDirectMessageList(request: Request, response: Response)
 
     try {
         const dms = await retrieveDms(userId);
+        response.cookie('blah', 'balh blah fgkdfjkgjd', {
+            httpOnly: true,
+            sameSite: 'strict',
+            // secure: true
+        })
         response.json(dms);
     } catch (e) {
         const {status, message} = getHttpError(e);
@@ -46,6 +51,7 @@ export async function getConversationDetails(request: Request, response: Respons
 }
 
 
+// move this to the profile routes
 export async function getParticipantInfo(request: Request, response: Response) {
     const participantId: number = +request.params.id;
 

@@ -64,6 +64,7 @@ export async function getContactDetails(participant: number) {
     }
 
     // find the user #participant
+    // mark all messages as read
     return {
         id: 1,
         username: 'okhiar',

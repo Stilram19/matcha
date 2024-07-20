@@ -1,9 +1,12 @@
 import { Server, Socket } from "socket.io";
-import { extractUserId } from "../services/socket.service.js";
+import { eventHandlerWithErrorHandler, extractUserId } from "../services/socket.service.js";
 import { EmittedMessage } from "../types/chat.type.js";
 import { validateMessageData } from "../validators/socketEventValidator.js";
 import ioEmitter from '../services/emitter.service.js';
 import { EmittedEvents } from '../types/enums.js';
+import { ApplicationError } from "../helpers/ApplicationError.js";
+import { checkIdExists } from "../services/chat.service.js";
+import { isBlockedService } from "../services/profile.js";
 
 
 function sendMessage(client: Socket, message: EmittedMessage) {
@@ -14,6 +17,18 @@ function sendMessage(client: Socket, message: EmittedMessage) {
     ioEmitter.emitToClientSockets(message.to, 'chat:message', {
         from: senderId,
         message: message.message,
+    })
+
+    ioEmitter.emitToClientSockets(message.to, 'notification:new', {
+        id: Math.floor(Math.random() * 1000),
+        type: 'message',
+        title: 'New Message',
+        message: 'You have received a new message from John Doe',
+        senderId: senderId,
+        profilePicture: 'https://example.com/profiles/john-doe.jpg',
+        senderFirstName: 'oussmaa',
+        senderLastName: 'khiar',
+        read: false
     })
 
 
@@ -43,22 +58,30 @@ function    sendMessageHandler(client: Socket, data: any) {
 }
 
 
-function registerChatHandlers(client: Socket) {
-    // client.use(([event, ...args], next) => {
-    //     if (isUnauthorized(event)) {
-    //       return next(new Error("unauthorized event"));
-    //     }
-    //     // do not forget to call next
-    //     next();
-    //   })
+async function handleMarkMessageAsRead(client: Socket, data: {participantId: number, messageId: number}) {
+    const   {participantId, messageId} = data;
+    const   userId = extractUserId(client);
+    if (!participantId || typeof participantId !== 'number'
+            || !messageId || typeof messageId !== "number") {
+        throw new ApplicationError('Invalid socket data for read event')
+    }
 
-    // client.on("error", (err) => {
-    //     // if (err && err.message === "unauthorized event") {
-    //       client.disconnect();
-    //     // }
-    //   });
-    client.use
-    client.on('chat:send', (data) => sendMessageHandler(client, data));
+    if (participantId === userId)
+        return ; // ? do nothing
+    if (!checkIdExists(participantId))
+        throw new ApplicationError('user not found');
+    if (await isBlockedService(userId, participantId))
+        return ;
+    // if (message does not exits return) // sender participantId receiver userId Where id = messageId.
+
+    // commit to the database the changes. (status of the messageId)
+}
+
+
+
+function registerChatHandlers(client: Socket) {
+    client.on('chat:send', (data) => eventHandlerWithErrorHandler(sendMessageHandler)(client, data));
+    client.on('chat:markAsRead', (data) => eventHandlerWithErrorHandler(handleMarkMessageAsRead)(client, data));
 
 
     // ! testing => remove later

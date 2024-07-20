@@ -3,7 +3,7 @@ import { FaArrowLeft } from "react-icons/fa6";;
 import ChatList from "../../components/chat/ChatList";
 import ChatWindow from '../../components/chat/ChatWindow';
 import ContactInfo from "../../components/chat/ContactInfo";
-import ChatSelectedProvider from '../../context/ChatSelectedProvider';
+import ActiveDmProvider from '../../context/activeDmProvider';
 import eventObserver from '../../utils/eventObserver';
 import { GlobalEventEnum } from '../../types/globalEventEnum';
 
@@ -45,12 +45,13 @@ const Chat = () => {
 
 
     return (
-        <ChatSelectedProvider value={activeDmId}>
+        <ActiveDmProvider value={{activeDmId, setActiveDmId}}>
             {error ? <div className="fixed left-1/2 bg-red-300 text-black rounded-lg px-4 py-2 z-50 shadow-lg">{error}</div> : null}
             <div className="flex justify-around w-screen h-[calc(100vh-80px)]">
                 <div className="w-[90%] m-5 border border-e0 rounded-xl shadow-md flex">
                     <div className={`w-full ${isDmActive ? "hidden" : ''} md:inline-block md:w-1/3 lg:w-1/4 h-full md:border-r`}>
                         {/* onClick event attached to every single dm Bar */}
+                        {/* ! no need to pass the call back */}
                         <ChatList onClick={(id) => setActiveDmId(id)}/> 
                     </div>
                 
@@ -72,7 +73,7 @@ const Chat = () => {
                     </div>
                 </div>
             </div>
-        </ChatSelectedProvider>
+        </ActiveDmProvider>
     )
 }
 

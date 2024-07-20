@@ -17,6 +17,25 @@ import SearchResults from "../pages/searchResults/SearchResults";
 import History from "../pages/history/History";
 import VerifyEmail from "../pages/auth/emailVerification";
 import ResetPassword from "../pages/auth/resetVerification";
+import { useEffect } from "react";
+import NotificationPage from "../pages/notification/NotificationPage";
+
+
+const Test = () => {
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("http://localhost:3000/blah", {credentials: 'include'});
+      const data = await res.json();
+
+      console.log(data);
+  })()
+  }, [])
+
+  return <div>
+    hello
+  </div>
+}
 
 const router = createBrowserRouter([
     {
@@ -85,6 +104,14 @@ const router = createBrowserRouter([
     {
       path: '/search-results',
       element: <LoggedInLayout><SearchResults/></LoggedInLayout>
+    },
+    {
+      path: '/notifications',
+      element: <LoggedInLayout><NotificationPage /></LoggedInLayout>
+    },
+    {
+      path: '/test',
+      element: <Test></Test>
     },
 ]);
 

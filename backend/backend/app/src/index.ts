@@ -12,7 +12,7 @@ console.log(process.env.API_PORT);
 const API_PORT = process.env.API_PORT || 3000;
 
 app.use(cors({ 
-    origin: process.env.FRONTEND_ORIGIN || "*",
+    origin: process.env.FRONTEND_ORIGIN,
     credentials: true
 }));
 

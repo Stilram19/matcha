@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DmListType, EventsEnum } from "../types";
 import useFetch from "./useFetch";
 import { changeParticipantPresence, prepareSocketEventRegistration } from "../utils/socket";
 import { useSocketEventRegister } from "./useSocketEventResgiter";
 import eventObserver from "../utils/eventObserver";
-import { useSelectedDm } from "../context/ChatSelectedProvider";
+import { useActiveDm } from "../context/activeDmProvider";
 
 
 // this interface should consistent with data that send by the io server
@@ -18,6 +18,8 @@ interface MessageEvent {
 }
 
 type    StatePair = [DmListType[] | undefined, React.Dispatch<React.SetStateAction<DmListType[] | undefined>>];
+
+type    ReactSetter<T> = Dispatch<SetStateAction<T>>
 
 
 // function reorderDmList(dms: DmListType[], dm: any) {
@@ -56,30 +58,22 @@ function    createDmsUpdateFunc(activeDmId: number, data: MessageEvent) {
     }
 }
 
-
-const   useFetchAllAndSubscribe: () => {dms: StatePair, matched: StatePair} = () => {
-    const   activeDmId = useSelectedDm();
-    const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
-    const   [matched, setMatched] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
-
-
-    const userPresenceHandler = (onlineUsers: any) => {
-        console.log('online-users:');
-        console.log(onlineUsers);
-
-        // modify dms Presence, it's going to change the status (online, offline) 
-        const   mutatedDms = (dms: DmListType[] | undefined) => dms && changeParticipantPresence(dms, onlineUsers);
-
-        setDms(mutatedDms);
-        setMatched(mutatedDms);
+function registerSocketEvents(activeDmId: number, setDms: ReactSetter<DmListType[] | undefined>, setContacts: ReactSetter<DmListType[] | undefined>) {
+    const userPresenceHandler = (onlineUsers: number[]) => {
+        console.log('online-users:', onlineUsers);
+    
+        // Modify dms presence, changing the status (online, offline)
+        const mutateDms = (dms: DmListType[] | undefined) => dms && changeParticipantPresence(dms, onlineUsers);
+    
+        setDms(mutateDms);
+        setContacts(mutateDms);
     }
-
 
     const   messageEventHandler = (data: MessageEvent) => {
         // ? checking if the sended message, was already in the list, if so need to re-order the dms list
         // ? if not i need just to insert it in the first of the array, & the unseen counter should incerement 
         const   updateDms = createDmsUpdateFunc(activeDmId, data);
-
+    
         setDms(updateDms);
     }
 
@@ -89,56 +83,78 @@ const   useFetchAllAndSubscribe: () => {dms: StatePair, matched: StatePair} = ()
                                 ['global:online-users', userPresenceHandler],
                                 ['chat:message', messageEventHandler]
                             ]);
-
     useSocketEventRegister(regiterarFunction, [activeDmId]);
+}
+
+
+
+
+const   handleFevoritesChange = (dmId: number, setDms: ReactSetter<DmListType[] | undefined>) => {
+    console.log(`${dmId} fav changing..`);
+    setDms((prev) => {
+        if (!prev) return (prev);
+        const index = prev.findIndex((dm) => dm.id === dmId);
+        if (index === -1) return (prev);
+
+        prev[index].isFavorite = !prev[index].isFavorite;
+        return ([...prev]);
+    });
+}
+
+const handleSendMessage = (message: any, setDms: ReactSetter<DmListType[] | undefined>) => {
+    // if the message was sent for the first time add it, otherwise update last message that the logged in user sent
+    setDms((prevDms) => {
+        if (!prevDms)
+            return (prevDms);
+        const index = prevDms.findIndex((dm) => dm.id === message.to);
+        if (index !== -1) {
+            const dmItem: DmListType = {...prevDms[index], lastMessage: message.message}
+            return [dmItem, ...prevDms.slice(0, index), ...prevDms.slice(index + 1)];
+        }
+        const   newDm: DmListType = {
+            id: message.to,
+            firstName: 'blah',
+            lastName: 'blah',
+            lastMessage: message.message,
+            profilePicture: '',
+            isFavorite: false,
+            status: 'online',
+            unreadCount: 0,
+        }
+        return ([newDm, ...prevDms]);
+    })
+}
+
+
+
+
+
+
+
+
+const   useFetchAllAndSubscribe: () => {dms: StatePair, contacts: StatePair} = () => {
+    const   { activeDmId } = useActiveDm();
+    const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+    const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+
+
+    registerSocketEvents(activeDmId, setDms, setContacts);
+
 
     useEffect(() => {
-        const   handleFevoritesChange = (dmId: number) => {
-            console.log(`${dmId} fav changing..`);
-            setDms((prev) => {
-                if (!prev) return (prev);
-                const index = prev.findIndex((dm) => dm.id === dmId);
-                if (index === -1) return (prev);
- 
-                prev[index].isFavorite = !prev[index].isFavorite;
-                return ([...prev]);
-            });
-        }
-    
-        const handleSendMessage = (message: any) => {
-            // if the message was sent for the first time add it, otherwise update last message that the logged in user sent
-            setDms((prevDms) => {
-                if (!prevDms)
-                    return (prevDms);
-                const index = prevDms.findIndex((dm) => dm.id === message.to);
-                if (index !== -1) {
-                    const dmItem: DmListType = {...prevDms[index], lastMessage: message.message}
-                    return [dmItem, ...prevDms.slice(0, index), ...prevDms.slice(index + 1)];
-                }
-                const   newDm: DmListType = {
-                    id: message.to,
-                    firstName: 'blah',
-                    lastName: 'blah',
-                    lastMessage: message.message,
-                    profilePicture: '',
-                    isFavorite: false,
-                    status: 'online',
-                    unreadCount: 0,
-                }
-                return ([newDm, ...prevDms]);
-            })
-        } 
+        const   handleFavChange = (dmId: number) => handleFevoritesChange(dmId, setDms);
+        const   handleSendMsg = (message: any) => handleSendMessage(message, setDms);
 
-        eventObserver.subscribe(EventsEnum.APP_FAVORITE_CHANGE, handleFevoritesChange);
-        eventObserver.subscribe(EventsEnum.APP_SEND_MESSAGE, handleSendMessage);
-    
+        eventObserver.subscribe(EventsEnum.APP_FAVORITE_CHANGE, handleFavChange);
+        eventObserver.subscribe(EventsEnum.APP_SEND_MESSAGE, handleSendMsg);
+
         return () => {
-            eventObserver.unsubscribe(EventsEnum.APP_FAVORITE_CHANGE, handleFevoritesChange);
-            eventObserver.unsubscribe(EventsEnum.APP_SEND_MESSAGE, handleSendMessage);
+            eventObserver.unsubscribe(EventsEnum.APP_FAVORITE_CHANGE, handleFavChange);
+            eventObserver.unsubscribe(EventsEnum.APP_SEND_MESSAGE, handleSendMsg);
         }
     }, []);
 
-    return {dms: [dms, setDms], matched: [matched, setMatched]}
+    return {dms: [dms, setDms], contacts: [contacts, setContacts]}
 }
 
 

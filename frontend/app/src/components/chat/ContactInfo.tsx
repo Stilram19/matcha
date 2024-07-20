@@ -5,32 +5,42 @@ import { IoHeartDislikeSharp, IoVolumeMute } from "react-icons/io5";
 import { MdBlockFlipped } from "react-icons/md";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import { IconType } from "react-icons";
-import { useSelectedDm } from "../../context/ChatSelectedProvider";
+import { useActiveDm } from "../../context/activeDmProvider";
 import useFetch from "../../hooks/useFetch";
 import { ContactDetailsType, EventsEnum } from "../../types";
 import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 
+type    DropdownItemType = {
+    title: string,
+    onClick: () => void,
+    icon: IconType,
+}
 
-const DropdownItem = ({title, Icon} : {title: string, Icon: IconType}) => {
+const DropdownItem = ({title, Icon, onClick} : {title: string, Icon: IconType, onClick: () => void}) => {
     return (
-        <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1">
+        <button className="p-1 w-full border-b hover:bg-gray-100 flex justify-center items-center gap-1" onClick={() => onClick()}>
             <Icon  size={15} className="fill-gray-600" />
             <p className="text-gray-600">{title}</p>
         </button>
     )
 }
 
-const Dropdown = () => {
+const Dropdown = ({dropdowns} : {dropdowns: DropdownItemType[]}) => {
     const [isOpen, setIsOpen] = useState(false);
-
-
     const dropdownRef = useOutsideClick(() => setIsOpen(false));
+    // const dropdwons: DropdownItemType[] = [
+    //     {title: "block", onClick: () => "blah", icon: MdBlockFlipped},
+    //     {title: "Mute", onClick: () => "blah", icon: IoVolumeMute},
+    //     {title: "Unlike", onClick: () => "blah", icon: IoHeartDislikeSharp},
+    //     {title: "Profile", onClick: () => "blah", icon: FaRegUserCircle},
+    // ]
+
+
 
     const handleDropdown = () => {
         setIsOpen((prev) => !prev);
     }
-
 
     return (
         <div ref={dropdownRef} className="self-end relative w-[150px] z-20">
@@ -42,10 +52,10 @@ const Dropdown = () => {
             {isOpen && 
                 <div className='absolute right-5 w-full shadow-lg bg-white border rounded-lg overflow-hidden'>
 
-                    <DropdownItem title="Block" Icon={MdBlockFlipped} />
-                    <DropdownItem title="Mute" Icon={IoVolumeMute} />
-                    <DropdownItem title="Unlike" Icon={IoHeartDislikeSharp} />
-                    <DropdownItem title="Profile" Icon={FaRegUserCircle} />
+                    {dropdowns.map((dropdownItem) => {
+                        const   {title, onClick, icon} = dropdownItem;
+                        return <DropdownItem key={title} title={title} onClick={onClick} Icon={icon} />
+                    })}
 
                 </div>
             }
@@ -55,7 +65,7 @@ const Dropdown = () => {
 
 
 function registerEventHandlers(setContactDetails: React.Dispatch<React.SetStateAction<ContactDetailsType | undefined>>) {
-    const activeDmId = useSelectedDm();
+    const { activeDmId } = useActiveDm();
 
     const   presenceChangeHandler = (onlineUsers: number[]) => {
         const status = onlineUsers.indexOf(activeDmId) !== -1 ? 'online' : 'offline';
@@ -73,19 +83,43 @@ function registerEventHandlers(setContactDetails: React.Dispatch<React.SetStateA
     useSocketEventRegister(registrarFunction, [activeDmId]);
 }
 
+
+function getDropdownItems() : DropdownItemType[] {
+    const   {activeDmId, setActiveDmId} = useActiveDm();
+    const   dropdowns: DropdownItemType[] = [];
+
+    const   handleBlock = () => {
+        // http post request for blocking the active dm user
+        console.log(`block ${activeDmId}`);
+        setActiveDmId(-1);
+    }
+
+    const   handleUnlike = () => {
+        // http unlike the user
+        console.log(`unlike ${activeDmId}`);
+    }
+
+
+    dropdowns.push({title: 'Block', onClick: handleBlock, icon: MdBlockFlipped});
+    dropdowns.push({title: 'Unlike', onClick: handleUnlike, icon: IoHeartDislikeSharp});
+    return dropdowns;
+}
+
 const ContactInfo = () => {
-    const activeDmId = useSelectedDm();
+    const { activeDmId } = useActiveDm();
     const [contactDetails, setContactDetails] = useFetch<ContactDetailsType>(`${import.meta.env.VITE_LOCAL_CHAT_CONTACT_INFO}/${activeDmId}`, [activeDmId]);
 
     console.log(contactDetails)
     registerEventHandlers(setContactDetails);
+
+    const dropdowns = getDropdownItems();
 
     return (
         <div className="p-2 w-full h-full overflow-y-auto scrollbar">
             {
                 contactDetails && 
                 <div className="flex flex-col items-center">
-                    <Dropdown />
+                    <Dropdown dropdowns={dropdowns} />
 
                     <img src={contactDetails.profilePicture} className=" h-40 w-40 object-cover rounded-full p-1 bg-pink" />
                     <h1 className="text-xl">{contactDetails.firstName + " " + contactDetails.lastName}</h1>

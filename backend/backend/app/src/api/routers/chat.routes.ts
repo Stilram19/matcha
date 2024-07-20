@@ -11,6 +11,23 @@ router.get('/chat/favorites', getFavoritesChat);
 router.get('/chat/conversation_details/:id', validateDmParam, getConversationDetails)
 router.get('/chat/participant/:id', validateDmParam, getParticipantInfo)
 router.get('/chat/dms/:id', validateDmParam, getDmHistory);
+router.get('/blah', (req, res) => {
+    console.log(req)
+    console.log(req.cookies)
+
+    res.json("hello")
+});
+
+// router.get('/cookie', (req, res) => {
+//     res.cookie('blah', 'balh blah fgkdfjkgjd', {
+//         httpOnly: true,
+//         sameSite: 'none'
+//     })
+
+//     res.json("cookie")
+// });
+
+
 
 
 export default router;

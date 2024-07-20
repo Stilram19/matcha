@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import socketService from "./socketManager.service.js";
+import socketManager from "./socketManager.service.js";
 
 
 class   IoEmitter {
@@ -24,7 +24,7 @@ class   IoEmitter {
     emitToClientSockets(userId: number, event:string, data: any) {
         if (!this.io_server)
             throw Error("Socket.IO server is not initialized yet");
-        const sockets = socketService.getSocketsById(userId);
+        const sockets = socketManager.getSocketsById(userId);
         const server: Server = this.io_server;
     
         sockets?.forEach((socket) => {

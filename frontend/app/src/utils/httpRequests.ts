@@ -102,3 +102,6 @@ export async function sendLoggedInGetRequest(url: string) {
 
     return (responseBody);
 }
+
+
+// ! why if the endpoint not found the server respond with unauthorized

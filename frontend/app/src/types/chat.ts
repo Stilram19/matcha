@@ -1,5 +1,6 @@
 export type    ChatBoxProps = {
     messages: any[];
+    // shouldScrollDown: boolean;
 }
 
 export type ChatListProps = {

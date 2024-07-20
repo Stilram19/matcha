@@ -82,5 +82,136 @@ export function userLikeNotificationHandler(client: Socket, data: UserEventData)
         */
 }
 
-// export const userLikeNotificationHandler = createLikeNotificationHandler(EmittedEvents.LIKED);
-// export const userLikedBackNotificationHandler = createLikeNotificationHandler(EmittedEvents.LIKED_BACK);
+
+
+
+// ? HTTP Services
+export async function retrieveNotifications(userId: number) {
+
+    // select all the notification of the userId and count the unseen notifications
+
+
+    return [
+        {
+            id: 1,
+            type: 'new_message',
+            title: 'New Message',
+            message: 'You have received a new message from John Doe',
+            senderId: 123,
+            profilePicture: 'https://example.com/profiles/john-doe.jpg',
+            senderFirstName: 'John',
+            senderLastName: 'Doe',
+            read: false
+        },
+        {
+            id: 2,
+            type: 'like',
+            title: 'New Like',
+            message: 'Jane Doe liked your post',
+            senderId: 124,
+            profilePicture: 'https://example.com/profiles/jane-doe.jpg',
+            senderFirstName: 'Jane',
+            senderLastName: 'Doe',
+            read: false
+        },
+        {
+            id: 3,
+            type: 'unlike',
+            title: 'New Unlike',
+            message: 'Alice Smith unliked your post',
+            senderId: 125,
+            profilePicture: 'https://example.com/profiles/alice-smith.jpg',
+            senderFirstName: 'Alice',
+            senderLastName: 'Smith',
+            read: false
+        },
+        {
+            id: 4,
+            type: 'visited_your_profile',
+            title: 'Profile Visit',
+            message: 'Bob Johnson visited your profile',
+            senderId: 126,
+            profilePicture: 'https://example.com/profiles/bob-johnson.jpg',
+            senderFirstName: 'Bob',
+            senderLastName: 'Johnson',
+            read: true
+        },
+        {
+            id: 2,
+            type: 'like',
+            title: 'New Like',
+            message: 'Jane Doe liked your post',
+            senderId: 124,
+            profilePicture: 'https://example.com/profiles/jane-doe.jpg',
+            senderFirstName: 'Jane',
+            senderLastName: 'Doe',
+            read: false
+        },
+        {
+            id: 3,
+            type: 'unlike',
+            title: 'New Unlike',
+            message: 'Alice Smith unliked your post',
+            senderId: 125,
+            profilePicture: 'https://example.com/profiles/alice-smith.jpg',
+            senderFirstName: 'Alice',
+            senderLastName: 'Smith',
+            read: false
+        },
+        {
+            id: 4,
+            type: 'visited_your_profile',
+            title: 'Profile Visit',
+            message: 'Bob Johnson visited your profile',
+            senderId: 126,
+            profilePicture: 'https://example.com/profiles/bob-johnson.jpg',
+            senderFirstName: 'Bob',
+            senderLastName: 'Johnson',
+            read: true
+        },
+        {
+            id: 1,
+            type: 'new_message',
+            title: 'New Message',
+            message: 'You have received a new message from John Doe',
+            senderId: 123,
+            profilePicture: 'https://example.com/profiles/john-doe.jpg',
+            senderFirstName: 'John',
+            senderLastName: 'Doe',
+            read: false
+        },
+        {
+            id: 2,
+            type: 'like',
+            title: 'New Like',
+            message: 'Jane Doe liked your post',
+            senderId: 124,
+            profilePicture: 'https://example.com/profiles/jane-doe.jpg',
+            senderFirstName: 'Jane',
+            senderLastName: 'Doe',
+            read: false
+        },
+        {
+            id: 3,
+            type: 'unlike',
+            title: 'New Unlike',
+            message: 'Alice Smith unliked your post',
+            senderId: 125,
+            profilePicture: 'https://example.com/profiles/alice-smith.jpg',
+            senderFirstName: 'Alice',
+            senderLastName: 'Smith',
+            read: false
+        },
+        {
+            id: 4,
+            type: 'visited_your_profile',
+            title: 'Profile Visit',
+            message: 'Bob Johnson visited your profile',
+            senderId: 126,
+            profilePicture: 'https://example.com/profiles/bob-johnson.jpg',
+            senderFirstName: 'Bob',
+            senderLastName: 'Johnson',
+            read: true
+        },
+    ];
+}

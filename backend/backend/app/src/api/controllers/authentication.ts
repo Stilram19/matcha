@@ -8,10 +8,10 @@ export async function localStrategyController(request: Request, response: Respon
     const username = request.body.username as string;
     const password = request.body.password as string;
 
-    if (await isLoginValidService(username, password) == false) {
-        response.status(403).send( { msg: 'invalid username or password' } );
-        return ;
-    }
+    // if (await isLoginValidService(username, password) == false) {
+    //     response.status(403).send( { msg: 'invalid username or password' } );
+    //     return ;
+    // }
 
     console.log('logged in successfully');
  
