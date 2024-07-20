@@ -23,6 +23,7 @@ CREATE TABLE "user" (
     gender VARCHAR(20),
     sexual_preference VARCHAR(20),
     fame_rating DECIMAL(5, 2),
+    report_count INTEGER,
     profile_picture VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

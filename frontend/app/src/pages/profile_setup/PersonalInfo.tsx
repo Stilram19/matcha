@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { sendFormDataRequest, sendLoggedInGetRequest } from "../../utils/httpRequests";
-import { getFormError } from "../../utils/errorHandling";
+import { getFormError, isOfBriefProfileInfosType } from "../../utils/typeGuards";
 import { BriefProfileInfos } from "../../types/profile";
 import { getCookie } from "../../utils/generalPurpose";
+import ErrorOccurred from "../../components/utils/error-occurred/ErrorOccurred";
 
 type SelectOptions = {
     value: string;
@@ -41,6 +42,8 @@ type FormValues = {
 const PersonalInfo = () => {
     const [image, setImage] = useState<File>();
     const [defaultProfileInfos, setDefaultProfileInfos] = useState<BriefProfileInfos>();
+    const [errorOccurred, setErrorOccurred] = useState(false);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -60,9 +63,12 @@ const PersonalInfo = () => {
             try {
                 const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_CURR_USER_BRIEF_INFOS_API_URL);
 
-                if (responseBody && responseBody.profileInfos) {
-                    setDefaultProfileInfos(responseBody.profileInfos);
+                if (!responseBody || !isOfBriefProfileInfosType(responseBody.profileInfos)) {
+                    setErrorOccurred(true);
+                    return ;
                 }
+
+                setDefaultProfileInfos(responseBody.profileInfos);
             }
             catch (err) {
                 console.log(err);
@@ -72,6 +78,14 @@ const PersonalInfo = () => {
 
     if (!defaultProfileInfos) {
         return ;
+    }
+
+    if (errorOccurred) {
+        return (
+            <>
+                <ErrorOccurred />
+            </>
+        )
     }
 
     const validationSchema = Yup.object({

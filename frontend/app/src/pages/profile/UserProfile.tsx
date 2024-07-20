@@ -14,6 +14,8 @@ import LikeBackProfileButton from "../../components/profile/LikeBackProfileButto
 import { ProfileInfos } from "../../types/profile";
 import { sendLoggedInActionRequest, sendLoggedInGetRequest } from "../../utils/httpRequests";
 import AreYouSureOverlay from "../../components/profile/AreYouSureOverlay";
+import ErrorOccurred from "../../components/utils/error-occurred/ErrorOccurred";
+import { isOfProfileInfosType } from "../../utils/typeGuards";
 
 function UserProfile() {
     let [profileInfos, setProfileInfos] = useState<ProfileInfos>();
@@ -22,25 +24,48 @@ function UserProfile() {
     let [isInterestsEditOpen, setIsInterestsEditOpen] = useState(false);
     let [isFakeReportAreYouSureModelOpen, setIsFakeReportAreYouSureModelOpen] = useState(false);
     let [isBlockAreYouSureModelOpen, setIsBlockAreYouSureModelOpen] = useState(false);
+    let [isLoading, setIsLoading] = useState(true);
+    let [errorOccurred, setErrorOccurred] = useState(false);
 
     useEffect(() => {
         (async function initializeComponent() {
+            setIsLoading(true);
+            setErrorOccurred(false);
             try {
                 const profileInfosUrl = (userId ? import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}` : import.meta.env.VITE_LOCAL_CURR_PROFILE_INFOS_API_URL);
                 const responseBody = await sendLoggedInGetRequest(profileInfosUrl);
 
-                console.log(responseBody.profileInfos);
-
-                if (responseBody && responseBody.profileInfos) {
-                    responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
-                    setProfileInfos(responseBody.profileInfos);
+                if (!responseBody || !isOfProfileInfosType(responseBody.profileInfos)) {
+                    setErrorOccurred(true);
+                    return ;
                 }
+
+                responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
+                setProfileInfos(responseBody.profileInfos);
             } catch(err) {
-                console.log(err);
+                setErrorOccurred(true);
                 // navigate to a not found or error occured page
+            } finally {
+                setIsLoading(false);
             }
         })();
-    }, []);
+    }, [userId]);
+
+    if (errorOccurred) {
+        return (
+            <>
+                <ErrorOccurred />
+            </>
+        )
+    }
+
+    if (isLoading) {
+        return ;
+    }
+
+    if (profileInfos == undefined) {
+        return ;
+    }
 
     function handleEditButtonClick() {
         setIsProfileEditOpen(true);
@@ -142,10 +167,6 @@ function UserProfile() {
         finally {
             setIsFakeReportAreYouSureModelOpen(false);
         }
-    }
-
-    if (profileInfos == undefined) {
-        return ;
     }
 
     return (

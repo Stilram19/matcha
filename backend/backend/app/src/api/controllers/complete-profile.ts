@@ -4,6 +4,7 @@ import { addUserInterestsService } from '../services/profile.js';
 import { addUserPhotosService, updatePersonalInfosService } from '../services/complete-profile.js';
 import dotenv from 'dotenv'
 import { setCompleteProfileInfosCookie } from '../utils/cookies.js';
+import { isArray } from '../validators/generalPurpose.js';
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ export async function completeInterestsController(request: Request, response: Re
     const { userId } = getUserIdFromJwtService(accessToken);
     const { interests } = request.body;
 
-    if (!interests || !Array.isArray(interests)) {
+    if (!isArray(interests, undefined, 'string')) {
         response.status(400).send( { msg: 'bad interests request body' } );
         return ;
     }

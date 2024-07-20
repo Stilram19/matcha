@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import { ProfileInfos } from '../../types/profile';
 import { sendFormDataRequest } from '../../utils/httpRequests';
-import { getFormError } from '../../utils/errorHandling';
+import { getFormError } from '../../utils/typeGuards';
 
 type EditProfileOverlayProps = {
     profileInfos: ProfileInfos;
