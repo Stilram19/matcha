@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { MdCloudUpload } from "react-icons/md";
 import ImageCard from "../../components/utils/ImageCard";
 import { sendFormDataRequest } from "../../utils/httpRequests";
@@ -39,18 +39,27 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
 
 export default function ProfileSetup() {
     const   [images, setImages] = useState<File[]>([]);
+    const   [isRedirecting, setIsRedirecting] = useState(false);
     const   navigate = useNavigate();
     const   MAX_PICTURES = 4;
 
-    const completeProfileCookie = getCookie('CompleteProfile');
+    useEffect(() => {
+        const completeProfileCookie = getCookie('CompleteProfile');
 
-    if (completeProfileCookie != '2') {
-        const navRoute = completeProfileCookie == undefined ? '/complete-info/1'
-            : completeProfileCookie == '1' ? '/complete-info/2' : '/profile'
+        if (completeProfileCookie != '2') {
+            const navRoute = completeProfileCookie == undefined ? '/complete-info/1'
+                : completeProfileCookie == '1' ? '/complete-info/2' : '/profile'
 
-        setTimeout(() => {
-            navigate(navRoute);
-        }, 300);
+            setTimeout(() => {
+                navigate(navRoute);
+            }, 300);
+
+            setIsRedirecting(true);
+        }
+    }, []);
+
+    if (isRedirecting) {
+        return ;
     }
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {

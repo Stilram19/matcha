@@ -43,6 +43,7 @@ const PersonalInfo = () => {
     const [image, setImage] = useState<File>();
     const [defaultProfileInfos, setDefaultProfileInfos] = useState<BriefProfileInfos>();
     const [errorOccurred, setErrorOccurred] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
 
     const navigate = useNavigate();
 
@@ -56,6 +57,9 @@ const PersonalInfo = () => {
             setTimeout(() => {
                 navigate(navRoute);
             }, 300);
+
+            setIsRedirecting(true);
+            return ;
         }
         // console.log('completeProfileCookie: ' + completeProfileCookie);
 
@@ -75,6 +79,10 @@ const PersonalInfo = () => {
             }
         })();
     }, [])
+
+    if (isRedirecting) {
+        return ;
+    }
 
     if (!defaultProfileInfos) {
         return ;
