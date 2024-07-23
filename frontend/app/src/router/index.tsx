@@ -90,7 +90,7 @@ const router = createBrowserRouter([
       element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
     },
     {
-      path: '/chat',
+      path: '/chat/:conversationId?',
       element: <LoggedInLayout><Chat/></LoggedInLayout>
     },
     {

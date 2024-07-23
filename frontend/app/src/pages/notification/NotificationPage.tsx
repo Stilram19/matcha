@@ -1,4 +1,4 @@
-import { INotification } from "../../components/header/NotificationList";
+import { INotification } from "../../components/notification/NotificationList";
 import useFetch from "../../hooks/useFetch";
 
 
@@ -31,8 +31,9 @@ const   NotificationPage = () => {
     return (
 
         <div className="flex justify-around p-2 pt-3">
-            <div className="flex flex-col md:w-1/2">
-                <span className="text-3xl mb-2">Notifications</span>
+            <div className="flex flex-col md:w-1/2 gap-4">
+                <div className="text-4xl">Notifications</div>
+                <hr className="mb-2"/>
                 {
                     notifications && <NotificationList notifications={notifications} />
                 }

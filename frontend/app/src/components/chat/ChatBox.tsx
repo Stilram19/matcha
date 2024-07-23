@@ -1,54 +1,8 @@
 import { ChatBoxProps } from "../../types";
+import ChatInputField from "./ChatInputField";
 import Message from "./Message";
-import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { useActiveDm } from "../../context/activeDmProvider";
-import { AiOutlineAudio } from "react-icons/ai";
-import { IoArrowDownCircleOutline, IoSend } from "react-icons/io5";
+import { FC, useEffect, useRef, useState } from "react";
  
-const   ChatInputField: FC<{onSend: (msg: string) => void}> = ({onSend}) => {
-    const   { activeDmId } = useActiveDm();
-    const   inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        if (inputRef.current)
-            inputRef.current.focus();
-    }, [activeDmId]) // ! it depend on the active conversation id
-
-    const   sendHandler = () => {
-        if (!inputRef.current)
-            return ;
-
-        const   msg = inputRef.current.value;
-        if (msg === '') return;
-        onSend(msg);
-        inputRef.current.value = '';
-    }
-
-    return (
-        <div className="relative pt-2">
-            <div className="absolute bottom-2 w-full px-3">
-                <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Enter your message"
-                    className="outline-none border w-full p-3 px-3 pr-20 rounded-lg"
-                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && sendHandler()}
-                />
-
-                <div className="absolute bottom-0 top-0 right-5 flex items-center gap-2">
-                    <button className="">
-                        <AiOutlineAudio size={25} className="fill-gray-500 hover:fill-black" />
-                    </button>
-                    <button className="p-1 bg-pink rounded-md" onClick={sendHandler}>
-                        <IoSend size={25} className="fill-white" />
-                    </button>
-                </div>
-            </div> 
-        </div>
-    )
-
-}
-
 
 const   ChatBox: FC<ChatBoxProps & {onSend: (msg: string) => void}> = ({messages, onSend}) => {
     const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
@@ -94,7 +48,6 @@ const   ChatBox: FC<ChatBoxProps & {onSend: (msg: string) => void}> = ({messages
             return ;
         chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
-
 
     return (
         <>

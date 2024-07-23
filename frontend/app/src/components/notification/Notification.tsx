@@ -9,11 +9,9 @@ import { useLocation } from "react-router-dom";
 
 
 function registerEventHandlers(setNotifications: Dispatch<SetStateAction<INotification[] | undefined>>) {
-    const location = useLocation();
 
     const   handleNewNotification = (notification: INotification) => {
-        if (location.pathname === "/chat")
-            return ;
+        // i think, i should not overwhelmed user, with message notifications when the chat is open
         setNotifications((prev) => {
             if (!prev)
                 return (prev);
@@ -45,7 +43,9 @@ const   Notification = () => {
 
     useEffect(() => {
         if (!notifications)
-            return ;  
+            return ;
+        // instead of calling this in every time the a notification came
+        // i can assume that the count gonna increase by one..
         const count = notifications.reduce((acc, value) => acc + (!value.read ? 1 : 0), 0);
         setUnreadCount(count);
     }, [notifications])
@@ -56,9 +56,9 @@ const   Notification = () => {
 
 
     return (
-        <div ref={notificationRef} className="relative">
-            <div className="relative cursor-pointer"  onClick={handleBellClick}>
-                <FaBell size={28}  className="hover:text-pastel-pink"/>
+        <div ref={notificationRef} className="w-full relative">
+            <div className="w-full relative cursor-pointer"  onClick={handleBellClick}>
+                <FaBell size={25}  className="hover:text-pastel-pink"/>
                 { unreadCount ?
                     <span className="absolute bg-red-600 top-0 -right-1 flex items-center justify-center w-[16px] h-[16px] font-semibold text-white rounded-full text-xs">
                         {unreadCount}
@@ -73,11 +73,13 @@ const   Notification = () => {
                     <div className="p-1 bg-pastel-pink text-black font-semibold rounded-t-md">
                         Notifications
                     </div>
-                    <div className="w-full max-h-[60vh] overflow-auto scrollbar">
-                        {
-                            notifications && <NotificationList notifications={notifications} />
-                        }
-                        <div className="w-full text-center cursor-pointer bg-blue-50">load more</div>
+                    <div className="w-full max-h-[60vh] overflow-auto scrollbar bg-white">
+                        <div onClick={() => {console.log('clicked'); setIsOpen(false);}}>
+                            {
+                                notifications && <NotificationList notifications={notifications} />
+                            }
+                        </div>
+                        <div className="w-full text-center cursor-pointer hover:bg-blue-50">load more</div>
                     </div>
                 </div>
             }

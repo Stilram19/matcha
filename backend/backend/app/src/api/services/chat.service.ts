@@ -23,6 +23,7 @@ export async function retrieveDms(userId: number) {
     const dms: any[] = [];
     dms.sort((a, b) => a.created_at - b.created_at)
     // filter out the blocked one by the userId
+    // Checking if they liked each other
 
     return dummyDms;
 }

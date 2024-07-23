@@ -6,6 +6,7 @@ import ContactInfo from "../../components/chat/ContactInfo";
 import ActiveDmProvider from '../../context/activeDmProvider';
 import eventObserver from '../../utils/eventObserver';
 import { GlobalEventEnum } from '../../types/globalEventEnum';
+import { useParams } from 'react-router-dom';
 
 const WelcomeSection = () => {
     return (
@@ -40,9 +41,17 @@ function useError() {
 
 const Chat = () => {
     const error = useError();
+    const { conversationId } = useParams();
     const [activeDmId, setActiveDmId] = useState(-1);
-    const isDmActive = activeDmId !== -1;
 
+    useEffect(() => {
+        if (!conversationId)
+            return ;
+        setActiveDmId(+conversationId);
+    }, [conversationId])
+
+    const isDmActive = activeDmId !== -1;
+    console.log(conversationId)
 
     return (
         <ActiveDmProvider value={{activeDmId, setActiveDmId}}>

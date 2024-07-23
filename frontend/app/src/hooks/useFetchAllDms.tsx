@@ -159,3 +159,12 @@ const   useFetchAllAndSubscribe: () => {dms: StatePair, contacts: StatePair} = (
 
 
 export default useFetchAllAndSubscribe;
+
+
+/*
+SELECT * FROM dms
+JOIN attachement ON attachement.dm_id = dms.id
+WHERE 
+  (m.senderId = userId1 AND m.receiverId = userId2)
+   OR (m.senderId = userId2 AND m.receiverId = userId1)
+*/

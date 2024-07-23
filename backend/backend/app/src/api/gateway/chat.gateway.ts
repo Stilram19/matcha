@@ -21,10 +21,10 @@ function sendMessage(client: Socket, message: EmittedMessage) {
 
     ioEmitter.emitToClientSockets(message.to, 'notification:new', {
         id: Math.floor(Math.random() * 1000),
-        type: 'message',
+        type: 'new_message',
         title: 'New Message',
         message: 'You have received a new message from John Doe',
-        senderId: senderId,
+        actorId: senderId,
         profilePicture: 'https://example.com/profiles/john-doe.jpg',
         senderFirstName: 'oussmaa',
         senderLastName: 'khiar',

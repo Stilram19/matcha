@@ -49,9 +49,10 @@ function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[]>>, 
 
 
 
+// !!! useReducer to manage complex state
 
 const   ChatWindow = () => {
-    const   socket = useSocket();
+    const   socket = useSocket(); // ? maybe i should abstract away the socket object and provide register and emit
     const   { activeDmId } = useActiveDm();
     const   [messages, setMessages] = useState<any[]>(dmMessages);
     const   [participant, setParticipant] = useState<ParticipantUser>({
@@ -77,8 +78,6 @@ const   ChatWindow = () => {
     }
 
     registerEventHandlers(setMessages, setParticipant);
-    // instead of using this, integrate the same method as in useFetchAllDms
-    // using useSocketEventRegiester hook
     useEffect(() => {
 
         setParticipant({id: activeDmId as number,
@@ -92,7 +91,7 @@ const   ChatWindow = () => {
         return () => {
             console.log("unmount ChatBox");
         };
-    }, [socket, activeDmId]) // the dmId dependency necessary for re-register the receiveMessage callback
+    }, [activeDmId]) // the dmId dependency necessary for re-register the receiveMessage callback
 
 
     const   handleScrollToTop = () => {

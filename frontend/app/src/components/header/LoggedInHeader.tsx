@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import './style.css'
 import { useState } from "react";
 import Search from "./Search";
-import Notification from "./Notification";
+import Notification from "../notification/Notification";
 import { FaBell } from "react-icons/fa6";
 
 function LoggedInHeader() {
@@ -41,7 +41,7 @@ function LoggedInHeader() {
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/test'>history</NavLink></li>
                 </ul>
                 <img src="/icons/nav-bar-divider.svg" alt="nav bar divider" className="h-34px mt-5" />
-                <div className="flex items-center">
+                <div className="flex items-center gap-1">
                     <Notification />
                     <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
                 </div>
