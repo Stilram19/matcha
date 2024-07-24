@@ -11,11 +11,12 @@ export function extractUserId(client: Socket) {
 type EventHandler = (client: Socket, data: any) => void;
 
 export function eventHandlerWithErrorHandler(fn: EventHandler) {
-    return (client: Socket, data: any) => {
+    return  (client: Socket, data: any) => {
         try {
-            fn(client, data);
+             fn(client, data);
         } catch (e) {
             const { message } = getApplicationError(e);
+            console.log(message)
             client.emit('error', {message: message});
         }
     }

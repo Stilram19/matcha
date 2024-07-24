@@ -7,16 +7,71 @@ import { EmittedEvents } from '../types/enums.js';
 import { ApplicationError } from "../helpers/ApplicationError.js";
 import { checkIdExists } from "../services/chat.service.js";
 import { isBlockedService } from "../services/profile.js";
+import { writeFile } from "fs";
+import { fileTypeFromBuffer } from "file-type";
+import path from "path";
 
 
-function sendMessage(client: Socket, message: EmittedMessage) {
+async function    validateUploadedFile(view: Uint8Array) {
+    const   type = await fileTypeFromBuffer(view)
+    console.log(type)
+    return (type && type.mime === 'video/webm');
+}
+
+function generateAudioFileName(userId: number) {
+    let fileName: string;
+
+    fileName = `audio-${Date.now()}_${userId}.wav`
+    return (fileName);
+}
+
+async function saveAudioFile(audioData: ArrayBuffer, filename: string) {
+    const view = new Uint8Array(audioData);
+
+    if (!await validateUploadedFile(view))
+        throw new ApplicationError('Invalid audio file type. Please upload a WAV file.');
+
+    writeFile(path.join(path.resolve(), 'uploads', filename), view, (err) => {
+        if (err) {
+            console.log('write error:');
+            console.log(err);
+        }
+    });
+}
+
+async function sendMessageHandler(client: Socket, message: EmittedMessage) {
     const senderId = extractUserId(client);
     if (senderId === message.to)
         return ;
 
-    ioEmitter.emitToClientSockets(message.to, 'chat:message', {
+    console.log(message);
+    console.log('chat eventttttttt');
+    if (message.messageType === 'audio') {
+        // Asynchronously saving the file but synchronously validating the file mime
+        await saveAudioFile(message.messageContent as ArrayBuffer, generateAudioFileName(senderId));
+    }
+
+    console.log('emitting to pariticipants');
+    ioEmitter.emitToClientSockets(senderId, 'chat:message', {
+        isSender: true,
         from: senderId,
-        message: message.message,
+        to: message.to,
+        messageType: message.messageType,
+        messageContent: message.messageContent,
+        firstName: 'walid',
+        lastName: 'khiarrrrr',
+        status: 'online',
+    })
+
+    ioEmitter.emitToClientSockets(message.to, 'chat:message', {
+        isSender: false,
+        from: senderId,
+        to: message.to,
+        messageType: message.messageType,
+        messageContent: message.messageContent,
+        firstName: 'oussssaaaaama',
+        lastName: 'khiarrrrr',
+        status: 'online',
     })
 
     ioEmitter.emitToClientSockets(message.to, 'notification:new', {
@@ -44,18 +99,18 @@ function sendMessage(client: Socket, message: EmittedMessage) {
 }
 
 
-function    sendMessageHandler(client: Socket, data: any) {
-    if (!validateMessageData(data)) { // Checking for the data type also
-        client.emit(EmittedEvents.ERROR, {data: "Invalid Message Data"});
-        return ;
-    }
+// function    sendMessageHandler(client: Socket, data: any) {
+//     // if (!validateMessageData(data)) { // Checking for the data type also
+//     //     client.emit(EmittedEvents.ERROR, {data: "Invalid Message Data"});
+//     //     return ;
+//     // }
 
-    /*
-        if (!isUserExists(data.to) || isBlocked(data.to, client.handshake.user.id))
-            client.emit('error', {message: "User Not found"});
-    */
-    sendMessage(client, data);
-}
+//     /*
+//         if (!isUserExists(data.to) || isBlocked(data.to, client.handshake.user.id))
+//             client.emit('error', {message: "User Not found"});
+//     */
+//     sendMessage(client, data);
+// }
 
 
 async function handleMarkMessageAsRead(client: Socket, data: {participantId: number, messageId: number}) {
@@ -76,6 +131,8 @@ async function handleMarkMessageAsRead(client: Socket, data: {participantId: num
 
     // commit to the database the changes. (status of the messageId)
 }
+
+
 
 
 

@@ -31,6 +31,16 @@ export type MessageProps = {
     sentAt: string,
 }
 
+type MessageTypes = 'audio' | 'text';
+
+export type MessageType = {
+    isSender: boolean;
+    from: number;
+    messageType: MessageTypes;
+    messageContent: string | ArrayBuffer;
+    sentAt: string;
+}
+
 
 export enum    EventsEnum {
     CHAT_SEND = 'chat:send',

@@ -54,7 +54,8 @@ function createIoServer(server: any) {
         credentials: true
     }
 
-    const io = new Server(server, {cors: corsOptions});
+    // Max Payload Bytes 1e7 (10MB)
+    const io = new Server(server, {cors: corsOptions, maxHttpBufferSize: 1e7});
     ioEmitter.initIoServer = io; // * intisalize io Server
 
 

@@ -1,155 +1,111 @@
-import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useActiveDm } from "../../context/activeDmProvider";
 import { AiOutlineAudio } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
+import { useSocket } from "../../context/SocketProvider";
+import useRecorder from "../../hooks/useRecorder";
 
-
-function    useRecorder() {
-    const [isRecording, setIsRecording] = useState(false);
-    const [audioUrl, setAudioUrl] = useState('');
-    const audioChunks = useRef<Blob[]>([]);
-    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
-    // useEffect(() => {
-    //     const getMediaRecorder = async () => {
-    //         try {
-    //             const mediaStream = await navigator.mediaDevices.getUserMedia({audio: true});
-    //             const mediaRecorder = new MediaRecorder(mediaStream);
-            
-    //             mediaRecorder.ondataavailable = (e) => {
-    //                 console.log(`data arrived`)
-    //                 audioChunks.current.push(e.data);
-    //             }
-
-    //             mediaRecorder.onstop = () => {
-    //                 const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
-    //                 const url = URL.createObjectURL(audioBlob);
-    //                 setAudioUrl(url);
-    //                 audioChunks.current = [];
-    //                 const tracks = mediaRecorder.stream.getTracks();
-    //                 tracks.forEach((track) => track.stop());
-    //             }
-
-    //             mediaRecorderRef.current = mediaRecorder;
-    //         } catch (e) {
-    //             console.log(`media stream error: ${e}`);
-    //         }
-    //     }
-
-    //     getMediaRecorder();
-
-    //     return () => {
-    //         if (!mediaRecorderRef.current)
-    //             return ;
-    //         const tracks = mediaRecorderRef.current.stream.getTracks();
-    //         tracks.forEach((track) => track.stop());
-    //     };
-    // }, [])
-
-    const startRecording = async () => {
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({audio: true});
-            const mediaRecorder = new MediaRecorder(mediaStream);
-
-            mediaRecorder.ondataavailable = (e) => {
-                console.log(`data arrived`)
-                audioChunks.current.push(e.data);
-            }
-        
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
-                const url = URL.createObjectURL(audioBlob);
-                setAudioUrl(url);
-                audioChunks.current = [];
-                const tracks = mediaRecorder.stream.getTracks();
-                tracks.forEach((track) => track.stop());
-            }
-
-            mediaRecorderRef.current = mediaRecorder;
-            setIsRecording(true);
-            audioChunks.current = [];
-            mediaRecorder.start();
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    const stopRecording = () => {
-        if (!mediaRecorderRef.current)
-            return ;
-        setIsRecording(false);
-        mediaRecorderRef.current.stop();
-    }
-
-
-    return {
-        startRecording,
-        stopRecording,
-        audioUrl,
-        isRecording
-    }
-
+type SendedMessageType = {
+    type: 'text' | 'audio',
+    content: string | ArrayBuffer;
 }
 
+function formatMinuteSecond(seconds: number) {
+    return Math.floor(seconds / 60).toString().padStart(2, '0') + ':' + Math.floor(seconds % 60).toString().padStart(2, '0')
+}
 
-
-
-const   ChatInputField: FC<{onSend: (msg: string) => void}> = ({onSend}) => {
+const   ChatInputField = ({onSend}: {onSend: () => void}) => {
+    const   socket = useSocket();
     const   { activeDmId } = useActiveDm();
     const   inputRef = useRef<HTMLInputElement>(null);
-    const   {startRecording, stopRecording, isRecording, audioUrl} = useRecorder();
+    // const   [ audioLengthSeconds, setAudioLengthSeconds ] = useState(0);
+    const   {startRecording, stopRecording, isRecording, audioArrayBuffer, audioClear, audioSeconds} = useRecorder();
 
-    console.log(`${audioUrl}`)
     useEffect(() => {
-        if (inputRef.current)
-            inputRef.current.focus();
-    }, [activeDmId]) // ! it depend on the active conversation id
+        if (inputRef.current) inputRef.current.focus();
+        stopRecording();
+        audioClear();
+    }, [activeDmId])
+
+    const   sendMessage = ({type, content}: SendedMessageType) => {
+        const   messageDetails = {
+            to: activeDmId,
+            messageType: type,
+            messageContent: content,
+        }
+        console.log('emitting')
+        socket?.emit('chat:send', messageDetails);
+    }
 
     const   sendHandler = () => {
-        if (!inputRef.current)
-            return ;
-
-        const   msg = inputRef.current.value;
-        if (msg === '') return;
-        onSend(msg);
-        inputRef.current.value = '';
+        if (audioArrayBuffer) {
+            console.log(audioArrayBuffer);
+            sendMessage({type: 'audio', content: audioArrayBuffer});
+            audioClear();
+        } else {
+            if (!inputRef.current || !inputRef.current.value)
+                return ;
+            sendMessage({type: 'text', content: inputRef.current.value});
+            inputRef.current.value = '';
+        }
+        onSend();
     }
 
     const   handleAudioRecording = () => {
-        console.log(`recording ${isRecording}`)
-        if (!isRecording)
-            startRecording();
-        else
-            stopRecording();
+        !isRecording ? startRecording() : stopRecording();
     }
 
+
+    console.log('re-render... ChatInput')
     return (
         <div className="relative pt-2">
 
             <div className="absolute bottom-2 w-full px-3">
-                <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Enter your message"
-                    className="outline-none border w-full p-3 px-3 pr-20 rounded-lg"
-                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && sendHandler()}
-                />
+                {!isRecording && !audioArrayBuffer ?
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Enter your message"
+                        className="outline-none border w-full p-3 px-3 pr-20 rounded-lg"
+                        onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && sendHandler()}
+                    /> :
+                    <div className="w-full flex items-center p-3 border rounded-lg gap-4 bg-transparent pr-20">
+                        <div className="font-semibold">
+                            {formatMinuteSecond(audioSeconds)}
+                        </div>
+                        <div className="flex justify-center w-full">
+                        {
+                            isRecording ?
+                            <div className="beats-container">
+                                <div className="beat"></div>
+                                <div className="beat"></div>
+                                <div className="beat"></div>
+                                <div className="beat"></div>
+                                <div className="beat"></div>
+                            </div> :
+                            <div className="flex justify-between w-[200px] items-center">
+                                <div className="h-5 w-5 rounded-full bg-red-dark"></div>
+                                <div className="h-5 w-5 rounded-full bg-red-dark"></div>
+                                <div className="h-5 w-5 rounded-full bg-red-dark"></div>
+                                <div className="h-5 w-5 rounded-full bg-red-dark"></div>
+                                <div className="h-5 w-5 rounded-full bg-red-dark"></div>
+                            </div>
+                        }
+                        </div>
+                    </div>
+                }
+
+
 
                 <div className="absolute bottom-0 top-0 right-5 flex items-center gap-2">
-                    <button className="">
+                    <button className={`${inputRef.current && inputRef.current.value ? 'hidden' : ''}`}>
                         <AiOutlineAudio size={25} className="fill-gray-500 hover:fill-black" onClick={handleAudioRecording} />
                     </button>
                     <button className="p-1 bg-pink rounded-md" onClick={sendHandler}>
                         <IoSend size={25} className="fill-white" />
                     </button>
                 </div>
-                {isRecording && "recording"}
-            {
-                audioUrl ? 
-                    <audio src={audioUrl} controls></audio>
-                :
-                    null
-            }
+
             </div> 
         </div>
     )

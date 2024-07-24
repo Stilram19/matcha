@@ -67,7 +67,7 @@ const Chat = () => {
                     <div className={`md:inline-block relative ${isDmActive ? 'inline-block w-full' : 'hidden'} md:w-2/3 lg:w-1/2 h-full lg:border-r`}>
                         {isDmActive ? (
                                 <>
-                                    <span className="md:hidden absolute top-7 cursor-pointer" onClick={() => setActiveDmId(-1)}>
+                                    <span className="md:hidden absolute top-7 cursor-pointer z-10" onClick={() => setActiveDmId(-1)}>
                                         <FaArrowLeft className="hover:fill-slate-400" size={25} />
                                     </span>
                                     <ChatWindow/>

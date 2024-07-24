@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaRegUserCircle } from "react-icons/fa";
-import { IoHeartDislikeSharp, IoVolumeMute } from "react-icons/io5";
+import { IoHeartDislikeSharp } from "react-icons/io5";
 import { MdBlockFlipped } from "react-icons/md";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import { IconType } from "react-icons";
@@ -29,13 +28,6 @@ const DropdownItem = ({title, Icon, onClick} : {title: string, Icon: IconType, o
 const Dropdown = ({dropdowns} : {dropdowns: DropdownItemType[]}) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useOutsideClick(() => setIsOpen(false));
-    // const dropdwons: DropdownItemType[] = [
-    //     {title: "block", onClick: () => "blah", icon: MdBlockFlipped},
-    //     {title: "Mute", onClick: () => "blah", icon: IoVolumeMute},
-    //     {title: "Unlike", onClick: () => "blah", icon: IoHeartDislikeSharp},
-    //     {title: "Profile", onClick: () => "blah", icon: FaRegUserCircle},
-    // ]
-
 
 
     const handleDropdown = () => {
@@ -92,6 +84,7 @@ function getDropdownItems() : DropdownItemType[] {
         // http post request for blocking the active dm user
         console.log(`block ${activeDmId}`);
         setActiveDmId(-1);
+        // emit the Block event to the Dms List  Component
     }
 
     const   handleUnlike = () => {
@@ -103,6 +96,19 @@ function getDropdownItems() : DropdownItemType[] {
     dropdowns.push({title: 'Block', onClick: handleBlock, icon: MdBlockFlipped});
     dropdowns.push({title: 'Unlike', onClick: handleUnlike, icon: IoHeartDislikeSharp});
     return dropdowns;
+}
+
+
+function    dropdownItems() {
+    const   dropdowns: DropdownItemType[] = [];  
+
+    const   addDropdownItem = (item :DropdownItemType) => {
+        dropdowns.push(item)
+    }
+
+    return {
+
+    }
 }
 
 const ContactInfo = () => {

@@ -1,6 +1,8 @@
+
 export interface EmittedMessage {
     to: number;
-    message: string;
+    messageType: 'text' | 'audio';
+    messageContent: string | ArrayBuffer;
 }
 
 

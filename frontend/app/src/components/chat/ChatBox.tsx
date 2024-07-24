@@ -1,24 +1,30 @@
-import { ChatBoxProps } from "../../types";
 import ChatInputField from "./ChatInputField";
 import Message from "./Message";
-import { FC, useEffect, useRef, useState } from "react";
- 
+import { useEffect, useRef, useState } from "react";
+import { useMessages } from "../../context/messagesProvider";
 
-const   ChatBox: FC<ChatBoxProps & {onSend: (msg: string) => void}> = ({messages, onSend}) => {
-    const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
-    const [showScrollButton, setShowScrollButton] = useState<boolean>(false); // ? this will be true if new messages arrived or the user viewing older messages
+
+
+function    getFormattedTime() {
+    const   dateNow = new Date();
+    const   formattedTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
+    return (formattedTime)
+}
+
+const   ChatBox = () => {
     const chatBoxRef = useRef<HTMLDivElement>(null);
+    const { messages } = useMessages();
+    const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
+    const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
+    // ? this will be true if new messages arrived or the user viewing older messages
 
     useEffect(() => {
         if (!chatBoxRef.current)
             return ;
-        console.log(shouldScrollDown);
-        if (shouldScrollDown) {
+        if (shouldScrollDown)
             chatBoxRef.current.scrollTop = chatBoxRef.current?.scrollHeight;
-        } else {
-            console.log("new messages are received")
+        else
             setShowScrollButton(true);
-        }
     }, [messages])
 
 
@@ -36,11 +42,6 @@ const   ChatBox: FC<ChatBoxProps & {onSend: (msg: string) => void}> = ({messages
             // fetchMoreMessages(); // ? this function should fetch more data when the user consume all the dms history
             console.log('MORE DMS');
         }
-    }
-
-    const handleOnSend = (msg: string) => {
-        onSend(msg);
-        setShouldScrollDown(true);
     }
 
     const handleScrollButtonClick = () => {
@@ -64,12 +65,17 @@ const   ChatBox: FC<ChatBoxProps & {onSend: (msg: string) => void}> = ({messages
                     <div ref={chatBoxRef} className="h-[calc(100%-50px)] overflow-y-auto scrollbar mr-1 pr-1.5"  onScroll={handleOnScroll}>
                         {
                             messages.map((message, index, arr) => {
+                                const   isAudio = message.messageType === 'audio';
+                                console.log(`isAudio: ${isAudio}`)
                                 return (
                                     <div
                                         key={index} // ! add the id of the message instead of the array index
                                         className={`mr-1 my-2 md:my-2 lg:my-3 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-3 md:mt-5 lg:mt-6' : '')} ${index == messages.length - 1 ? 'mb-3' : ''}`}
                                     >
-                                        <Message  {...message}  />
+                                        { isAudio ? 
+                                            <audio controls src={URL.createObjectURL(new Blob([message.messageContent], {type: 'audio/wav'}))}></audio>
+                                            : <Message  message={message.messageContent as string} sentAt={getFormattedTime()} isSender={message.isSender}  />
+                                        }
                                     </div>
                                 )
                             })
@@ -78,7 +84,7 @@ const   ChatBox: FC<ChatBoxProps & {onSend: (msg: string) => void}> = ({messages
                     </div>
                 </div>
             </div>
-            <ChatInputField onSend={handleOnSend} />
+            <ChatInputField onSend={() => setShouldScrollDown(true)} />
         </>
     )
 }

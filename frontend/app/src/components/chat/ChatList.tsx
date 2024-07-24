@@ -1,7 +1,7 @@
 import { DmListType } from "../../types";
 import { ChatListProps } from "../../types";
 import { FC, useState } from "react";
-import useFetchAllDms from "../../hooks/useFetchAllDms";
+import useFetchAllDms from "../../hooks/useFetchAllAndSubscribe";
 import MessageBar from "./MessageBar";
 import ChatListHeader from "./ChatListHeader";
 
