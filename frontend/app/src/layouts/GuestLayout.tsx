@@ -10,7 +10,7 @@ type Props = {
 const GuestLayout: FC<Props> = ({children}) =>  {
 
     const navigate = useNavigate();
-    const [isRedirecting, setIsRedirecting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
@@ -27,12 +27,13 @@ const GuestLayout: FC<Props> = ({children}) =>  {
                 navigate(redirectPage);
             }, 300);
 
-            setIsRedirecting(true);
+            return ;
         }
+
+        setIsLoading(false);
     }, [])
 
-    if (isRedirecting) {
-        console.log('redirecting....')
+    if (isLoading) {
         return ;
     }
 

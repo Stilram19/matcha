@@ -39,7 +39,7 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
 
 export default function ProfileSetup() {
     const   [images, setImages] = useState<File[]>([]);
-    const   [isRedirecting, setIsRedirecting] = useState(false);
+    const   [isLoading, setIsLoading] = useState(true);
     const   navigate = useNavigate();
     const   MAX_PICTURES = 4;
 
@@ -54,11 +54,13 @@ export default function ProfileSetup() {
                 navigate(navRoute);
             }, 300);
 
-            setIsRedirecting(true);
+            return ;
         }
+
+        setIsLoading(false);
     }, []);
 
-    if (isRedirecting) {
+    if (isLoading) {
         return ;
     }
 

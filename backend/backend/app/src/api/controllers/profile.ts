@@ -7,54 +7,73 @@ import { isArray } from '../validators/generalPurpose.js';
 export async function getProfileInfosController(request: Request, response: Response) {
     const userId = Number(request.params.userId);
 
-    const profileInfos = await retrieveProfileInfosService(userId);
+    try {
+        const profileInfos = await retrieveProfileInfosService(userId);
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
+
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function getCurrProfileInfosController(request: Request, response: Response) {
-    const accessToken = request.cookies['AccessToken'] as string;
-    const { userId } = getUserIdFromJwtService(accessToken);
-    const profileInfos = await retrieveProfileInfosService(userId as number);
+    try {
+        const accessToken = request.cookies['AccessToken'] as string;
+        const { userId } = getUserIdFromJwtService(accessToken);
+        const profileInfos = await retrieveProfileInfosService(userId as number);
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
+
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function getBriefProfileInfosController(request: Request, response: Response) {
-    const userId = Number(request.params.userId);
+    try {
+        const userId = Number(request.params.userId);
+        const profileInfos = await retrieveBriefProfileInfosService(userId);
 
-    const profileInfos = await retrieveBriefProfileInfosService(userId);
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function getCurrBriefProfileInfosController(request: Request, response: Response) {
-    const accessToken = request.cookies['AccessToken'] as string;
-    const { userId } = getUserIdFromJwtService(accessToken);
+    try {
+        const accessToken = request.cookies['AccessToken'] as string;
+        const { userId } = getUserIdFromJwtService(accessToken);
 
-    const profileInfos = await retrieveBriefProfileInfosService(userId as number);
+        const profileInfos = await retrieveBriefProfileInfosService(userId as number);
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
+
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function updateInterestsController(request: Request, response: Response) {

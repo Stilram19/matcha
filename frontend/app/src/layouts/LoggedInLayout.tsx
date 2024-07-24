@@ -12,7 +12,7 @@ const LoggedInLayout: FC<Props> = ({children}) =>  {
     // check here that the user is logged in
 
     const navigate = useNavigate();
-    const [isRedirecting, setIsRedirecting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
@@ -22,7 +22,6 @@ const LoggedInLayout: FC<Props> = ({children}) =>  {
                 navigate('/login');
             }, 300);
 
-            setIsRedirecting(true);
             return ;
         }
 
@@ -33,12 +32,13 @@ const LoggedInLayout: FC<Props> = ({children}) =>  {
                 navigate('/complete-info/1');
             }, 300);
 
-            setIsRedirecting(true);
             return ;
         }
+
+        setIsLoading(false);
     }, [])
 
-    if (isRedirecting) {
+    if (isLoading) {
         return ;
     }
 

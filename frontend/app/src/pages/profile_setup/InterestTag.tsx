@@ -9,7 +9,7 @@ const InterestTag = () => {
     const   [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
     const navigate = useNavigate();
 
-    const [isRedirecting, setIsRedirecting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const completeProfileCookie = getCookie('CompleteProfile');
@@ -22,13 +22,11 @@ const InterestTag = () => {
                 navigate(navRoute);
             }, 300);
 
-            setIsRedirecting(true);
+            return ;
         }
-    }, []);
 
-    if (isRedirecting) {
-        return (null);
-    }
+        setIsLoading(false);
+    }, []);
 
     const handleOnClick = (tag: string) => {
         setSelectedTags((prev) => {
@@ -53,6 +51,10 @@ const InterestTag = () => {
         catch (err) {
             console.log(err);
         }
+    }
+
+    if (isLoading) {
+        return ;
     }
 
     return (

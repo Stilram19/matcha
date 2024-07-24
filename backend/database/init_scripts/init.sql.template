@@ -15,8 +15,9 @@ CREATE TABLE "user" (
     email VARCHAR(50) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL, -- hashed --
-    passwordSalt VARCHAR(64) NOT NULL,
+    password_salt VARCHAR(64) NOT NULL,
     is_verified BOOLEAN DEFAULT FALSE, -- for email verification --
+    is_profile_complete BOOLEAN DEFAULT FALSE, -- for profile completion ---
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     biography TEXT,
@@ -30,6 +31,13 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "email_verification" (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+    token VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "password_reset" (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
     token VARCHAR(64) NOT NULL,
