@@ -49,3 +49,11 @@ export enum    EventsEnum {
     APP_FAVORITE_CHANGE = 'app:favorite',
     APP_SEND_MESSAGE = 'app:send',
 }
+
+
+// export type ChatListStateType = {
+//     dms: DmListType[],
+//     contacts: DmListType[],
+//     searchInput: string,
+//     currentTab: string,
+// }

@@ -2,6 +2,7 @@ import ChatInputField from "./ChatInputField";
 import Message from "./Message";
 import { useEffect, useRef, useState } from "react";
 import { useMessages } from "../../context/messagesProvider";
+import { useActiveDm } from "../../context/activeDmProvider";
 
 
 
@@ -12,6 +13,7 @@ function    getFormattedTime() {
 }
 
 const   ChatBox = () => {
+    const {activeDmId} = useActiveDm();
     const chatBoxRef = useRef<HTMLDivElement>(null);
     const { messages } = useMessages();
     const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
@@ -84,7 +86,7 @@ const   ChatBox = () => {
                     </div>
                 </div>
             </div>
-            <ChatInputField onSend={() => setShouldScrollDown(true)} />
+            <ChatInputField key={activeDmId} onSend={() => setShouldScrollDown(true)} />
         </>
     )
 }

@@ -4,6 +4,7 @@ function    useRecorder() {
     const [isRecording, setIsRecording] = useState(false);
     const [audioSeconds, setAudioSeconds] = useState(0);
     const [ audioArrayBuffer, setArrayBuffer ] = useState<ArrayBuffer | null>(null)
+    // const [ tmp, setTmp ] = useState<ArrayBuffer | null>(null)
     const audioChunks = useRef<Blob[]>([]);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -24,6 +25,7 @@ function    useRecorder() {
                 // const url = URL.createObjectURL(audioBlob);
                 const audioBuffer = await audioBlob.arrayBuffer();
                 setArrayBuffer(audioBuffer);
+                // ! add this to count the recorded seconds correctly
                 // const audioContext = new AudioContext();
                 // const audioBuffer1 = await audioContext.decodeAudioData(audioBuffer);
                 // console.log(audioBuffer1);
@@ -31,6 +33,7 @@ function    useRecorder() {
                 const tracks = mediaRecorder.stream.getTracks();
                 tracks.forEach((track) => track.stop());
                 clearInterval(intervalId);
+                setIsRecording(false);
             }
 
             mediaRecorderRef.current = mediaRecorder;
@@ -45,8 +48,9 @@ function    useRecorder() {
     const stopRecording = () => {
         if (!mediaRecorderRef.current)
             return ;
-        setIsRecording(false);
         mediaRecorderRef.current.stop();
+        
+        console.log('stopping')
     }
 
     const audioClear = () => {

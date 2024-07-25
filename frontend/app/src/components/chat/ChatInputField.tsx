@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useRef } from "react";
 import { useActiveDm } from "../../context/activeDmProvider";
 import { AiOutlineAudio } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
@@ -18,14 +18,20 @@ const   ChatInputField = ({onSend}: {onSend: () => void}) => {
     const   socket = useSocket();
     const   { activeDmId } = useActiveDm();
     const   inputRef = useRef<HTMLInputElement>(null);
-    // const   [ audioLengthSeconds, setAudioLengthSeconds ] = useState(0);
     const   {startRecording, stopRecording, isRecording, audioArrayBuffer, audioClear, audioSeconds} = useRecorder();
 
     useEffect(() => {
+        console.log('focusing')
         if (inputRef.current) inputRef.current.focus();
-        stopRecording();
-        audioClear();
+        return () => {
+            console.log('clearing')
+            audioClear();
+            stopRecording();
+        }
     }, [activeDmId])
+
+    console.log(isRecording, audioArrayBuffer)
+
 
     const   sendMessage = ({type, content}: SendedMessageType) => {
         const   messageDetails = {

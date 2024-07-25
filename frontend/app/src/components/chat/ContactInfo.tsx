@@ -99,17 +99,18 @@ function getDropdownItems() : DropdownItemType[] {
 }
 
 
-function    dropdownItems() {
-    const   dropdowns: DropdownItemType[] = [];  
+// function    dropdownItems() {
+//     const   dropdowns: DropdownItemType[] = [];  
 
-    const   addDropdownItem = (item :DropdownItemType) => {
-        dropdowns.push(item)
-    }
+//     const   addDropdownItem = (item :DropdownItemType) => {
+//         dropdowns.push(item)
+//     }
 
-    return {
 
-    }
-}
+//     return {
+
+//     }
+// }
 
 const ContactInfo = () => {
     const { activeDmId } = useActiveDm();
