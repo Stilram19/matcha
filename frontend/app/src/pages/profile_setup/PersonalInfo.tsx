@@ -73,7 +73,6 @@ const PersonalInfo = () => {
                     return ;
                 }
 
-
                 setDefaultProfileInfos(responseBody.profileInfos);
             }
             catch (err) {

@@ -53,18 +53,12 @@ CREATE TABLE user_photo (
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE SET NULL
 );
 
-CREATE TABLE interest (
-    id SERIAL PRIMARY KEY,
-    interest VARCHAR(255) UNIQUE NOT NULL
-);
-
 CREATE TABLE user_interest (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
-    interest_id INTEGER,
+    interest VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
-    FOREIGN KEY (interest_id) REFERENCES "interest" (id) ON DELETE CASCADE,
-    UNIQUE (user_id, interest_id)
+    UNIQUE (user_id, interest)
 );
 
 CREATE TABLE history (

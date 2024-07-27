@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Gender from "../../components/utils/Gender";
 import SexualPreferences from "../../components/utils/SexualPreferences";
 import './style.css'
@@ -26,6 +26,7 @@ function UserProfile() {
     let [isBlockAreYouSureModelOpen, setIsBlockAreYouSureModelOpen] = useState(false);
     let [isLoading, setIsLoading] = useState(true);
     let [errorOccurred, setErrorOccurred] = useState(false);
+    let navigate = useNavigate();
 
     useEffect(() => {
         (async function initializeComponent() {
@@ -146,8 +147,22 @@ function UserProfile() {
     }
 
     async function handleBlock() {
+        if (!profileInfos) {
+            return ;
+        }
+
         try {
             await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_BLOCK_API_URL + `/${userId}`);
+
+            const profileInfosCopy = Object.create(profileInfos);
+
+            profileInfosCopy.userInfos.isLiked = false;
+            profileInfosCopy.userInfos.isLiking = false;
+            setProfileInfos(profileInfosCopy);
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 500);
         }
         catch (err) {
             console.log(err);
@@ -158,6 +173,10 @@ function UserProfile() {
     }
 
     async function handleFakeAccountReport() {
+        if (!profileInfos) {
+            return ;
+        }
+
         try {
             await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_REPORT_FAKE_API_URL + `/${userId}`);
         }

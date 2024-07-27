@@ -4,27 +4,60 @@ import pool from '../model/pgPoolConfig.js';
 
 dotenv.config();
 
-export async function addUserPhotosService(userId: number, photosPaths: string[]) {
-    photosPaths.forEach( path => console.log(process.env.BASE_URL + `/${path}`) );
+export async function addUserPhotosService(userId: number, imageUrls: string[]) {
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const photoValues = imageUrls.map((url, i) => `($1, $${i + 2})`).join(', ');
+        const insertPhotosQuery = `
+            INSERT INTO user_photo (user_id, photo)
+            VALUES ${photoValues}
+        `;
+
+        const values = [userId, ...imageUrls];
+
+        await client.query(insertPhotosQuery, values);
+
+        await client.query('COMMIT');
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error adding user photos:', err);
+        throw new Error('Failed to add user photos');
+    } finally {
+        client.release();
+    }   
 }
 
-export async function updatePersonalInfosService(profileInfos: updateProfilePersonalInfos) {
-    console.log('username: ' + profileInfos.username);
-    console.log('firstname: ' + profileInfos.firstname);
-    console.log('lastname: ' + profileInfos.lastname);
-    console.log('gender: ' + profileInfos.gender);
-    console.log('sexualPreferences: ' + profileInfos.sexualPreference);
-    console.log('biography: ' + profileInfos.biography);
-    console.log('age: ' + profileInfos.age);
+export async function updatePersonalInfosService(userId: number, profileInfos: updateProfilePersonalInfos) {
+    let client;
 
-    if (profileInfos.profilePicturePath) {
-        console.log('profilePictureUrl: ' + process.env.BASE_URL + `/${profileInfos.profilePicturePath}`);
-        return (process.env.BASE_URL + `/${profileInfos.profilePicturePath}`);
-    } else {
-        console.log('profilePictureUrl: null');
-        return (null);
+    try {
+        const query = `UPDATE "user" SET
+            first_name = COALESCE($1, first_name),
+            last_name = COALESCE($2, last_name),
+            age = COALESCE($3, age),
+            biography = COALESCE($4, biography),
+            gender = COALESCE($5, gender),
+            sexual_preference = COALESCE($6, sexual_preference),
+            username = COALESCE($7, username),
+            profile_picture = COALESCE($8, profile_picture)
+            WHERE id = $9;`;
+        client = await pool.connect();
+
+        await client.query(query, [profileInfos.firstname, profileInfos.lastname,
+            profileInfos.age, profileInfos.biography, profileInfos.gender,
+            profileInfos.sexualPreference, profileInfos.username,
+            profileInfos.profilePicturePath,
+            userId
+        ])
     }
-    // don't forget to check if the username is already there!
+    catch (err) {
+
+    } finally {
+
+    }
 }
 
 export async function setProfileAsCompleteService(userId: number) {

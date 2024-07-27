@@ -108,6 +108,8 @@ export async function completePersonalInfosController(request: Request, response
     const gender = request.body.gender as string;
     const biography = request.body.biography as string;
     const sexualPreference = request.body.sexualPreference as string;
+    const accessToken = request.cookies['AccessToken'] as string;
+    const { userId } = getUserIdFromJwtService(accessToken);
 
     if (file) {
         profilePicturePath = file.path;
@@ -115,7 +117,7 @@ export async function completePersonalInfosController(request: Request, response
 
     try {
         const personalInfos = {profilePicturePath, username, firstname, lastname, age, gender, biography, sexualPreference}
-        await updatePersonalInfosService(personalInfos);
+        await updatePersonalInfosService(userId as number, personalInfos);
 
         setCompleteProfileInfosCookie(1, response);
         response.status(201).send( { msg: 'personal infos completed!' } );

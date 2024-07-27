@@ -18,8 +18,9 @@ export async function blockMiddleware(request: Request, response: Response, next
     const { userId } = getUserIdFromJwtService(accessToken);
     const visitedUserId = Number(request.params.userId);
 
-    if (await isBlockedService(userId as number, visitedUserId) === true) {
-        response.sendStatus(403);
+    if (await isBlockedService(userId as number, visitedUserId) === true
+        || await isBlockedService(visitedUserId, userId as number) === true) {
+        response.status(403).send( { url: process.env.FRONTENT_PROFILE_URL } );
         return ;
     }
 
