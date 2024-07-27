@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import GuestHeader from "../components/header/GuestHeader";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../utils/generalPurpose";
@@ -10,19 +10,31 @@ type Props = {
 const GuestLayout: FC<Props> = ({children}) =>  {
 
     const navigate = useNavigate();
-    const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
+    const [isLoading, setIsLoading] = useState(true);
 
-    if (csrfClientExposedCookie) {
-        const completeProfileCookie = getCookie('CompleteProfile');
-        let redirectPage = '/profile';
+    useEffect(() => {
+        const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
 
-        if (completeProfileCookie != '3') {
-            redirectPage = '/complete-info/1';
+        if (csrfClientExposedCookie) {
+            const completeProfileCookie = getCookie('CompleteProfile');
+            let redirectPage = '/profile';
+
+            if (completeProfileCookie != '3') {
+                redirectPage = '/complete-info/1';
+            }
+
+            setTimeout(() => {
+                navigate(redirectPage);
+            }, 300);
+
+            return ;
         }
 
-        setTimeout(() => {
-            navigate(redirectPage);
-        }, 300);
+        setIsLoading(false);
+    }, [])
+
+    if (isLoading) {
+        return ;
     }
 
     return (

@@ -12,18 +12,20 @@ GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
 -- SCHEMA
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
+    email VARCHAR(50) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255), -- hashed --
-    passwordSalt VARCHAR(64),
+    password VARCHAR(255) NOT NULL, -- hashed --
+    password_salt VARCHAR(64) NOT NULL,
     is_verified BOOLEAN DEFAULT FALSE, -- for email verification --
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
+    is_profile_complete BOOLEAN DEFAULT FALSE, -- for profile completion ---
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
     biography TEXT,
     age INTEGER,
     gender VARCHAR(20),
     sexual_preference VARCHAR(20),
-    fame_rating DECIMAL(5, 2),
-    report_count INTEGER,
+    fame_rating INTEGER DEFAULT 0,
+    report_count INTEGER DEFAULT 0,
     profile_picture VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -32,8 +34,14 @@ CREATE TABLE "email_verification" (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
     token VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "password_reset" (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+    token VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE user_photo (
@@ -45,18 +53,12 @@ CREATE TABLE user_photo (
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE SET NULL
 );
 
-CREATE TABLE interest (
-    id SERIAL PRIMARY KEY,
-    interest VARCHAR(255) UNIQUE NOT NULL
-);
-
 CREATE TABLE user_interest (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
-    interest_id INTEGER,
+    interest VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE,
-    FOREIGN KEY (interest_id) REFERENCES "interest" (id) ON DELETE CASCADE,
-    UNIQUE (user_id, interest_id)
+    UNIQUE (user_id, interest)
 );
 
 CREATE TABLE history (

@@ -43,6 +43,7 @@ const PersonalInfo = () => {
     const [image, setImage] = useState<File>();
     const [defaultProfileInfos, setDefaultProfileInfos] = useState<BriefProfileInfos>();
     const [errorOccurred, setErrorOccurred] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -56,12 +57,16 @@ const PersonalInfo = () => {
             setTimeout(() => {
                 navigate(navRoute);
             }, 300);
+
+            return ;
         }
         // console.log('completeProfileCookie: ' + completeProfileCookie);
 
         (async function fetchDefaultPersonalInfos() {
             try {
                 const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_CURR_USER_BRIEF_INFOS_API_URL);
+
+                setIsLoading(false);
 
                 if (!responseBody || !isOfBriefProfileInfosType(responseBody.profileInfos)) {
                     setErrorOccurred(true);
@@ -75,6 +80,10 @@ const PersonalInfo = () => {
             }
         })();
     }, [])
+
+    if (isLoading) {
+        return ;
+    }
 
     if (!defaultProfileInfos) {
         return ;

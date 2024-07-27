@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { getUserIdFromJwtService } from "../services/jwt.js";
 import { addUserInterestsService } from '../services/profile.js';
-import { addUserPhotosService, updatePersonalInfosService } from '../services/complete-profile.js';
+import { addUserPhotosService, setProfileAsCompleteService, updatePersonalInfosService } from '../services/complete-profile.js';
 import dotenv from 'dotenv'
 import { setCompleteProfileInfosCookie } from '../utils/cookies.js';
 import { isArray } from '../validators/generalPurpose.js';
@@ -74,6 +74,7 @@ export async function completePhotosController(request: Request, response: Respo
         const photosPaths: string[] = files.map(file => file.path);
 
         await addUserPhotosService(userId as number, photosPaths);
+        await setProfileAsCompleteService(userId as number);
         setCompleteProfileInfosCookie(3, response);
         response.status(200).send({ message: 'Files uploaded successfully', files });
     } catch (error) {
@@ -107,6 +108,8 @@ export async function completePersonalInfosController(request: Request, response
     const gender = request.body.gender as string;
     const biography = request.body.biography as string;
     const sexualPreference = request.body.sexualPreference as string;
+    const accessToken = request.cookies['AccessToken'] as string;
+    const { userId } = getUserIdFromJwtService(accessToken);
 
     if (file) {
         profilePicturePath = file.path;
@@ -114,7 +117,7 @@ export async function completePersonalInfosController(request: Request, response
 
     try {
         const personalInfos = {profilePicturePath, username, firstname, lastname, age, gender, biography, sexualPreference}
-        await updatePersonalInfosService(personalInfos);
+        await updatePersonalInfosService(userId as number, personalInfos);
 
         setCompleteProfileInfosCookie(1, response);
         response.status(201).send( { msg: 'personal infos completed!' } );

@@ -13,7 +13,6 @@ function VerifyEmail() {
 
   useEffect(() => {
   const verifyEmail = async () => {
-      
       if (!token) {
         setMessage('Invalid or missing token.');
         setIsLoading(false);

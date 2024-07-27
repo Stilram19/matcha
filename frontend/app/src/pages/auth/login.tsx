@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { sendActionRequest } from "../../utils/httpRequests";
 import { useState } from "react";
 import ForgotPasswordModal from "../../components/auth/ForgotPasswordModel";
-
 
 // Validation schema
 const LoginSchema = Yup.object().shape({
@@ -22,13 +21,17 @@ export default function Login() {
     const [showForgotPasswordErrorMessage, setShowForgotPasswordErrorMessage] = useState(false);
     const [showForgotPasswordMessage, setShowForgotPasswordMessage] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (values: FormValues, formikHelpers: FormikHelpers<FormValues>) => {
         const { setSubmitting } = formikHelpers;
 
         try {
             await sendActionRequest('POST', import.meta.env.VITE_LOCAL_LOGIN_API_URL as string, values);
-            
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 500);
             setShowErrorMessage(false);
             setShowForgotPasswordErrorMessage(false);
         } catch (error) {

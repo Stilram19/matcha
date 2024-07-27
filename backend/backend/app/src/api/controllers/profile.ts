@@ -1,60 +1,84 @@
 import { Request, Response } from 'express'
-import { likeProfileService, blockUserService, reportFakeAccountService, retrieveBriefProfileInfosService, retrieveProfileInfosService, updateUserInterestsService, unlikeProfileService, addUserInterestsService } from '../services/profile.js';
+import { likeProfileService, blockUserService, reportFakeAccountService, getBriefProfileInfosService, getProfileInfosService, updateUserInterestsService, unlikeProfileService, addUserInterestsService } from '../services/profile.js';
 import { getUserIdFromJwtService } from '../services/jwt.js';
 import { updatePersonalInfosService } from '../services/complete-profile.js';
 import { isArray } from '../validators/generalPurpose.js';
 
 export async function getProfileInfosController(request: Request, response: Response) {
-    const userId = Number(request.params.userId);
+    const profileId = Number(request.params.userId);
+    const accessToken = request.cookies['AccessToken'] as string;
+    const { userId } = getUserIdFromJwtService(accessToken);
 
-    const profileInfos = await retrieveProfileInfosService(userId);
+    try {
+        const profileInfos = await getProfileInfosService(profileId, userId as number);
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
+
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function getCurrProfileInfosController(request: Request, response: Response) {
-    const accessToken = request.cookies['AccessToken'] as string;
-    const { userId } = getUserIdFromJwtService(accessToken);
-    const profileInfos = await retrieveProfileInfosService(userId as number);
+    try {
+        const accessToken = request.cookies['AccessToken'] as string;
+        const { userId } = getUserIdFromJwtService(accessToken);
+        const profileInfos = await getProfileInfosService(userId as number, userId as number);
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
+
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function getBriefProfileInfosController(request: Request, response: Response) {
-    const userId = Number(request.params.userId);
+    try {
+        const userId = Number(request.params.userId);
+        const profileInfos = await getBriefProfileInfosService(userId);
 
-    const profileInfos = await retrieveBriefProfileInfosService(userId);
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function getCurrBriefProfileInfosController(request: Request, response: Response) {
-    const accessToken = request.cookies['AccessToken'] as string;
-    const { userId } = getUserIdFromJwtService(accessToken);
+    try {
+        const accessToken = request.cookies['AccessToken'] as string;
+        const { userId } = getUserIdFromJwtService(accessToken);
 
-    const profileInfos = await retrieveBriefProfileInfosService(userId as number);
+        const profileInfos = await getBriefProfileInfosService(userId as number);
 
-    if (!profileInfos) {
-        response.status(404).send( { msg: 'user not found' } );
-        return ;
+        console.log('userId: ' + userId);
+        console.log('profileInfos: ' + profileInfos?.profilePicture);
+
+        if (!profileInfos) {
+            response.status(404).send( { msg: 'user not found' } );
+            return ;
+        }
+
+        response.status(200).send( { profileInfos } );
     }
-
-    response.status(200).send( { profileInfos } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function updateInterestsController(request: Request, response: Response) {
@@ -150,9 +174,6 @@ export async function likeProfileController(request: Request, response: Response
     const { userId } = getUserIdFromJwtService(accessToken);
     const likedUserId = Number(request.params.userId);
 
-    // console.log('likingUserId: ' + userId);
-    // console.log('likedUserId: ' + likedUserId);
-
     if (userId === likedUserId) {
         console.log('bad like request');
         response.sendStatus(400);
@@ -203,6 +224,8 @@ export async function updatePersonalInfosController(request: Request, response: 
     const age = Number(request.body.age as string);
     const biography = request.body.biography as string;
     const sexualPreference = request.body.sexualPreference as string;
+    const accessToken = request.cookies['AccessToken'] as string;
+    const { userId } = getUserIdFromJwtService(accessToken);
 
     if (file) {
         profilePicturePath = file.path;
@@ -210,7 +233,7 @@ export async function updatePersonalInfosController(request: Request, response: 
 
     try {
         const personalInfos = {profilePicturePath, username, firstname, lastname, age, gender, sexualPreference, biography}
-        const imageUrl = await updatePersonalInfosService(personalInfos);
+        const imageUrl = await updatePersonalInfosService(userId as number, personalInfos);
 
         response.status(201).send( { msg: 'personal infos completed!', imageUrl } );
     }
