@@ -157,10 +157,10 @@ export async function reportFakeAccountController(request: Request, response: Re
     }
 
     // console.log('reportingUserId: ' + userId);
-    console.log('reportedUserId: ' + reportedUserId);
+    // console.log('reportedUserId: ' + reportedUserId);
 
     try {
-        await reportFakeAccountService(reportedUserId);
+        await reportFakeAccountService(userId as number, reportedUserId);
 
         response.sendStatus(201);
     }

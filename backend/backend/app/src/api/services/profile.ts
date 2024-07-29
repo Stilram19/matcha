@@ -249,30 +249,14 @@ async function addBlockedUser(blockingUserId: number, blockedUserId: number) {
     const client = await pool.connect();
 
     try {
-        await client.query('BEGIN');
-
-        const checkBlockQuery = `
-            SELECT id 
-            FROM blocked_users 
-            WHERE blocking_user_id = $1 AND blocked_user_id = $2
-        `;
-        const checkBlockResult = await client.query(checkBlockQuery, [blockingUserId, blockedUserId]);
-
-        if (checkBlockResult.rows.length > 0) {
-            console.log('User is already blocked');
-            await client.query('COMMIT');
-            return;
-        }
-
         const insertBlockQuery = `
             INSERT INTO blocked_users (blocking_user_id, blocked_user_id)
             VALUES ($1, $2)
+            ON CONFLICT (blocking_user_id, blocked_user_id) DO NOTHING
         `;
         await client.query(insertBlockQuery, [blockingUserId, blockedUserId]);
 
-        await client.query('COMMIT');
     } catch (err) {
-        await client.query('ROLLBACK');
         console.error('Error blocking user:', err);
         throw new Error('Failed to block user');
     } finally {
@@ -285,8 +269,46 @@ export async function blockUserService(blockingUserId: number, blockedUserId: nu
     await addBlockedUser(blockingUserId, blockedUserId);
 }
 
-export async function reportFakeAccountService(reportedUserId: number) {
+export async function reportFakeAccountService(reportingUserId: number, reportedUserId: number): Promise<void> {
+    const client = await pool.connect();
 
+    try {
+        await client.query('BEGIN');
+
+        const insertReportQuery = `
+            INSERT INTO fake_account_report (reporting_user_id, reported_user_id)
+            VALUES ($1, $2)
+            ON CONFLICT (reporting_user_id, reported_user_id) DO NOTHING
+            RETURNING id;
+        `;
+        const result = await client.query(insertReportQuery, [reportingUserId, reportedUserId]);
+
+        if (result.rowCount === 0) {
+            await client.query('COMMIT');
+            return;
+        }
+
+        const updateCountQuery = `
+            UPDATE "user"
+            SET fake_account_reports_count = fake_account_reports_count + 1
+            WHERE id = $1;
+        `;
+        await client.query(updateCountQuery, [reportedUserId]);
+
+        const deleteUserQuery = `
+            DELETE FROM "user"
+            WHERE id = $1 AND fake_account_reports_count = 10;
+        `;
+        await client.query(deleteUserQuery, [reportedUserId]);
+
+        await client.query('COMMIT');
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error reporting user:', err);
+        throw new Error('Failed to report user');
+    } finally {
+        client.release();
+    }
 }
 
 export async function likeProfileService(likingUserId: number, likedUserId: number) {
@@ -295,24 +317,35 @@ export async function likeProfileService(likingUserId: number, likedUserId: numb
     try {
         await client.query('BEGIN');
 
-        const checkLikeQuery = `
-            SELECT id 
-            FROM user_likes 
-            WHERE liking_user_id = $1 AND liked_user_id = $2
-        `;
-        const checkLikeResult = await client.query(checkLikeQuery, [likingUserId, likedUserId]);
-
-        if (checkLikeResult.rows.length > 0) {
-            console.log('Liking user has already liked the user');
-            await client.query('COMMIT');
-            return;
-        }
-
         const insertLikeQuery = `
             INSERT INTO user_likes (liking_user_id, liked_user_id)
             VALUES ($1, $2)
+            ON CONFLICT (liking_user_id, liked_user_id) DO NOTHING
+            RETURNING id;
         `;
-        await client.query(insertLikeQuery, [likingUserId, likedUserId]);
+        const insertResult = await client.query(insertLikeQuery, [likingUserId, likedUserId]);
+
+        if (insertResult.rows.length > 0) {
+            const updateLikesCountQuery = `
+                UPDATE "user"
+                SET likes_count = likes_count + 1
+                WHERE id = $1
+            `;
+            await client.query(updateLikesCountQuery, [likedUserId]);
+
+            const calculateFameRatingQuery = `
+                UPDATE "user"
+                SET fame_rating = CASE
+                    WHEN likes_count = 1 THEN 2
+                    WHEN likes_count >= 10 AND likes_count < 100 THEN 3
+                    WHEN likes_count >= 100 AND likes_count < 1000 THEN 4
+                    WHEN likes_count >= 1000 THEN 5
+                    ELSE 1
+                END
+                WHERE id = $1
+            `;
+            await client.query(calculateFameRatingQuery, [likedUserId]);
+        }
 
         await client.query('COMMIT');
     } catch (err) {
@@ -330,24 +363,39 @@ export async function unlikeProfileService(likingUserId: number, likedUserId: nu
     try {
         await client.query('BEGIN');
 
-        const checkLikeQuery = `
-            SELECT id 
-            FROM user_likes 
-            WHERE liking_user_id = $1 AND liked_user_id = $2
-        `;
-        const checkLikeResult = await client.query(checkLikeQuery, [likingUserId, likedUserId]);
-
-        if (checkLikeResult.rows.length === 0) {
-            console.log('Like record does not exist');
-            await client.query('COMMIT');
-            return;
-        }
-
         const deleteLikeQuery = `
             DELETE FROM user_likes 
             WHERE liking_user_id = $1 AND liked_user_id = $2
+            RETURNING id;
         `;
-        await client.query(deleteLikeQuery, [likingUserId, likedUserId]);
+        const deleteResult = await client.query(deleteLikeQuery, [likingUserId, likedUserId]);
+
+        if (deleteResult.rows.length === 0) {
+            return ;
+        }
+
+        console.log('deleteResult > 0');
+
+        const updateLikesCountQuery = `
+            UPDATE "user"
+            SET likes_count = likes_count - 1
+            WHERE id = $1 AND likes_count > 0
+        `;
+        await client.query(updateLikesCountQuery, [likedUserId]);
+
+        const calculateFameRatingQuery = `
+            UPDATE "user"
+            SET fame_rating = CASE
+            WHEN likes_count = 0 THEN 1
+            WHEN likes_count = 1 THEN 2
+            WHEN likes_count >= 10 AND likes_count < 100 THEN 3
+            WHEN likes_count >= 100 AND likes_count < 1000 THEN 4
+            WHEN likes_count >= 1000 THEN 5
+            ELSE 1
+            END
+            WHERE id = $1
+        `;
+        await client.query(calculateFameRatingQuery, [likedUserId]);
 
         await client.query('COMMIT');
     } catch (err) {
