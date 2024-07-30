@@ -1,5 +1,6 @@
 import { dummyDms } from "../helpers/dummyDms.js";
 import HttpError from "../helpers/HttpError.js";
+import { execute } from "../model/execute.js";
 
 // type DmListType = {
 //     id: number,
@@ -20,10 +21,18 @@ export async function checkIdExists(id: number) {
 export async function retrieveDms(userId: number) {
     // retrieving the last dms list
     // const dms = await getDMSList(userId);
-    const dms: any[] = [];
-    dms.sort((a, b) => a.created_at - b.created_at)
+    // const dms: any[] = [];
+    // dms.sort((a, b) => a.created_at - b.created_at)
     // filter out the blocked one by the userId
     // Checking if they liked each other
+
+    // const   query = `
+    //     (SELECT MAX(sent_at) FROM dm WHERE sender_id = $1 OR reciever_id = $1 GROUP BY sender_id, reciever_id) as latest_messages
+    //     INNER JOIN dms ON dms.
+    // `
+
+    // const   dms = await execute('SELECT * FROM dm WHERE sender_id = $1 OR receiver_id = $2', [userId])
+
 
     return dummyDms;
 }
@@ -95,3 +104,51 @@ export async function getFavoriteUsers(userId: number) {
 
     return dummyDms.filter((value) => value.isFavorite);
 }
+
+
+/*
+
+select dm.*, sender.name as sender_name, receiver.name as receiver_name from dm
+JOIN users_t sender
+ON dm.sender_id = sender.id
+JOIN users_t receiver
+ON dm.receiver_id = receiver.id;
+
+
+
+select * from dm
+join (
+select GREATEST(sender_id, receiver_id) as user1, least(sender_id, receiver_id) as user2, MAX(created_at) as sent_at from dm where sender_id = 1 OR receiver_id = 1 group by greatest(sender_id, receiver_id), least(sender_id, receiver_id)
+) as latest_dms
+ON ((latest_dms.user1 = dm.sender_id AND latest_dms.user2 = dm.receiver_id) OR (latest_dms.user1 = dm.receiver_id AND latest_dms.user2 = dm.sender_id)) AND dm.created_at = latest_dms.sent_at
+;
+
+
+
+WITH latest_dms AS (
+    SELECT
+        GREATEST(sender_id, receiver_id) AS user1,
+        LEAST(sender_id, receiver_id) AS user2,
+        MAX(created_at) AS sent_at
+    FROM dm
+    WHERE sender_id = 1 OR receiver_id = 1
+    GROUP BY GREATEST(sender_id, receiver_id), LEAST(sender_id, receiver_id)
+)
+SELECT
+    dm.id,
+    dm.message as lastMessage,
+    u.id AS userId,
+    u.username,
+    CASE WHEN dm.sender_id = 1 THEN true ELSE false END AS isSender,
+    CASE WHEN f.id IS NOT NULL THEN true ELSE false END AS isFavorite
+FROM dm
+JOIN latest_dms l
+    ON l.sent_at = dm.created_at
+    AND ((dm.sender_id = l.user1 AND dm.receiver_id = l.user2)
+        OR (dm.receiver_id = l.user1 AND dm.sender_id = l.user2))
+JOIN users_t u
+    ON u.id != 1 AND (dm.sender_id = u.id OR dm.receiver_id = u.id)
+LEFT JOIN favorites f
+    ON f.user_id = 1
+    AND f.fav_id = u.id;
+*/

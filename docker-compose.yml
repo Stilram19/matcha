@@ -10,19 +10,22 @@ services:
       - ./backend/database/.env
     networks:
       - backend
-    expose:
-      - "${POSTGRES_PORT}"
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    env_file:
-      - ./backend/database/.env
     ports:
-      - "${PGADMIN_MAPPED_PORT}:${PGADMIN_HOST_PORT}"
-    depends_on:
-      - postgres
-    networks:
-      - backend
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    # expose:
+    #   - "${POSTGRES_PORT}"
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   env_file:
+  #     - ./backend/database/.env
+  #   ports:
+  #     - "${PGADMIN_MAPPED_PORT}:${PGADMIN_HOST_PORT}"
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - backend
 
 networks:
   client_server_net:
