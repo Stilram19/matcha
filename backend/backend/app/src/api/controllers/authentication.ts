@@ -6,6 +6,7 @@ import { sendForgetPasswordEmailService } from '../services/mailService.js';
 
 export async function localStrategyController(request: Request, response: Response): Promise<void> {
     try {
+        console.log('login controller ....')
         const username = request.body.username as string;
         const password = request.body.password as string;
         const [userId, is_profile_complete] = await loginVerificationService(username, password);

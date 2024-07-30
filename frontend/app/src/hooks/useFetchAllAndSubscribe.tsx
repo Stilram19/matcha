@@ -14,6 +14,7 @@ interface MessageEvent {
     to: number;
     messageType: 'audio' | 'text';
     messageContent: string | ArrayBuffer;
+    profilePicture: string;
     firstName: string;
     lastName: string;
     status: 'online' | 'offline';
@@ -37,23 +38,23 @@ function createDmsUpdateFunc(activeDmId: number, data: MessageEvent) {
     return (prevDms: DmListType[] | undefined): DmListType[] | undefined => {
         if (!prevDms) return;
 
-        const formatLastMessage = formatMessage(data.messageType, data.messageContent);
+        const formattedLastMessage = formatMessage(data.messageType, data.messageContent);
         
         if (data.isSender) {
             const index = prevDms.findIndex((dm) => dm.id === data.to);
             if (index !== -1) {
-                const updatedDm = { ...prevDms[index], lastMessage: formatLastMessage };
+                const updatedDm = { ...prevDms[index], lastMessage: formattedLastMessage };
                 return [updatedDm, ...prevDms.slice(0, index), ...prevDms.slice(index + 1)];
             }
 
             const newDm: DmListType = {
                 id: data.to,
-                firstName: 'blah',
-                lastName: 'blah',
-                lastMessage: formatLastMessage,
-                profilePicture: '',
-                isFavorite: false,
-                status: 'online',
+                firstName: data.firstName,
+                lastName: data.lastName,
+                lastMessage: formattedLastMessage,
+                profilePicture: data.profilePicture,
+                isFavorite: data.isFavorite,
+                status: data.status,
                 unreadCount: 0,
             };
             return [newDm, ...prevDms];
@@ -64,7 +65,7 @@ function createDmsUpdateFunc(activeDmId: number, data: MessageEvent) {
             const unreadCount = prevDms[index].unreadCount + (activeDmId === data.from ? 0 : 1);
             const updatedDm = {
                 ...prevDms[index],
-                lastMessage: formatLastMessage,
+                lastMessage: formattedLastMessage,
                 unreadCount,
             };
             return [updatedDm, ...prevDms.slice(0, index), ...prevDms.slice(index + 1)];
@@ -72,12 +73,12 @@ function createDmsUpdateFunc(activeDmId: number, data: MessageEvent) {
 
         const newMessage: DmListType = {
             id: data.from,
-            firstName: 'blah',
-            lastName: 'blah',
-            lastMessage: formatLastMessage,
-            profilePicture: '',
-            isFavorite: false,
-            status: 'online',
+            firstName: data.firstName,
+            lastName: data.lastName,
+            lastMessage: formattedLastMessage,
+            profilePicture: data.profilePicture,
+            isFavorite: data.isFavorite,
+            status: data.status,
             unreadCount: 1,
         };
         return [newMessage, ...prevDms];
@@ -138,7 +139,7 @@ const   handleFevoritesChange = (dmId: number, setDms: ReactSetter<DmListType[] 
 const   useFetchAllAndSubscribe: () => {dms: StatePair, contacts: StatePair} = () => {
     const   { activeDmId } = useActiveDm();
     const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
-    const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+    const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
 
 
     registerSocketEvents(activeDmId, setDms, setContacts);

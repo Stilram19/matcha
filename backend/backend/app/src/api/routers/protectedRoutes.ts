@@ -6,7 +6,7 @@ import notificationRouter from "./notification.routes.js"
 
 const router = Router();
 
-router.use(verifyAccessToken);
+// router.use(verifyAccessToken);
 router.use(chatRouter);
 router.use(notificationRouter);
 

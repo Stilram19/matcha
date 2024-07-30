@@ -1,6 +1,8 @@
 import { dummyDms } from "../helpers/dummyDms.js";
 import HttpError from "../helpers/HttpError.js";
 import { execute } from "../model/execute.js";
+import pool from "../model/pgPoolConfig.js";
+import { isUserOnline } from "./socket.service.js";
 
 // type DmListType = {
 //     id: number,
@@ -13,10 +15,75 @@ import { execute } from "../model/execute.js";
 // }
 
 
-export async function checkIdExists(id: number) {
-    // check the id is it exists in the users table
-    return (true);
+// export async function checkIdExists(id: number) {
+//     const   query = `SELECT EXISTS (
+//         SELECT 1 from "user" WHERE id = $1
+//     ) AS id_exists`;
+
+//     const   client = await pool.connect();
+
+//     try {
+//         const res = await client.query(query, [id]);
+//         return (res.rows[0].id_exists as boolean);
+//     } catch (e) {
+//         throw e;
+//     } finally {
+//         client.release();
+//     }
+// }
+
+export async function checkRecordExistence(table: string, recordId: number) {
+    const query = `SELECT EXISTS (
+            SELECT 1 FROM "${table}" WHERE id = $1
+        ) AS id_exists
+    `
+
+    const client = await pool.connect();
+
+    try {
+        const res = await client.query(query, [recordId])
+        return (res.rows[0].id_exists);
+    } catch (e) {
+        throw e;
+    } finally {
+        client.release();
+    }
 }
+
+export async function getContactsService(userId: number) {
+    let client = await pool.connect();
+
+    const   retrieveQuery = `
+                        SELECT u.id, first_name, last_name, username, profile_picture
+                        FROM (
+                            SELECT CASE WHEN user1 = $1 THEN user2 ELSE user1 END as matched_user_id
+                            FROM (
+                                SELECT GREATEST(liking_user_id, liked_user_id) as user1, LEAST(liking_user_id, liked_user_id) as user2
+                                FROM user_likes
+                                WHERE liking_user_id = $1 or liked_user_id = $1
+                                GROUP BY user1, user2
+                                HAVING COUNT(*) = 2
+                            )
+                        )
+                        JOIN "user" u
+                        ON u.id = matched_user_id
+                        ORDER BY first_name, last_name;
+    `
+
+    const results = await client.query(retrieveQuery, [userId]);
+    console.log(results.rows);
+    client.release();
+
+    return  results.rows.map(contact => ({
+        id: contact.id,
+        firstName: contact.first_name,
+        lastName: contact.last_name,
+        username: contact.username,
+        profilePicture: `${process.env.BASE_URL}/${contact.profile_picture}`,
+        status: isUserOnline(userId) ? 'online' : 'offline',
+    }));
+}
+
 
 export async function retrieveDms(userId: number) {
     // retrieving the last dms list
@@ -47,6 +114,10 @@ export async function getChatHistory(userId: number, participantId: number) {
 
     // get Conversation history with the participant id, and set the unread messages to read
 
+    const   client = 
+
+
+
     const records: any[] = [];
     const chat_history = records.map((record) => {
         return {
@@ -69,7 +140,7 @@ export async function getChatHistory(userId: number, participantId: number) {
 
 
 export async function getContactDetails(participant: number) {
-    if (!await checkIdExists(participant)) {
+    if (!await checkRecordExistence('user', participant)) {
         throw new HttpError(404, 'User Id not found');
     }
 

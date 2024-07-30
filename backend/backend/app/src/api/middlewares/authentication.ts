@@ -8,6 +8,8 @@ export function validateLocalLoginBody(request: Request, response: Response, nex
     const { username, password } = request.body;
     const error = 'invalid username or password';
 
+    console.log("login...");
+    console.log(request.body);
     if (!username || !password) {
         response.status(400).send( { msg: error } );
         return ;

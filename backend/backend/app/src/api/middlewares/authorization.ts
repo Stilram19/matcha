@@ -41,6 +41,7 @@ export function validateJwtToken(request: Request, response: Response, next: Nex
     }
 
     console.log(`JWT TOKENS VALIDATED!`);
+    request.user = { id: accessTokenResult.userId as number }; // attaching the jwt payload, to access it easily later
     next();
 }
 

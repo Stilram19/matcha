@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { getApplicationError } from "../helpers/getErrorObject.js";
+import socketManager from "./socketManager.service.js";
 
 
 // Maybe extracting the whole payload
@@ -20,4 +21,9 @@ export function eventHandlerWithErrorHandler(fn: EventHandler) {
             client.emit('error', {message: message});
         }
     }
+}
+
+
+export function isUserOnline(userId: number) {
+    return socketManager.isUserOnline(userId);
 }
