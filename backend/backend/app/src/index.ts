@@ -4,6 +4,7 @@ import routes from './api/routers/index.js'
 import cors from 'cors'
 import createIoServer from './api/gateway/index.js';
 import cookieParser from 'cookie-parser'
+import fs from 'fs'
 
 dotenv.config();
 
@@ -18,6 +19,12 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json());
+const uploadDir = './uploads';
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+app.use('/uploads', express.static(uploadDir));
 app.use(routes);
 
 const http_server = app.listen(API_PORT, () => {

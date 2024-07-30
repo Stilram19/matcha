@@ -8,12 +8,12 @@ export function setJwtTokensAsHttpOnlyCookies(userId: number, response: Response
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'lax'
     });
 
     response.cookie('RefreshToken', refreshToken, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'lax'
     });
 }
 
@@ -22,12 +22,12 @@ export function setCSRFcookies(response: Response) {
 
     response.cookie('csrfSecretCookie', csrfCookie, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'lax' 
     });
 
     response.cookie('csrfClientExposedCookie', csrfCookie, {
         httpOnly: false,
-        sameSite: 'none'
+        sameSite: 'lax'
     });
 }
 
@@ -36,7 +36,14 @@ export function setAccessTokensCookie(userId: number, response: Response) {
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'none'
+        sameSite: 'lax'
+    });
+}
+
+export function setCompleteProfileInfosCookie(value: number, response: Response) {
+    response.cookie('CompleteProfile', value, {
+        httpOnly: false,
+        sameSite: 'lax'
     });
 }
 
@@ -48,4 +55,10 @@ export function clearJwtCookies(response: Response) {
 export function clearCSRFCookies(response: Response) {
     response.clearCookie('csrfSecretCookie');
     response.clearCookie('csrfClientExposedCookie');
+}
+
+export function clearAllCookies(response: Response) {
+    clearJwtCookies(response);
+    clearCSRFCookies(response);
+    response.clearCookie('CompleteProfile');
 }

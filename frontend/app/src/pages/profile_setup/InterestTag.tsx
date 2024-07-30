@@ -1,20 +1,32 @@
-import { useState } from "react";
-import Tag from "../../components/utils/Tag";
+import { useEffect, useState } from "react";
+import Tag from "../../components/Tag";
 import interests from "../../utils/interests";
 import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 import { useNavigate } from "react-router-dom";
-
-
-// const tags = [
-//     "anime", "movies", "gaming", "music", "cats", "singing", "travel",
-//     "science", "history", "learning", "fantasy", "pop", "animals", "culture",
-//     "baking", "comedy", "drawing", "languages", "concerts", "art", "philosophy",
-//     "meditation", "books", "dance", "writing", "mystery"
-// ];
+import { getCookie } from "../../utils/generalPurpose";
 
 const InterestTag = () => {
     const   [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
     const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const completeProfileCookie = getCookie('CompleteProfile');
+
+        if (completeProfileCookie != '1') {
+            const navRoute = completeProfileCookie == undefined ? '/complete-info/1'
+                : completeProfileCookie == '2' ? '/complete-info/3' : '/profile'
+
+            setTimeout(() => {
+                navigate(navRoute);
+            }, 300);
+
+            return ;
+        }
+
+        setIsLoading(false);
+    }, []);
 
     const handleOnClick = (tag: string) => {
         setSelectedTags((prev) => {
@@ -30,12 +42,19 @@ const InterestTag = () => {
     const handleContinue = async () => {
         console.log([...selectedTags]);
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...selectedTags]});
-            navigate('/complete-info/3');
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PROFILE_INTERESTS_API_URL, {interests: [...selectedTags]}, 'application/json');
+
+            setTimeout(() => {
+                navigate('/complete-info/3');
+            }, 1000);
         }
         catch (err) {
             console.log(err);
         }
+    }
+
+    if (isLoading) {
+        return ;
     }
 
     return (
@@ -68,6 +87,5 @@ const InterestTag = () => {
     )
 
 }
-
 
 export default InterestTag;

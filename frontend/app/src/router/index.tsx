@@ -10,38 +10,42 @@ import PersonalInfo from "../pages/profile_setup/PersonalInfo";
 import CompleteInfo from "../pages/profile_setup/CompleteInfo";
 import InterestTag from "../pages/profile_setup/InterestTag";
 import Explore from "../pages/explore/Explore";
-import ExploreV2 from "../pages/explore/Explore1";
 import UserProfile from "../pages/profile/UserProfile";
 import LoggedInLayout from "../layouts/LoggedInLayout";
-import SearchResults from "../pages/searchResults/SearchResults";
+import SearchResults from "../pages/search_results/SearchResults";
 import History from "../pages/history/History";
 import VerifyEmail from "../pages/auth/emailVerification";
 import ResetPassword from "../pages/auth/resetVerification";
-import { useEffect } from "react";
+// import { useEffect } from "react";
+import CommonLayout from "../layouts/CommonLayout";
 import NotificationPage from "../pages/notification/NotificationPage";
 
 
-const Test = () => {
+// const Test = () => {
 
-  useEffect(() => {
-    (async () => {
-      const res = await fetch("http://localhost:3000/blah", {credentials: 'include'});
-      const data = await res.json();
+//   useEffect(() => {
+//     (async () => {
+//       const res = await fetch("http://localhost:3000/blah", {credentials: 'include'});
+//       const data = await res.json();
 
-      console.log(data);
-  })()
-  }, [])
+//       console.log(data);
+//   })()
+//   }, [])
 
-  return <div>
-    hello
-  </div>
-}
+//   return <div>
+//     hello
+//   </div>
+// }
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <GuestLayout><LandingPage /></GuestLayout>
+        element: <CommonLayout><LandingPage /></CommonLayout>
     },
+    // {
+    //     path: '/about',
+    //     element: <CommonLayout><AboutPage /></CommonLayout>
+    // },
     {
       path: '/login',
       element: <GuestLayout><Login /></GuestLayout>
@@ -85,16 +89,20 @@ const router = createBrowserRouter([
       path: '/explore',
       element: <LoggedInLayout><Explore /></LoggedInLayout>
     },
-    {
-      path: '/explore1',
-      element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
-    },
+    // {
+    //   path: '/explore1',
+    //   element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
+    // },
     {
       path: '/chat/:conversationId?',
       element: <LoggedInLayout><Chat/></LoggedInLayout>
     },
     {
       path: '/profile/:userId',
+      element: <LoggedInLayout><UserProfile/></LoggedInLayout>
+    },
+    {
+      path: '/profile',
       element: <LoggedInLayout><UserProfile/></LoggedInLayout>
     },
     {
@@ -108,11 +116,7 @@ const router = createBrowserRouter([
     {
       path: '/notifications',
       element: <LoggedInLayout><NotificationPage /></LoggedInLayout>
-    },
-    {
-      path: '/test',
-      element: <Test></Test>
-    },
+    }
 ]);
 
 export default router;

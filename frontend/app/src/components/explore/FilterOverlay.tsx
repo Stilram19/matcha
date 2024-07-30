@@ -4,7 +4,7 @@ import InterestsInput from "../utils/InterestsInput";
 import AgeGapFilter from "./age-gap-filter/AgeGapFilter";
 
 type FilterOverlayProps = {
-    handleFilterOverlayClose: () => void;
+    handleFilterOverlayClose: (fameRatingRange: number[], ageRange: number[], interests: Set<string>) => void;
 };
 
 function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
@@ -17,12 +17,12 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
     function handleBackgroundClick(e: React.MouseEvent<HTMLDivElement>) {
         const classes = (e.target as HTMLElement).classList;
         if (classes.contains('bg-black') && classes.contains('bg-opacity-40')) {
-            handleFilterOverlayClose();
+            handleFilterOverlayClose([minFameRating, maxFameRating], [minAge, maxAge], selectedInterests);
         }
     }
 
     function handleClose() {
-        handleFilterOverlayClose();
+        handleFilterOverlayClose([minFameRating, maxFameRating], [minAge, maxAge], selectedInterests);
     }
 
     // function handleSubmit() {
@@ -49,7 +49,7 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
     return (
         <div onClick={handleBackgroundClick} className="fixed z-30 flex justify-center items-center inset-0 bg-black bg-opacity-40">
             <div className="bg-white overflow-y-auto rounded-18px flex flex-col h-full w-550px overlay-slide" style={{maxHeight: 813}}>
-                <div className="flex justify-between items-center w-full mt-4">
+                <div className="flex justify-between items-center w-full mt-4 mb-4">
                     <h2 style={{ fontSize: '30px' }} className="ml-5">Filters</h2>
                     <img
                         src="/icons/overlay-cross-icon.svg"
@@ -60,9 +60,7 @@ function FilterOverlay({handleFilterOverlayClose}: FilterOverlayProps) {
                         onClick={handleClose}
                     />
                 </div>
-                <div className="mt-3">
-                    <img src="/icons/overlay-divider.svg" className="w-full" alt="overlay divider"/>
-                </div>
+                <hr className="divider"></hr>
                 <div className="ml-4 flex flex-col gap-10 mt-4">
                     <div>
                         <h3 style={{fontSize: 23, fontWeight: 'bold'}} className="mb-2">Filter by Fame Rating:</h3>

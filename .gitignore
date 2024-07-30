@@ -29,3 +29,6 @@ dist-ssr
 # JS code (result of TS compilation) in the backend
 ./backend/backend/app/dist/
 *.js
+
+# uploads
+uploads

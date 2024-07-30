@@ -19,3 +19,15 @@ export type UserInfos = {
     biography: string;
     fameRating: number;
 };
+
+export type BriefProfileInfos = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    biography: string;
+    profilePicture: string;
+};

@@ -31,7 +31,44 @@ export async function sendActionRequest(method: string, url: string, data: any, 
     return (responseBody);
 }
 
-export async function sendLoggedInActionRequest(method: string, url: string, data?: any) {
+export async function sendFormDataRequest(method: string, url: string, formData: FormData) {
+    const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
+
+    const headers: { [key: string]: string } = {
+        'Authorization': `Bearer ${csrfClientExposedCookie}`
+    }
+
+    const response = await fetch(url, {
+        method,
+        credentials: 'include',
+        headers: headers,
+        body: formData
+    });
+
+    let responseBody: any;
+
+    try {
+        responseBody = await response.json();        
+    } catch (err) {
+        responseBody = null;
+    }
+
+    if (response.status === 401) {
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
+    }
+
+    if (!response.ok) {
+        throw (responseBody?.error ?? responseBody ?? 'uknown error occurred');
+    }
+
+    return (responseBody);
+}
+
+export async function sendLoggedInActionRequest(method: string, url: string, data?: any, contentType?: string) {
     const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
 
     const headers: { [key: string]: string } = {
@@ -43,6 +80,10 @@ export async function sendLoggedInActionRequest(method: string, url: string, dat
 
     if (data) {
         body = JSON.stringify(data);
+    }
+
+    if (contentType) {
+        headers['Content-Type'] = contentType;
     }
 
     const response = await fetch(url, {
@@ -61,7 +102,11 @@ export async function sendLoggedInActionRequest(method: string, url: string, dat
     }
 
     if (response.status === 401) {
-        document.location.href = 'http://localhost:5173/login';
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
     }
 
     if (!response.ok) {
@@ -93,7 +138,11 @@ export async function sendLoggedInGetRequest(url: string) {
     }
 
     if (response.status === 401) {
-        document.location.href = 'http://localhost:5173/login';
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
     }
 
     if (!response.ok) {

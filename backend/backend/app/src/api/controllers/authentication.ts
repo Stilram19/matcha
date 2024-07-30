@@ -1,66 +1,83 @@
 import { Request, Response } from 'express'
-import { clearCSRFCookies, clearJwtCookies, setCSRFcookies, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
-import { changePasswordService, isEmailValidService, isLoginValidService, saveResetPasswordTokenService } from '../services/authentication.js';
+import { clearAllCookies, setCSRFcookies, setCompleteProfileInfosCookie, setJwtTokensAsHttpOnlyCookies } from '../utils/cookies.js';
+import { changePasswordService, emailValidationService, loginVerificationService, saveResetPasswordTokenService } from '../services/authentication.js';
 import { generateRandomTokenService } from '../services/hashing.js';
 import { sendForgetPasswordEmailService } from '../services/mailService.js';
 
 export async function localStrategyController(request: Request, response: Response): Promise<void> {
-    const username = request.body.username as string;
-    const password = request.body.password as string;
+    try {
+        const username = request.body.username as string;
+        const password = request.body.password as string;
+        const [userId, is_profile_complete] = await loginVerificationService(username, password);
 
-    // if (await isLoginValidService(username, password) == false) {
-    //     response.status(403).send( { msg: 'invalid username or password' } );
-    //     return ;
-    // }
+        if (!userId) {
+            response.status(403).send( { msg: 'invalid username or password' } );
+            return ;
+        }
 
-    console.log('logged in successfully');
- 
-    // set jwt tokens in httpOnly cookies to mitigate XSS attacks
-    setJwtTokensAsHttpOnlyCookies(1, response);
+        console.log('logged in successfully');
+    
+        // set jwt tokens in httpOnly cookies to mitigate XSS attacks
+        setJwtTokensAsHttpOnlyCookies(userId as number, response);
 
-    // set CSRF cookies to mitigate CSRF attacks
-    setCSRFcookies(response);
+        // set profile as already complete
+        if (is_profile_complete) {
+            setCompleteProfileInfosCookie(3, response);
+        }
 
-    response.status(201).send( { msg: 'logged in successfully' } )
+        // set CSRF cookies to mitigate CSRF attacks
+        setCSRFcookies(response);
+
+        response.status(201).send( { msg: 'logged in successfully' } );
+    }
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function forgetPasswordController(request: Request, response: Response): Promise<void> {
-    const email = request.body.email as string;
+    try {
+        const email = request.body.email as string;
 
-    if (await isEmailValidService(email) == false) {
-        response.status(403).send( { msg: 'invalid email address' } );
-        return ;
+        const userId = await emailValidationService(email);
+
+        if (!userId) {
+            response.status(403).send( { msg: 'invalid email address' } );
+            return ;
+        }
+
+        const resetToken = generateRandomTokenService(16);
+        await saveResetPasswordTokenService(userId as number, resetToken);
+        sendForgetPasswordEmailService(email, resetToken);
+
+        response.status(201).send( { msg: 'email sent' } );
     }
-
-    const resetToken = generateRandomTokenService(16);
-
-    await saveResetPasswordTokenService(email, resetToken);
-
-    sendForgetPasswordEmailService(email, resetToken);
-
-    response.status(201).send( { msg: 'email sent' } );
-    return ;
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function resetPasswordController(request: Request, response: Response) {
-    const authHeader = request.headers['authorization'] as string;
-    const resetToken = authHeader.split(' ')[1] as string;
-    const password = request.body.password as string;
+    try {
+        const authHeader = request.headers['authorization'] as string;
+        const resetToken = authHeader.split(' ')[1] as string;
+        const password = request.body.password as string;
 
-    const userId = await changePasswordService(resetToken, password);
+        const userId = await changePasswordService(resetToken, password);
 
-    if (userId === undefined) {
-        response.status(403).send( { msg: 'resetToken invalid or expired' } );
-        return ;
+        if (userId === undefined) {
+            response.status(403).send( { msg: 'resetToken invalid or expired' } );
+            return ;
+        }
+
+        response.status(201).send( { msg: 'password changed!' } );
     }
-
-    // deconnect user from all sessions
-
-    response.status(201).send( { msg: 'password changed!' } );
+    catch (err) {
+        response.sendStatus(500);
+    }
 }
 
 export async function logoutUserController(request: Request, response: Response) {
-    clearJwtCookies(response);
-    clearCSRFCookies(response);
-    response.status(401); // return unauthorized to make the client redirect to the login page
+    clearAllCookies(response);
+    response.status(201).send( { msg: 'logged out' } );
 }

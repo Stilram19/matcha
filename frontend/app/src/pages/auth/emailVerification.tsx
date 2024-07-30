@@ -13,7 +13,6 @@ function VerifyEmail() {
 
   useEffect(() => {
   const verifyEmail = async () => {
-      
       if (!token) {
         setMessage('Invalid or missing token.');
         setIsLoading(false);
@@ -21,16 +20,16 @@ function VerifyEmail() {
       }
 
       try {
-        await sendActionRequest('POST', import.meta.env.VITE_VERIFY_EMAIL_API_URL as string, { token }, token);
+        await sendActionRequest('POST', import.meta.env.VITE_LOCAL_VERIFY_EMAIL_API_URL as string, { token }, token);
 
         setTimeout(() => {
           navigate('/complete-info/1');
-        }, 2000);
+        }, 1000);
         setMessage('Email verified successfully.');
       } catch (error) {
         setTimeout(() => {
           navigate('/login');
-        }, 2000);
+        }, 1000);
         setMessage('Failed to verify email.');
       } finally {
         setIsLoading(false);

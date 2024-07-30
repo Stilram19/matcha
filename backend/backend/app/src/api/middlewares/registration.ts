@@ -17,7 +17,7 @@ export function validateLocalSignupBody(request: Request, response: Response, ne
     if (!isEmailFormatValid(email as string) || !isPasswordValid(password as string) 
         || !isUsernameValid(username as string) || !isFirstNameValid(firstname as string) 
             || !isLastNameValid(lastname as string)) {
-        response.status(400).send( { msg: 'invalid email or password input' } );
+        response.status(400).send( { msg: 'invalid input' } );
         return ;
     }
 

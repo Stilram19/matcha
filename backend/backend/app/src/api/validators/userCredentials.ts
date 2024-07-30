@@ -30,9 +30,36 @@ export function isEmailFormatValid(email: string): boolean {
 
 
 export function isFirstNameValid(firstName: string): boolean {
-    return (firstName.length > 0);
+    const firstnameRegexp = /^[a-zA-Z]{2,20}$/;
+
+    return (firstnameRegexp.test(firstName));
 }
 
 export function isLastNameValid(firstName: string): boolean {
-    return (firstName.length > 0);
+    const lastnameRegexp = /^[a-zA-Z]{2,20}$/;
+
+    return (lastnameRegexp.test(firstName));
+}
+
+export function isGenderAndSexualPreferenceValid(gender: string, sexualPreference: string): boolean {
+    const handledGenders = new Set(['male', 'female', 'transgender']);
+    const handledSexualPreferences = new Set(['heterosexual', 'bisexual-male', 'bisexual-female', 'homosexual', 'lesbian']);
+
+    if (!handledGenders.has(gender) || !handledSexualPreferences.has(sexualPreference)) {
+        return (false);
+    }
+
+    if (gender == 'male' && (sexualPreference == 'lesbian' || sexualPreference == 'bisexual-female')) {
+        return (false);
+    }
+
+    if (gender == 'female' && (sexualPreference == 'homosexual' || sexualPreference == 'bisexual-male')) {
+        return (false);
+    }
+
+    return (true);
+}
+
+export function isAgeValid(age: number) {
+    return (age >= 18 && age <= 30);
 }

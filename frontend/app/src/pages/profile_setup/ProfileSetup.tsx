@@ -1,14 +1,14 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { MdCloudUpload } from "react-icons/md";
 import ImageCard from "../../components/utils/ImageCard";
-
+import { sendFormDataRequest } from "../../utils/httpRequests";
+import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../utils/generalPurpose";
 
 type ImageCardsProps = {
     images: File[];
     handleRemove: (key: number) => void;
 }
-
-
 
 // I should pass only the image source for this component, to make things more abstract
 const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
@@ -37,11 +37,32 @@ const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
 
 }
 
-
 export default function ProfileSetup() {
     const   [images, setImages] = useState<File[]>([]);
+    const   [isLoading, setIsLoading] = useState(true);
+    const   navigate = useNavigate();
     const   MAX_PICTURES = 4;
 
+    useEffect(() => {
+        const completeProfileCookie = getCookie('CompleteProfile');
+
+        if (completeProfileCookie != '2') {
+            const navRoute = completeProfileCookie == undefined ? '/complete-info/1'
+                : completeProfileCookie == '1' ? '/complete-info/2' : '/profile'
+
+            setTimeout(() => {
+                navigate(navRoute);
+            }, 300);
+
+            return ;
+        }
+
+        setIsLoading(false);
+    }, []);
+
+    if (isLoading) {
+        return ;
+    }
 
     const handleUploadChange = (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -57,6 +78,33 @@ export default function ProfileSetup() {
 
     const handleRemove = (index: number) => {
         setImages((prev) => prev.filter((_, i) => i != index))
+    }
+
+    const onConfirm = async () => {
+        if (images.length === 0) {
+            return ;
+        }
+
+        const formData = new FormData();
+
+        images.forEach( (image) => {
+            formData.append('image', image);
+        });
+
+        for (let pair of formData.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`);
+        }
+
+        try {
+            await sendFormDataRequest('POST', import.meta.env.VITE_LOCAL_COMPLETE_PROFILE_PHOTOS_API_URL as string, formData);
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 1000);
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
     return (
@@ -80,6 +128,7 @@ export default function ProfileSetup() {
                     id="upload"
                     type="file"
                     multiple
+                    accept="image/*"
                     className="hidden"
                     onChange={handleUploadChange}
                 />
@@ -87,7 +136,8 @@ export default function ProfileSetup() {
                 <ImageCards images={images} handleRemove={handleRemove} />
 
                 <div className="flex justify-end">
-                    <button className="mt-5 mb-4 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+                    <button onClick={onConfirm} className="mt-5 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
+
                         Confirm
                     </button>
                 </div>

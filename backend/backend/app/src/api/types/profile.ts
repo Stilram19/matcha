@@ -28,5 +28,17 @@ export type BriefProfileInfos = {
     age: number;
     gender: string;
     sexualPreferences: string;
+    biography: string;
     profilePicture: string;
+};
+
+export type updateProfilePersonalInfos = {
+    profilePicturePath: string | null;
+    username: string;
+    firstname: string;
+    lastname: string;
+    age: number;
+    gender: string;
+    biography: string;
+    sexualPreference: string;
 };

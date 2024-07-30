@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Gender from "../../components/utils/Gender";
 import SexualPreferences from "../../components/utils/SexualPreferences";
 import './style.css'
@@ -14,29 +14,59 @@ import LikeBackProfileButton from "../../components/profile/LikeBackProfileButto
 import { ProfileInfos } from "../../types/profile";
 import { sendLoggedInActionRequest, sendLoggedInGetRequest } from "../../utils/httpRequests";
 import AreYouSureOverlay from "../../components/profile/AreYouSureOverlay";
+import ErrorOccurred from "../../components/utils/error-occurred/ErrorOccurred";
+import { isOfProfileInfosType } from "../../utils/typeGuards";
 
 function UserProfile() {
-    // const profileInfos = dummyProfileInfos[1];
     let [profileInfos, setProfileInfos] = useState<ProfileInfos>();
     let { userId } = useParams();
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
     let [isInterestsEditOpen, setIsInterestsEditOpen] = useState(false);
     let [isFakeReportAreYouSureModelOpen, setIsFakeReportAreYouSureModelOpen] = useState(false);
     let [isBlockAreYouSureModelOpen, setIsBlockAreYouSureModelOpen] = useState(false);
+    let [isLoading, setIsLoading] = useState(true);
+    let [errorOccurred, setErrorOccurred] = useState(false);
+    let navigate = useNavigate();
 
     useEffect(() => {
         (async function initializeComponent() {
+            setIsLoading(true);
+            setErrorOccurred(false);
             try {
-                const responseBody = await sendLoggedInGetRequest(import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}`);
+                const profileInfosUrl = (userId ? import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}` : import.meta.env.VITE_LOCAL_CURR_PROFILE_INFOS_API_URL);
+                const responseBody = await sendLoggedInGetRequest(profileInfosUrl);
+
+                if (!responseBody || !isOfProfileInfosType(responseBody.profileInfos)) {
+                    setErrorOccurred(true);
+                    return ;
+                }
 
                 responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
                 setProfileInfos(responseBody.profileInfos);
             } catch(err) {
-                console.log(err);
+                setErrorOccurred(true);
                 // navigate to a not found or error occured page
+            } finally {
+                setIsLoading(false);
             }
         })();
-    }, []);
+    }, [userId]);
+
+    if (errorOccurred) {
+        return (
+            <>
+                <ErrorOccurred />
+            </>
+        )
+    }
+
+    if (isLoading) {
+        return ;
+    }
+
+    if (profileInfos == undefined) {
+        return ;
+    }
 
     function handleEditButtonClick() {
         setIsProfileEditOpen(true);
@@ -84,7 +114,10 @@ function UserProfile() {
         handleLikeButtonClick();
     }
 
-    function handleEditOverlayClose() {
+    function handleEditOverlayClose(newProfileInfos: ProfileInfos | null) {
+        if (newProfileInfos) {
+            setProfileInfos(newProfileInfos);
+        }
         setIsProfileEditOpen(false);
     }
 
@@ -100,8 +133,9 @@ function UserProfile() {
         const profileInfosCopy: ProfileInfos = {userInfos: profileInfos.userInfos, interests: new Set(newSelectedInterests), userPhotos: profileInfos.userPhotos};
 
         try {
-            await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...newSelectedInterests]});
+            await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_PROFILE_INTERESTS_API_URL, {interests: [...newSelectedInterests]}, 'application/json');
 
+            // console.log('new selected interests: ' + newSelectedInterests);
             setProfileInfos(profileInfosCopy);
         }
         catch (err) {
@@ -113,8 +147,22 @@ function UserProfile() {
     }
 
     async function handleBlock() {
+        if (!profileInfos) {
+            return ;
+        }
+
         try {
             await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_BLOCK_API_URL + `/${userId}`);
+
+            const profileInfosCopy = Object.create(profileInfos);
+
+            profileInfosCopy.userInfos.isLiked = false;
+            profileInfosCopy.userInfos.isLiking = false;
+            setProfileInfos(profileInfosCopy);
+
+            setTimeout(() => {
+                navigate('/profile');
+            }, 500);
         }
         catch (err) {
             console.log(err);
@@ -125,6 +173,10 @@ function UserProfile() {
     }
 
     async function handleFakeAccountReport() {
+        if (!profileInfos) {
+            return ;
+        }
+
         try {
             await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_REPORT_FAKE_API_URL + `/${userId}`);
         }
@@ -134,10 +186,6 @@ function UserProfile() {
         finally {
             setIsFakeReportAreYouSureModelOpen(false);
         }
-    }
-
-    if (profileInfos == undefined) {
-        return ;
     }
 
     return (

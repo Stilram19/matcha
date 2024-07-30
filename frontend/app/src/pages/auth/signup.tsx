@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
 import { sendActionRequest } from '../../utils/httpRequests';
-import { getFormError } from '../../utils/errorHandling';
+import { getFormError } from '../../utils/typeGuards';
 
 const SignupSchema = Yup.object().shape({
     email: Yup.string()
@@ -19,8 +19,14 @@ const SignupSchema = Yup.object().shape({
         .matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
         .matches(/(?<!_)$/, 'Username cannot end with an underscore')
         .required('username is required'),
-    firstname: Yup.string().required('first name is required'),
-    lastname: Yup.string().required('last name is required'),
+    firstname: Yup.string().required('first name is required')
+            .min(2, 'firstname must be at least 2 characters')
+            .max(20, 'firstname must be at most 20 characters')
+            .matches(/^[a-zA-Z]+$/, 'only alphabets are allowed'),
+    lastname: Yup.string().required('last name is required')
+            .min(2, 'lastname must be at least 2 characters')
+            .max(20, 'lastname must be at most 20 characters')
+            .matches(/^[a-zA-Z]+$/, 'only alphabets are allowed'),
     password: Yup.string()
         .min(12, 'Password must be at least 12 characters')
         .max(28, 'Password must be at most 28 characters')
