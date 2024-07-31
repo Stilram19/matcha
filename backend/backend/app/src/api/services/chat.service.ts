@@ -211,16 +211,10 @@ export async function getContactDetails(participant: number) {
         const results = await client.query(query, [participant]);
 
         return results.rows[0];
-    }
-
-    return {
-        id: 1,
-        username: 'okhiar',
-        firstName: 'oussama',
-        lastName: 'khiar',
-        profilePicture: '/imgs/man_placeholder.jpg',
-        status: 'online',
-        biography: 'Sed tempor purus eu nibh tempor iaculis. Aenean accumsan, orci at maximus euismod, est nisi blandit nibh, 😆'
+    } catch (e) {
+        throw e;
+    } finally {
+        client.release();
     }
 }
 
