@@ -416,6 +416,7 @@ export async function isBlockedService(blockingUserId: number, blockedUserId: nu
             FROM blocked_users 
             WHERE blocking_user_id = $1 AND blocked_user_id = $2
         `;
+        console.log(blockedUserId, blockingUserId);
         const result = await client.query(query, [blockingUserId, blockedUserId]);
 
         return result.rows.length > 0;

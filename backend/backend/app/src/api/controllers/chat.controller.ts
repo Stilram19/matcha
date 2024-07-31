@@ -40,7 +40,7 @@ export async function getDirectMessageList(request: Request, response: Response)
 
 export async function getDmHistory(request: Request, response: Response) {
     const   userId = request.user.id;
-    const   participantId: number = +request.params.id;
+    const   participantId: number = +request.params.userId;
 
     // console.log(participantId);
     // assert(userId not blocking or blocked by participantId)
@@ -56,7 +56,7 @@ export async function getDmHistory(request: Request, response: Response) {
 }
 
 export async function getConversationDetails(request: Request, response: Response) {
-    const participantId: number = +request.params.id;
+    const participantId: number = +request.params.userId;
 
     try {
         const conversationDetails = await getContactDetails(participantId);
@@ -70,7 +70,7 @@ export async function getConversationDetails(request: Request, response: Respons
 
 // move this to the profile routes
 export async function getParticipantInfo(request: Request, response: Response) {
-    const participantId: number = +request.params.id;
+    const participantId: number = +request.params.userId;
 
     try {
         const participantInfo = await getParticipantInfoById(participantId);

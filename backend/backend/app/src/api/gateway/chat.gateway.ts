@@ -38,7 +38,7 @@ async function saveAudioFile(audioData: ArrayBuffer, filename: string) {
             console.log(err);
         }
     });
-    return (filename);
+    return (audioFileName);
 }
 
 // helper function
@@ -46,9 +46,19 @@ async function getUserBrief(userId: number) {
     const client = await pool.connect();
 
     const query = `SELECT id, first_name, last_name, username, profile_picture FROM "user" WHERE id = $1;`
-    const results = await client.query(query, [userId]);
+    
+    let results;
+    try {
+        results = await client.query(query, [userId]);
+    } catch (e) {
+        throw e;
+    } finally {
+        client.release();
+    }
+
     if (results.rowCount === 0)
         return (undefined);
+
     const user = results.rows[0];
     return {
         id: user.id,
@@ -81,6 +91,9 @@ async function sendMessageHandler(client: Socket, message: EmittedMessage) {
         return ;
 
     let receiverBreif = await getUserBrief(receiverId);
+    console.log(receiverId);
+    console.log('chat message')
+    console.log(receiverBreif)
     if (!receiverBreif)
         throw new ApplicationError('User not found');
 
@@ -98,8 +111,8 @@ async function sendMessageHandler(client: Socket, message: EmittedMessage) {
     emitChatMessageEvent(receiverBreif, messageId, message, senderId);
 
 
-    const notification = await createNewNotification(receiverId, senderId, 'new_message');
-    emitNotificationEvent(receiverId, notification);
+    // const notification = await createNewNotification(receiverId, senderId, 'new_message');
+    // emitNotificationEvent(receiverId, notification);
 
 }
 

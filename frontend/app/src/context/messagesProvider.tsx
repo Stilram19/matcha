@@ -4,7 +4,7 @@ import { MessageType } from "../types";
 
 type    MessageContextType = {
     messages: MessageType[],
-    setMessages: Dispatch<SetStateAction<MessageType[]>>
+    setMessages: Dispatch<SetStateAction<MessageType[] | undefined>>
 }
 
 const MessagesContext = createContext<MessageContextType>({} as MessageContextType);

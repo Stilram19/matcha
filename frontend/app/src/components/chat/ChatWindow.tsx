@@ -9,8 +9,7 @@ import { useActiveDm } from "../../context/activeDmProvider";
 import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import MessagesProvider from "../../context/messagesProvider";
-
-
+import useFetch from "../../hooks/useFetch";
 
 function    getFormattedTime() {
     const   dateNow = new Date();
@@ -18,16 +17,23 @@ function    getFormattedTime() {
     return (formattedTime)
 }
 
+// function    
 
-function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[]>>, setParticipant: Dispatch<SetStateAction<ParticipantUser | undefined>>) {
+
+function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[] | undefined>>, setParticipant: Dispatch<SetStateAction<ParticipantUser | undefined>>) {
     const   { activeDmId } = useActiveDm();
 
     const   messageReceivedHandler = (message: any) => {
         console.log(message);
         if (message.from === activeDmId || message.isSender) {
-            setMessages((prev) => [...prev, 
-                    {isSender: message.isSender , sentAt: getFormattedTime(), messageType: message.messageType, messageContent: message.messageContent}
-            ]);
+            setMessages((prev) => {
+                if (!prev)
+                    return (prev);
+            return [
+                ...prev, 
+                {isSender: message.isSender , sentAt: getFormattedTime(), messageType: message.messageType, messageContent: message.messageContent}
+            ]
+        });
             // !!!!!!!!! emit that the message read
         }
     }
@@ -52,7 +58,8 @@ function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[]>>, 
 
 
 const ChatWindow = () => {
-    const   [messages, setMessages] = useState<MessageType[]>([]);
+    const   {activeDmId} = useActiveDm();
+    const   [messages, setMessages] = useFetch<MessageType[]>(`${import.meta.env.VITE_LOCAL_CHAT_DMS}/${activeDmId}`);
     const   [participant, setParticipant] = useState<ParticipantUser>();
 
     registerEventHandlers(setMessages, setParticipant);
@@ -67,7 +74,7 @@ const ChatWindow = () => {
     }
 
     return (
-        <MessagesProvider value={{messages, setMessages}}>
+        <MessagesProvider value={{messages: messages || [], setMessages}}>
             <div className="w-full h-full flex flex-col">
                 {/* normally the passed user will be the participant in user in the conversation */}
                 {participant && 

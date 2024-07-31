@@ -17,7 +17,7 @@ import { EmittedEvents } from "../types/enums.js";
 // }
 
 
-export function    profileVisitNotificationHandler(client: Socket, data: UserEventData) {
+export async function    profileVisitNotificationHandler(client: Socket, data: UserEventData) {
     // validate data object
     if (!isValidUserEventData(data))
         throw new ApplicationError('Invalid visit event data')
@@ -36,7 +36,7 @@ export function    profileVisitNotificationHandler(client: Socket, data: UserEve
     // add to the history of the userId
 }
 
-export function userUnlikedNotificationHandler(client: Socket, data: UserEventData) {
+export async function userUnlikedNotificationHandler(client: Socket, data: UserEventData) {
     // validate data object
     if (!isValidUserEventData(data))
         throw new ApplicationError('Invalid visit event data')
@@ -59,7 +59,7 @@ export function userUnlikedNotificationHandler(client: Socket, data: UserEventDa
 
 
 
-export function userLikeNotificationHandler(client: Socket, data: UserEventData) {
+export async function userLikeNotificationHandler(client: Socket, data: UserEventData) {
         // validate data, data should have the likedUserId.
         if (!isValidUserEventData(data))
             throw new ApplicationError('Invalid visit event data')

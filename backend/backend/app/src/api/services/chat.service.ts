@@ -75,7 +75,6 @@ export async function getContactsService(userId: number) {
     `
 
     const results = await client.query(retrieveQuery, [userId]);
-    console.log(results.rows);
     client.release();
 
     return  results.rows.map(contact => ({
@@ -98,10 +97,11 @@ export async function retrieveDms(userId: number) {
                 MAX(sent_at) as sent_at
             FROM "dm"
             WHERE sender_id = $1 OR receiver_id = $1
-            GROUP user1, user2
+            GROUP BY user1, user2
         )
         SELECT
-            d.id, d.sender_id, d.receiver_id, d.content,
+            d.sender_id, d.receiver_id, d.content,
+            u.id,
             u.username,
             u.first_name,
             u.last_name,
@@ -110,12 +110,7 @@ export async function retrieveDms(userId: number) {
                 WHEN d.sender_id = $1
                 THEN true
                 ELSE false
-            END AS is_sender,
-            CASE
-                WHEN uf.id IS NULL
-                THEN false
-                ELSE true
-            END AS is_favorite
+            END AS is_sender
         FROM "dm" d
         JOIN latest_messages l
             ON d.sent_at = l.sent_at
@@ -124,21 +119,39 @@ export async function retrieveDms(userId: number) {
         JOIN "user" u
             ON u.id != $1
                 AND (u.id IN (sender_id, receiver_id))
-        LEFT JOIN user_favorites uf
-            ON uf.user_id = $1
-                AND uf.fav_id = u.id
-    `
+        ORDER BY d.sent_at DESC
+                `
+            //     CASE
+            //     WHEN uf.id IS NULL
+            //     THEN false
+            //     ELSE true
+            // END AS is_favorite
+                // LEFT JOIN user_favorites uf
+                //     ON uf.user_id = $1
+                //         AND uf.fav_id = u.id
 
     const client = await pool.connect();
 
 
     try {
         const results = await client.query(query, [userId]);
+        console.log("dmssssssssssss")
         console.log(results.rows);
 
         // ! Adding is it online
-        return (results.rows);
+        return (results.rows.map((dm) => ({
+            id: dm.id,
+            username: dm.username,
+            firstName: dm.first_name,
+            lastName: dm.last_name,
+            lastMessage: dm.content,
+            unreadCount: 2,
+            status: isUserOnline(dm.id) ? 'online' : 'offline',
+            profilePicture: process.env.BASE_URL + '/' + dm.profile_picture,
+            isSender: dm.is_sender
+        })));
     } catch (e) {
+        console.log(e)
         throw e;
     } finally {
         client.release();
@@ -176,7 +189,13 @@ export async function getChatHistory(userId: number, participantId: number) {
         const results = await client.query(query, [userId, participantId]);
         
         console.log(results.rows);
-        return (results.rows);
+        return (results.rows.map((chat) => ({
+            id: chat.id,
+            messageContent: chat.content,
+            sentAt: chat.sent_at,
+            messageType: 'text',
+            isSender: chat.is_sender,
+        })).reverse());
     } catch (e) {
         throw e;
     } finally {

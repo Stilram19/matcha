@@ -12,14 +12,16 @@ export function extractUserId(client: Socket) {
 }
 
 
-type EventHandler = (client: Socket, data: any) => void;
+type EventHandler = (client: Socket, data: any) => Promise<any>;
 
 export function eventHandlerWithErrorHandler(fn: EventHandler) {
-    return  (client: Socket, data: any) => {
+    return  async (client: Socket, data: any) => {
         try {
-             fn(client, data);
+             await fn(client, data);
         } catch (e) {
             const { message } = getApplicationError(e);
+            console.log(e);
+            console.log('event handler wrapper')
             console.log(message)
             client.emit('error', {message: message});
         }
