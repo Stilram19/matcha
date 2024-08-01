@@ -7,7 +7,7 @@ export interface INotification {
     message: string;
     actorId: number;
     profilePicture: string;
-    actorFirstName: string;
-    actorLastName: string;
-    read: boolean;
+    firstName: string;
+    lastName: string;
+    notificationStatus: boolean; // read (true)/unread
 }

@@ -4,7 +4,9 @@ import HttpError from "../helpers/HttpError.js";
 import { execute } from "../model/execute.js";
 import pool from "../model/pgPoolConfig.js";
 import { IUserBrief } from "../types/chat.type.js";
+import { ACTOR_NAME_PLACEHOLDER } from "../types/enums.js";
 import { INotification } from "../types/notification.type.js";
+import { getNotificationDetailsByType, substituteActorInNotificationDesc } from "./notification.service.js";
 import { isBlockedService } from "./profile.js";
 import { isUserOnline } from "./socket.service.js";
 
@@ -135,8 +137,6 @@ export async function retrieveDms(userId: number) {
 
     try {
         const results = await client.query(query, [userId]);
-        console.log("dmssssssssssss")
-        console.log(results.rows);
 
         // ! Adding is it online
         return (results.rows.map((dm) => ({
@@ -188,7 +188,7 @@ export async function getChatHistory(userId: number, participantId: number) {
     try {
         const results = await client.query(query, [userId, participantId]);
         
-        console.log(results.rows);
+        // console.log(results.rows);
         return (results.rows.map((chat) => ({
             id: chat.id,
             messageContent: chat.content,
@@ -217,7 +217,7 @@ export async function getContactDetails(participant: number) {
                 first_name,
                 last_name,
                 profile_picture,
-                biography,
+                biography
             FROM "user"
             WHERE id = $1;
         `
@@ -229,7 +229,16 @@ export async function getContactDetails(participant: number) {
     try {
         const results = await client.query(query, [participant]);
 
-        return results.rows[0];
+        const contactDetails = results.rows[0];
+        return {
+            id: contactDetails.id,
+            username: contactDetails.username,
+            firstName: contactDetails.first_name,
+            lastName: contactDetails.last_name,
+            profilePicture: process.env.BASE_URL + '/' + contactDetails.profile_picture,
+            biography: contactDetails.biography,
+            status: (isUserOnline(contactDetails.id) ? 'online' : 'offline')
+        }
     } catch (e) {
         throw e;
     } finally {
@@ -237,6 +246,8 @@ export async function getContactDetails(participant: number) {
     }
 }
 
+
+// Not completed yet
 export async function getParticipantInfoById(participant: number) {
     // checking user existance
 
@@ -332,54 +343,32 @@ export async function areMatched(userId1: number, userId2: number) {
 }
 
 
-export async function getNotificationDetailsByType(notificationType: string) {
-    const   client = await pool.connect();
-    
-    const query = `SELECT id, title, type, description
-                FROM "notification_type"
-                WHERE type = $1;
-    `
-    let notificationDetails : {id: number, title: string, type: string, description: string};
 
-    try {
-        const results = await client.query(query, [notificationType])
-    
-        if (results.rowCount === 0)
-            throw new ApplicationError('notificaiton type not found');
-
-        notificationDetails = results.rows[0];
-        return (notificationDetails);
-    } catch (e) {
-        throw e;
-    } finally {
-        client.release();
-    }
-}
-
+// ! move this to the notifications service
 export async function createNewNotification(notifierId: number, actorUser: IUserBrief, notificationType: string): Promise<INotification> {
     const   client = await pool.connect();
 
     const query = `INSERT INTO "notifications"
-                    (actor_id, notifier_id, notification_type_id, status)
-                    VALUES ($1, $2, $3, $4)
+                    (actor_id, notifier_id, notification_type_id)
+                    VALUES ($1, $2, $3)
                     RETURNING id;
             `
 
     try {
         const notificationDetails = await getNotificationDetailsByType(notificationType);
-        const notificationResult = await client.query(query, [actorUser.id, notifierId, notificationDetails.id, 0]); // 0 means not read yet
+        const notificationResult = await client.query(query, [actorUser.id, notifierId, notificationDetails.id]);
         const createdNotification = notificationResult.rows[0];
 
         return {
             id: createdNotification.id as number,
             type: notificationDetails.type as string,
             title: notificationDetails.title as string,
-            message: `${notificationDetails.description} ${actorUser.firstName} ${actorUser.lastName}` as string,
+            message: substituteActorInNotificationDesc(notificationDetails.description, `${actorUser.firstName} ${actorUser.lastName}`),
             actorId: actorUser.id,
             profilePicture: actorUser.profilePicture,
-            actorFirstName: actorUser.firstName,
-            actorLastName: actorUser.lastName,
-            read: false,
+            firstName: actorUser.firstName,
+            lastName: actorUser.lastName,
+            notificationStatus: false,
         };
 
     } catch (e) {

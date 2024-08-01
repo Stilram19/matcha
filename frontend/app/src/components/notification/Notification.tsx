@@ -5,7 +5,7 @@ import NotificationList, { INotification } from "./NotificationList";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
-import { useLocation } from "react-router-dom";
+import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 
 
 function registerEventHandlers(setNotifications: Dispatch<SetStateAction<INotification[] | undefined>>) {
@@ -27,6 +27,20 @@ function registerEventHandlers(setNotifications: Dispatch<SetStateAction<INotifi
 }
 
 
+// ! move this to another file
+async function markNotificationAsRead() {
+    console.log('marking read')
+    try {
+        await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_NOTIFICATION_MARK_READ);
+    } catch (e) {
+        console.log('marking notification as read error');
+        console.log(e);
+    }
+}
+
+
+
+
 const   Notification = () => {
     const   [isOpen, setIsOpen] = useState<boolean>(false);
     const   [notifications, setNotifications] = useFetch<INotification[]>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL);    
@@ -36,17 +50,19 @@ const   Notification = () => {
     const handleBellClick = () => {
             setIsOpen((prev) => !prev)
             // setUnreadCount(0);
+            if (unreadCount) // marking only if there's something to mark
+                markNotificationAsRead();
             setNotifications((prev) => {
-                return prev?.map((notification) => ({...notification, read: true}))
+                return prev?.map((notification) => ({...notification, notificationStatus: true}))
             })
     }
 
     useEffect(() => {
         if (!notifications)
-            return ;
+        return ;
         // instead of calling this in every time the a notification came
         // i can assume that the count gonna increase by one..
-        const count = notifications.reduce((acc, value) => acc + (!value.read ? 1 : 0), 0);
+        const count = notifications.reduce((acc, value) => acc + (!value.notificationStatus ? 1 : 0), 0);
         setUnreadCount(count);
     }, [notifications])
 

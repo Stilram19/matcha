@@ -9,6 +9,7 @@ import { writeFile } from "fs";
 import { fileTypeFromBuffer } from "file-type";
 import path from "path";
 import pool from "../model/pgPoolConfig.js";
+import { NotificationTypesEnum } from "../types/enums.js";
 
 
 async function    validateUploadedFile(view: Uint8Array) {
@@ -42,7 +43,7 @@ async function saveAudioFile(audioData: ArrayBuffer, filename: string) {
 }
 
 // helper function
-async function getUserBrief(userId: number) {
+async function getUserBrief(userId: number): Promise<IUserBrief | undefined> {
     const client = await pool.connect();
 
     const query = `SELECT id, first_name, last_name, username, profile_picture FROM "user" WHERE id = $1;`
@@ -64,7 +65,7 @@ async function getUserBrief(userId: number) {
         id: user.id,
         firstName: user.first_name,
         lastName: user.last_name,
-        profilePicture: process.env.BASE_URL + '/' + user.profile_picture,
+        profilePicture: process.env.BASE_URL + '/' + user.profile_picture, // put this in it own function
         status: (isUserOnline(userId) ? 'online' : 'offline') as 'online' | 'offline',
     };
 }
@@ -111,8 +112,9 @@ async function sendMessageHandler(client: Socket, message: EmittedMessage) {
     emitChatMessageEvent(receiverBreif, messageId, message, senderId);
 
 
-    // const notification = await createNewNotification(receiverId, senderId, 'new_message');
-    // emitNotificationEvent(receiverId, notification);
+    const notification = await createNewNotification(receiverId, senderBrief!, NotificationTypesEnum.NEW_MESSAGE);
+    console.log(notification);
+    emitNotificationEvent(receiverId, notification);
 
 }
 

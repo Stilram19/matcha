@@ -10,7 +10,7 @@ export async function getUserContacts(request: Request, response: Response) {
 
     try {
         const   contacts = await getContactsService(userId);
-        console.log(contacts);
+        // console.log(contacts);
         response.json(contacts);
     } catch (e) {
         const {status, message} = getHttpError(e);
@@ -50,6 +50,7 @@ export async function getDmHistory(request: Request, response: Response) {
         const chatHistory = await getChatHistory(userId, participantId);
         response.json(chatHistory);
     } catch (e) {
+        console.log(e);
         const {status, message} = getHttpError(e);
         response.status(status).json({status, message});
     }

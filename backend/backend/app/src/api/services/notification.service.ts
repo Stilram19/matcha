@@ -4,7 +4,9 @@ import { isValidUserEventData } from "../validators/socketEventValidator.js";
 import { UserEventData } from "../types/chat.type.js";
 import { ApplicationError } from "../helpers/ApplicationError.js";
 import ioEmitter from "./emitter.service.js";
-import { EmittedEvents } from "../types/enums.js";
+import { ACTOR_NAME_PLACEHOLDER, EmittedEvents } from "../types/enums.js";
+import pool from "../model/pgPoolConfig.js";
+import { INotification } from "../types/notification.type.js";
 
 
 // function validateAndExtractUserId(client: Socket, data: UserEventData): { userId: number; targetUserId: number } {
@@ -83,135 +85,117 @@ export async function userLikeNotificationHandler(client: Socket, data: UserEven
 }
 
 
+export async function getNotificationDetailsByType(notificationType: string) {
+    const   client = await pool.connect();
+    
+    const query = `SELECT id, title, type, description
+                FROM "notification_types"
+                WHERE type = $1;
+    `
+    let notificationDetails : {id: number, title: string, type: string, description: string};
+
+    try {
+        const results = await client.query(query, [notificationType])
+    
+        if (results.rowCount === 0)
+            throw new ApplicationError('notificaiton type not found');
+
+        notificationDetails = results.rows[0];
+        return (notificationDetails);
+    } catch (e) {
+        throw e;
+    } finally {
+        client.release();
+    }
+}
+
+
+// ? helper function
+export function substituteActorInNotificationDesc(description: string, fullname: string) : string {
+    return (description.replace(ACTOR_NAME_PLACEHOLDER, fullname));
+}
+
 
 
 // ? HTTP Services
-export async function retrieveNotifications(userId: number) {
+// SORT NOTIFICATION BY the creatation time
+export async function retrieveNotifications(userId: number): Promise<INotification[]> {
 
+    /*
+        id: number;
+    type: string;
+    title: string;
+    message: string;
+    actorId: number;
+    profilePicture: string;
+    firstName: string;
+    lastName: string;
+    notificationStatus: boolean; // read (true)/unread
+    */
     // select all the notification of the userId and count the unseen notifications
+    const   query = `
+            SELECT
+                n.id,
+                n.actor_id,
+                u.first_name,
+                u.last_name,
+                u.profile_picture,
+                nt.type,
+                nt.title,
+                nt.description,
+                n.status
+            FROM "notifications" n
+            JOIN "notification_types" nt
+                ON n.notification_type_id = nt.id
+            JOIN "user" u
+                ON u.id = n.actor_id
+            WHERE notifier_id = $1
+            LIMIT 20
+        `;
+        // ORDER BY n.created_at DESC
+
+    const client = await pool.connect();
+
+    let   results;
+    try {
+        results = await client.query(query, [userId]);
+    } catch (e) {
+        throw (e);
+    } finally {
+        client.release();
+    }
+
+    const mappedResults: INotification[] = results.rows.map((notification) => ({
+        id: notification.id,
+        type: notification.type,
+        title: notification.title,
+        message: substituteActorInNotificationDesc(notification.description, `${notification.first_name} ${notification.last_name}`),
+        actorId: notification.id,
+        firstName: notification.first_name,
+        lastName: notification.last_name,
+        profilePicture: process.env.BASE_URL + '/' + notification.profile_picture,
+        notificationStatus: notification.status,
+    }))
+
+    return (mappedResults);
+}
 
 
-    return [
-        {
-            id: 1,
-            type: 'new_message',
-            title: 'New Message',
-            message: 'You have received a new message from John Doe',
-            actorId: 123,
-            actorPicture: '/imgs/man_placeholder1.jpg',
-            actorFirstName: 'John',
-            actorLastName: 'Doe',
-            read: false
-        },
-        {
-            id: 2,
-            type: 'liked_you',
-            title: 'New Like',
-            message: 'Jane Doe liked your post',
-            actorId: 124,
-            actorPicture: '/imgs/man_placeholder.jpg',
-            actorFirstName: 'Jane',
-            actorLastName: 'Doe',
-            read: false
-        },
-        {
-            id: 3,
-            type: 'unliked_you',
-            title: 'New Unlike',
-            message: 'Alice Smith unliked your post',
-            actorId: 125,
-            actorPicture: '/imgs/man_placeholder2.jpg',
-            actorFirstName: 'Alice',
-            actorLastName: 'Smith',
-            read: false
-        },
-        {
-            id: 4,
-            type: 'profile_visit',
-            title: 'Profile Visit',
-            message: 'Bob Johnson visited your profile',
-            actorId: 126,
-            actorPicture: '/imgs/man_placeholder3.jpg',
-            actorFirstName: 'Bob',
-            actorLastName: 'Johnson',
-            read: true
-        },
-        {
-            id: 2,
-            type: 'liked_you',
-            title: 'New Like',
-            message: 'Jane Doe liked your post',
-            actorId: 124,
-            actorPicture: '/imgs/test.jpg',
-            actorFirstName: 'Jane',
-            actorLastName: 'Doe',
-            read: false
-        },
-        {
-            id: 3,
-            type: 'unliked_you',
-            title: 'New Unlike',
-            message: 'Alice Smith unliked your post',
-            actorId: 125,
-            actorPicture: '/imgs/man_placeholder2.jpg',
-            actorFirstName: 'Alice',
-            actorLastName: 'Smith',
-            read: false
-        },
-        {
-            id: 4,
-            type: 'profile_visit',
-            title: 'Profile Visit',
-            message: 'Bob Johnson visited your profile',
-            actorId: 126,
-            actorPicture: '/imgs/test.jpg',
-            actorFirstName: 'Bob',
-            actorLastName: 'Johnson',
-            read: true
-        },
-        {
-            id: 1,
-            type: 'new_message',
-            title: 'New Message',
-            message: 'You have received a new message from John Doe',
-            actorId: 123,
-            actorPicture: '/imgs/man_placeholder1.jpg',
-            actorFirstName: 'John',
-            actorLastName: 'Doe',
-            read: false
-        },
-        {
-            id: 2,
-            type: 'liked_you',
-            title: 'New Like',
-            message: 'Jane Doe liked your post',
-            actorId: 124,
-            actorPicture: '/imgs/test.jpg',
-            actorFirstName: 'Jane',
-            actorLastName: 'Doe',
-            read: false
-        },
-        {
-            id: 3,
-            type: 'unliked_you',
-            title: 'New Unlike',
-            message: 'Alice Smith unliked your post',
-            actorId: 125,
-            actorPicture: '/imgs/test.jpg',
-            actorFirstName: 'Alice',
-            actorLastName: 'Smith',
-            read: false
-        },
-        {
-            id: 4,
-            type: 'profile_visit',
-            title: 'Profile Visit',
-            message: 'Bob Johnson visited your profile',
-            actorId: 126,
-            actorPicture: '/imgs/test.jpg',
-            actorFirstName: 'Bob',
-            actorLastName: 'Johnson',
-            read: true
-        },
-    ];
+export  async function notificationMarkAsReadService(userId: number) {
+    const query = `
+                UPDATE "notifications"
+                SET status = true
+                WHERE notifier_id = $1;
+    `
+    const   client = await pool.connect();
+
+    try {
+        await client.query(query, [userId]);
+        console.log(`notification read by userId ${userId}`);
+    } catch (e) {
+        throw (e);
+    } finally {
+        client.release();
+    }
+
 }
