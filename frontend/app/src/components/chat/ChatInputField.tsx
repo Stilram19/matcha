@@ -4,8 +4,10 @@ import { AiOutlineAudio } from "react-icons/ai";
 import { IoSend } from "react-icons/io5";
 import { useSocket } from "../../context/SocketProvider";
 import useRecorder from "../../hooks/useRecorder";
+import { EventsEnum } from "../../types";
 
-type SendedMessageType = {
+type OutgoingMessagePayload = {
+    to: number,
     type: 'text' | 'audio',
     content: string | ArrayBuffer;
 }
@@ -21,37 +23,33 @@ const   ChatInputField = ({onSend}: {onSend: () => void}) => {
     const   {startRecording, stopRecording, isRecording, audioArrayBuffer, audioClear, audioSeconds} = useRecorder();
 
     useEffect(() => {
-        console.log('focusing')
         if (inputRef.current) inputRef.current.focus();
         return () => {
-            console.log('clearing')
             audioClear();
             stopRecording();
         }
     }, [activeDmId])
 
-    console.log(isRecording, audioArrayBuffer)
 
-
-    const   sendMessage = ({type, content}: SendedMessageType) => {
+    const   sendMessage = ({type, content, to}: OutgoingMessagePayload) => {
         const   messageDetails = {
-            to: activeDmId,
+            to,
             messageType: type,
             messageContent: content,
         }
         console.log('emitting')
-        socket?.emit('chat:send', messageDetails);
+        socket?.emit(EventsEnum.CHAT_SEND, messageDetails);
     }
 
     const   sendHandler = () => {
         if (audioArrayBuffer) {
             console.log(audioArrayBuffer);
-            sendMessage({type: 'audio', content: audioArrayBuffer});
+            sendMessage({type: 'audio', content: audioArrayBuffer, to: activeDmId});
             audioClear();
         } else {
             if (!inputRef.current || !inputRef.current.value)
                 return ;
-            sendMessage({type: 'text', content: inputRef.current.value});
+            sendMessage({type: 'text', content: inputRef.current.value, to: activeDmId});
             inputRef.current.value = '';
         }
         onSend();
@@ -61,8 +59,6 @@ const   ChatInputField = ({onSend}: {onSend: () => void}) => {
         !isRecording ? startRecording() : stopRecording();
     }
 
-
-    console.log('re-render... ChatInput')
     return (
         <div className="relative pt-2">
 

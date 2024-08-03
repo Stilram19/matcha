@@ -10,6 +10,7 @@ import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import MessagesProvider from "../../context/messagesProvider";
 import useFetch from "../../hooks/useFetch";
+import { GlobalEventEnum } from "../../types/globalEventEnum";
 
 function    getFormattedTime() {
     const   dateNow = new Date();
@@ -17,23 +18,32 @@ function    getFormattedTime() {
     return (formattedTime)
 }
 
-// function    
+// function   
+
+type ChatIncomingPayload = {from: number} & MessageType;
 
 
 function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[] | undefined>>, setParticipant: Dispatch<SetStateAction<ParticipantUser | undefined>>) {
     const   { activeDmId } = useActiveDm();
 
-    const   messageReceivedHandler = (message: any) => {
+    const   messageReceivedHandler = (message: ChatIncomingPayload) => {
         console.log(message);
+
         if (message.from === activeDmId || message.isSender) {
             setMessages((prev) => {
                 if (!prev)
                     return (prev);
-            return [
-                ...prev, 
-                {isSender: message.isSender , sentAt: getFormattedTime(), messageType: message.messageType, messageContent: message.messageContent}
-            ]
-        });
+                return [
+                    ...prev, 
+                    {
+                        id: message.messageId,
+                        isSender: message.isSender,
+                        sentAt: getFormattedTime(),
+                        messageType: message.messageType,
+                        messageContent: message.messageContent
+                    }
+                ]
+            });
             // !!!!!!!!! emit that the message read
         }
     }
@@ -60,7 +70,8 @@ function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[] | u
 const ChatWindow = () => {
     const   {activeDmId} = useActiveDm();
     const   [messages, setMessages] = useFetch<MessageType[]>(`${import.meta.env.VITE_LOCAL_CHAT_DMS}/${activeDmId}`);
-    const   [participant, setParticipant] = useState<ParticipantUser>();
+    const   [participant, setParticipant] = useFetch<ParticipantUser>(`${import.meta.env.VITE_LOCAL_CHAT_DM_PARTICIPANT}/${activeDmId}`);
+    // const   [participant, setParticipant] = useState<ParticipantUser>();
 
     registerEventHandlers(setMessages, setParticipant);
     const   handleFavoriteClick = (conversationId: number) => {
@@ -79,7 +90,7 @@ const ChatWindow = () => {
                 {/* normally the passed user will be the participant in user in the conversation */}
                 {participant && 
                     <ConversationHeader {...participant} onClick={handleFavoriteClick} /> }
-                <ChatBox/>
+                <ChatBox key={activeDmId}/>
             </div>
         </MessagesProvider>
     )

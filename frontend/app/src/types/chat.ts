@@ -26,20 +26,37 @@ export type DmListType = ParticipantUser & {lastMessage: string, unreadCount: nu
 export type ContactDetailsType = UserType & {biography: string}
 
 export type MessageProps = {
+    isAudio: boolean,
     isSender: boolean,
     message: string,
     sentAt: string,
 }
 
-type MessageTypes = 'audio' | 'text';
+type messageContentTypes = 'audio' | 'text';
 
-export type MessageType = {
+
+export interface MessageType {
+    messageId: number;
     isSender: boolean;
-    from: number;
-    messageType: MessageTypes;
-    messageContent: string | ArrayBuffer;
+    messageType: messageContentTypes;
+    messageContent: string; // ? text message or the audio resourse url
     sentAt: string;
 }
+
+export interface IncomingMessagePayload {
+    from: number;
+    to: number;
+    isSender: boolean;
+    messageType: messageContentTypes;
+    messageContent: string;
+    sentAt: string;
+    profilePicture: string;
+    firstName: string;
+    lastName: string;
+    status: 'online' | 'offline';
+    isFavorite: boolean;
+}
+
 
 
 export enum    EventsEnum {

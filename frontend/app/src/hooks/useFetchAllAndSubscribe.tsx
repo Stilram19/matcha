@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { DmListType, EventsEnum } from "../types";
+import { DmListType, EventsEnum, IncomingMessagePayload } from "../types";
 import useFetch from "./useFetch";
 import { changeParticipantPresence, prepareSocketEventRegistration } from "../utils/socket";
 import { useSocketEventRegister } from "./useSocketEventResgiter";
@@ -8,37 +8,26 @@ import { useActiveDm } from "../context/activeDmProvider";
 
 
 // this interface should consistent with data that send by the io server
-interface MessageEvent {
-    isSender: boolean;
-    from: number;
-    to: number;
-    messageType: 'audio' | 'text';
-    messageContent: string | ArrayBuffer;
-    profilePicture: string;
-    firstName: string;
-    lastName: string;
-    status: 'online' | 'offline';
-    isFavorite: boolean;
-}
-
 type    StatePair = [DmListType[] | undefined, React.Dispatch<React.SetStateAction<DmListType[] | undefined>>];
-
 type    ReactSetter<T> = Dispatch<SetStateAction<T>>
 
 
-function formatMessage(messageType: 'text' | 'audio', message: string | ArrayBuffer) {
+function formatMessage(messageType: 'text' | 'audio', message: string, isSender: boolean) {
+    let displayedMessage = message; 
     if (messageType === 'audio')
-        return ('audio message 🎙');
-    return (message as string);
+        displayedMessage = 'audio message 🎙';
+    
+    return `${isSender ? 'You: ' : ''}${displayedMessage}`;
 }
 
 
 
-function createDmsUpdateFunc(activeDmId: number, data: MessageEvent) {
+function createDmsUpdateFunc(activeDmId: number, data: IncomingMessagePayload) {
     return (prevDms: DmListType[] | undefined): DmListType[] | undefined => {
         if (!prevDms) return;
 
-        const formattedLastMessage = formatMessage(data.messageType, data.messageContent);
+        const formattedLastMessage = formatMessage(data.messageType, data.messageContent, data.isSender);
+        // console.log(data);
         
         if (data.isSender) {
             const index = prevDms.findIndex((dm) => dm.id === data.to);
@@ -91,15 +80,15 @@ function createDmsUpdateFunc(activeDmId: number, data: MessageEvent) {
 function registerSocketEvents(activeDmId: number, setDms: ReactSetter<DmListType[] | undefined>, setContacts: ReactSetter<DmListType[] | undefined>) {
     const userPresenceHandler = (onlineUsers: number[]) => {
         console.log('online-users:', onlineUsers);
-    
+
         // Modify dms presence, changing the status (online, offline)
         const mutateDms = (dms: DmListType[] | undefined) => dms && changeParticipantPresence(dms, onlineUsers);
-    
+
         setDms(mutateDms);
         setContacts(mutateDms);
     }
 
-    const   messageEventHandler = (data: MessageEvent) => {
+    const   messageEventHandler = (data: IncomingMessagePayload) => {
         // ? checking if the sended message, was already in the list, if so need to re-order the dms list
         // ? if not i need just to insert it in the first of the array, & the unseen counter should incerement 
         const   updateDms = createDmsUpdateFunc(activeDmId, data);
@@ -110,8 +99,8 @@ function registerSocketEvents(activeDmId: number, setDms: ReactSetter<DmListType
     // * create the callback that accepts a socket.io object, it will be called by
     // * the useSocketEventRegister and it's gonna register the event and there handlers
     const   regiterarFunction = prepareSocketEventRegistration([
-                                ['global:online-users', userPresenceHandler],
-                                ['chat:message', messageEventHandler]
+                                [EventsEnum.GLOBAL_PRESENCE, userPresenceHandler],
+                                [EventsEnum.CHAT_RECEIVE, messageEventHandler]
                             ]);
     useSocketEventRegister(regiterarFunction, [activeDmId]);
 }

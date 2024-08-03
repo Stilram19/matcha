@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { emitChatMessageEvent, emitNotificationEvent, eventHandlerWithErrorHandler, extractUserId, isUserOnline } from "../services/socket.service.js";
-import { EmittedMessage, IUserBrief } from "../types/chat.type.js";
+import { IDirectMessage, IncomingMessagePayload, IUserBrief, OutgoingMessagePayload } from "../types/chat.type.js";
 import { validateMessageData } from "../validators/socketEventValidator.js";
 import ioEmitter from '../services/emitter.service.js';
 import { ApplicationError } from "../helpers/ApplicationError.js";
@@ -71,7 +71,7 @@ async function getUserBrief(userId: number): Promise<IUserBrief | undefined> {
 }
 
 async   function messagePersistencyHandler(senderId: number, receiverId: number, messageType: string, messageContent: string | ArrayBuffer) {
-    let audioFileName: string;
+    let audioFileName: string = '';
 
     if (messageType === 'audio') {
         // Asynchronously saving the file but synchronously validating the file mime
@@ -79,22 +79,26 @@ async   function messagePersistencyHandler(senderId: number, receiverId: number,
     }
 
     // if type is audio then content will be the audio file
-    const messageId = await createNewDm(senderId, receiverId, messageContent)
-    return (messageId)
+    const createdDm: IDirectMessage = await createNewDm(senderId, receiverId, messageType, messageType === 'text' ? messageContent : audioFileName)
+    return ({
+        ...createdDm,
+        messageContent: (createdDm.messageType === 'text') ? createdDm.messageContent : process.env.BASE_URL + '/' + audioFileName
+    })
 }
 
-async function sendMessageHandler(client: Socket, message: EmittedMessage) {
+
+async function sendMessageHandler(client: Socket, message: IncomingMessagePayload) {
     const   senderId = extractUserId(client);
     const   receiverId = message.to;
 
     // !! validate the emitted object
+    // checking the message type should be either 'text' ot 'audio'
+    console.log(`senderId: ${senderId}`)
+    console.log(`receiverId: ${receiverId}`)
     if (senderId === receiverId)
         return ;
 
     let receiverBreif = await getUserBrief(receiverId);
-    console.log(receiverId);
-    console.log('chat message')
-    console.log(receiverBreif)
     if (!receiverBreif)
         throw new ApplicationError('User not found');
 
@@ -105,11 +109,11 @@ async function sendMessageHandler(client: Socket, message: EmittedMessage) {
     console.log(receiverBreif);
     const senderBrief = await getUserBrief(senderId);
 
-    const   messageId = await messagePersistencyHandler(senderId, receiverId, message.messageType, message.messageContent)
+    const   createdDm = await messagePersistencyHandler(senderId, receiverId, message.messageType, message.messageContent)
     // const messageId = await createNewDm(senderId, receiverId, message.messageContent);
-    console.log('emitting to pariticipants');
-    emitChatMessageEvent(senderBrief!, messageId, message, senderId);
-    emitChatMessageEvent(receiverBreif, messageId, message, senderId);
+
+    emitChatMessageEvent(senderId, receiverId, true, createdDm, receiverBreif);
+    emitChatMessageEvent(senderId, receiverId, false, createdDm, senderBrief!);
 
 
     const notification = await createNewNotification(receiverId, senderBrief!, NotificationTypesEnum.NEW_MESSAGE);

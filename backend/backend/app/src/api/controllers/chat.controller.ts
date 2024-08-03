@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getChatHistory, getContactDetails, getContactsService, getFavoriteUsers, getParticipantInfoById, retrieveDms } from "../services/chat.service.js";
+import { getChatHistory, getContactDetails, getContactsService, getParticipantInfoById, markMessagesAsReadService, retrieveDms } from "../services/chat.service.js";
 import { getHttpError } from '../helpers/getErrorObject.js';
 
 
@@ -30,6 +30,7 @@ export async function getDirectMessageList(request: Request, response: Response)
         //     sameSite: 'strict',
         //     // secure: true
         // })
+        console.log(dms)
         response.json(dms);
     } catch (e) {
         const {status, message} = getHttpError(e);
@@ -74,7 +75,7 @@ export async function getParticipantInfo(request: Request, response: Response) {
     const participantId: number = +request.params.userId;
 
     try {
-        const participantInfo = await getParticipantInfoById(participantId);
+        const participantInfo = await getParticipantInfoById(request.user.id, participantId);
         response.json(participantInfo);
     } catch (e) {
         const {status, message} = getHttpError(e);
@@ -83,10 +84,26 @@ export async function getParticipantInfo(request: Request, response: Response) {
 }
 
 
+export async function MarkMessagesAsRead(request: Request, response: Response) {
+
+    const   userId = request.user.id;
+    const   participantId: number = +request.params.userId;
+    
+    try {
+        await markMessagesAsReadService(userId, participantId)
+        response.sendStatus(200);
+    } catch (e) {
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
+    }
+    
+}
+
+
 export async function getFavoritesChat(request: Request, response: Response) {
     try {
-        const favorites = await getFavoriteUsers(request.user.id);
-        response.json(favorites);
+        // const favorites = await getFavoriteUsers(request.user.id);
+        response.json({});
     } catch (e) {
         const {status, message} = getHttpError(e);
         response.status(status).json({status, message});

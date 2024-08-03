@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { getApplicationError } from "../helpers/getErrorObject.js";
 import socketManager from "./socketManager.service.js";
-import { EmittedMessage, IUserBrief } from "../types/chat.type.js";
+import { IDirectMessage, IUserBrief, OutgoingMessagePayload } from "../types/chat.type.js";
 import ioEmitter from "./emitter.service.js";
 import { INotification } from "../types/notification.type.js";
 
@@ -34,23 +34,27 @@ export function isUserOnline(userId: number) {
 }
 
 
-export function emitChatMessageEvent(user: IUserBrief, messageId: number, message: EmittedMessage, senderId: number) {
-    const {id, firstName, lastName, profilePicture, status} = user;
 
-    ioEmitter.emitToClientSockets(id, 'chat:message', {
-        id: messageId,
-        isSender: id === senderId,
+// ! back to this
+export function emitChatMessageEvent(senderId: number, receiverId: number, isSender: boolean, createdDm: IDirectMessage, user: IUserBrief) {
+    const   {id, firstName, lastName, profilePicture, status } = user;
+
+    const   outgoingMessage: OutgoingMessagePayload = {
         from: senderId,
-        to: message.to,
-        messageType: message.messageType,
-        messageContent: message.messageContent,
-        firstName: firstName,
-        lastName: lastName,
-        profilePicture: profilePicture,
-        status: status,
-    })
-}
+        to: receiverId,
+        isSender,
+        firstName,
+        lastName,
+        profilePicture,
+        status,
+        messageId: createdDm.id,
+        messageType: createdDm.messageType,
+        messageContent: createdDm.messageContent,
+        sentAt: createdDm.sentAt,
+    }
 
+    ioEmitter.emitToClientSockets(isSender ? senderId : receiverId, 'chat:message', outgoingMessage);
+}
 
 export function emitNotificationEvent(notifierId: number, notification: INotification) {
     ioEmitter.emitToClientSockets(notifierId, 'notification:new', notification)

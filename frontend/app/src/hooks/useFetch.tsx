@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import { sendLoggedInGetRequest } from "../utils/httpRequests";
+import eventObserver from "../utils/eventObserver";
 
 // type UseFetchType<T> = (url: string, dependency?: any[]) => 
 
-function useFetch<T>(url: string, dependency?: any[]): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] {
+function useFetch<T>(url: string, dependency?: any[]): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>, any] {
     const   [data, setData] = useState<T>();
+    const   [error, setError] = useState<string | null>(null);
 
     // console.log("trying to fetch");
     // define which function to call sendLoggedInGetRequest if it get request, using it by default
@@ -17,6 +19,7 @@ function useFetch<T>(url: string, dependency?: any[]): [T | undefined, React.Dis
             } catch (error) {
                 console.log(`fetch error: ${error}`);
                 // ! error handling
+                setError(`fetch error: something went wrong`);
             }
         }
 
@@ -35,7 +38,7 @@ function useFetch<T>(url: string, dependency?: any[]): [T | undefined, React.Dis
         console.log("fetching.....");
     }, [url, ...(dependency ? dependency : [])])
 
-    return [data, setData];
+    return [data, setData, error];
 }
 
 export default useFetch;

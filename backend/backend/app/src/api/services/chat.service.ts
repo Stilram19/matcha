@@ -1,3 +1,4 @@
+import { QueryResult } from "pg";
 import { ApplicationError } from "../helpers/ApplicationError.js";
 import { dummyDms } from "../helpers/dummyDms.js";
 import HttpError from "../helpers/HttpError.js";
@@ -76,8 +77,15 @@ export async function getContactsService(userId: number) {
                         ORDER BY first_name, last_name;
     `
 
-    const results = await client.query(retrieveQuery, [userId]);
-    client.release();
+    let results: QueryResult; 
+    try {
+        results = await client.query(retrieveQuery, [userId]);
+    } catch (e) {
+        console.log(e);
+        throw (e);
+    } finally {
+        client.release();
+    }
 
     return  results.rows.map(contact => ({
         id: contact.id,
@@ -85,7 +93,7 @@ export async function getContactsService(userId: number) {
         lastName: contact.last_name,
         username: contact.username,
         profilePicture: `${process.env.BASE_URL}/${contact.profile_picture}`,
-        status: isUserOnline(userId) ? 'online' : 'offline',
+        status: isUserOnline(contact.id) ? 'online' : 'offline',
     }));
 }
 
@@ -96,13 +104,23 @@ export async function retrieveDms(userId: number) {
             SELECT
                 GREATEST(sender_id, receiver_id) as user1,
                 LEAST(sender_id, receiver_id) as user2,
-                MAX(sent_at) as sent_at
+                MAX(sent_at) as sent_at,
+                SUM(
+                    CASE
+                        WHEN receiver_id = $1 AND status = 'unread'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as unread_count
             FROM "dm"
             WHERE sender_id = $1 OR receiver_id = $1
             GROUP BY user1, user2
         )
         SELECT
-            d.sender_id, d.receiver_id, d.content,
+            d.sender_id,
+            d.receiver_id,
+            d.content,
+            l.unread_count,
             u.id,
             u.username,
             u.first_name,
@@ -112,7 +130,12 @@ export async function retrieveDms(userId: number) {
                 WHEN d.sender_id = $1
                 THEN true
                 ELSE false
-            END AS is_sender
+            END AS is_sender,
+            CASE
+                WHEN ufc.id IS NULL
+                THEN false
+                ELSE true
+            END AS is_favorite
         FROM "dm" d
         JOIN latest_messages l
             ON d.sent_at = l.sent_at
@@ -121,22 +144,18 @@ export async function retrieveDms(userId: number) {
         JOIN "user" u
             ON u.id != $1
                 AND (u.id IN (sender_id, receiver_id))
+        LEFT JOIN "user_favorite_contacts" ufc
+            ON ufc.user_id = $1
+                AND ufc.favorite_user_id = u.id
         ORDER BY d.sent_at DESC
-                `
-            //     CASE
-            //     WHEN uf.id IS NULL
-            //     THEN false
-            //     ELSE true
-            // END AS is_favorite
-                // LEFT JOIN user_favorites uf
-                //     ON uf.user_id = $1
-                //         AND uf.fav_id = u.id
-
+    `
     const client = await pool.connect();
 
 
     try {
+        console.log('get dfms')
         const results = await client.query(query, [userId]);
+        console.log(results.rows);
 
         // ! Adding is it online
         return (results.rows.map((dm) => ({
@@ -145,10 +164,11 @@ export async function retrieveDms(userId: number) {
             firstName: dm.first_name,
             lastName: dm.last_name,
             lastMessage: dm.content,
-            unreadCount: 2,
+            unreadCount: Number(dm.unread_count),
             status: isUserOnline(dm.id) ? 'online' : 'offline',
             profilePicture: process.env.BASE_URL + '/' + dm.profile_picture,
-            isSender: dm.is_sender
+            isSender: dm.is_sender,
+            isFavorite: dm.is_favorite,
         })));
     } catch (e) {
         console.log(e)
@@ -171,6 +191,7 @@ export async function getChatHistory(userId: number, participantId: number) {
     const   query = `
             SELECT
                 id,
+                content_type,
                 content,
                 sent_at,
                 CASE
@@ -191,10 +212,10 @@ export async function getChatHistory(userId: number, participantId: number) {
         // console.log(results.rows);
         return (results.rows.map((chat) => ({
             id: chat.id,
-            messageContent: chat.content,
-            sentAt: chat.sent_at,
-            messageType: 'text',
             isSender: chat.is_sender,
+            messageType: chat.content_type,
+            messageContent: chat.content_type === 'text' ? chat.content : process.env.BASE_URL + '/' + chat.content,
+            sentAt: chat.sent_at,
         })).reverse());
     } catch (e) {
         throw e;
@@ -248,25 +269,69 @@ export async function getContactDetails(participant: number) {
 
 
 // Not completed yet
-export async function getParticipantInfoById(participant: number) {
-    // checking user existance
+export async function getParticipantInfoById(userId: number, participantId: number) {
+    const query = `
+        SELECT
+            u.id,
+            username,
+            first_name,
+            last_name,
+            profile_picture,
+            CASE
+                WHEN ufc.id IS NULL
+                THEN false
+                ELSE true
+            END 
+        FROM "user" u
+        LEFT JOIN "user_favorite_contacts" ufc
+            ON ufc.user_id = $1 AND ufc.favorite_user_id = u.id
+        WHERE u.id = $2;
+    `
 
-    return {
-        id: 1,
-        username: 'okhiar',
-        first_name: 'oussama',
-        last_name: 'khiar',
-        profile_picture: '/imgs/man_placeholder.jpg',
-        status: 'online',
+    const client = await pool.connect();
+    try {
+        const results = await client.query(query, [userId, participantId]);
+        const participantUser = results.rows[0];
+        return ({
+            id: participantUser.id,
+            username: participantUser.username,
+            firstName: participantUser.first_name,
+            lastName: participantUser.last_name,
+            profilePicture: process.env.BASE_URL + '/' + participantUser.profile_picture,
+            isFavorite: participantUser.is_favorite,
+            status: isUserOnline(participantId) ? 'online' : 'offline',
+        })
+    } catch (e) {
+        throw (e);
+    } finally {
+        client.release();
     }
 }
 
-export async function getFavoriteUsers(userId: number) {
-    // select * from favorites WHERE user_id = userId JOIN with users on favorite_user_id = users.id
+// export async function getFavoriteUsers(userId: number) {
+//     // select * from favorites WHERE user_id = userId JOIN with users on favorite_user_id = users.id
 
-    return dummyDms.filter((value) => value.isFavorite);
+//     return dummyDms.filter((value) => value.isFavorite);
+// }
+
+
+export  async function markMessagesAsReadService(userId: number, participantId: number) {
+    const   query = `
+        UPDATE "dm"
+        SET status = 'read'
+        WHERE receiver_id = $1 AND sender_id = $2 
+    `
+    const client = await pool.connect();
+
+    try {
+        await client.query(query, [userId, participantId]);
+    } catch (e) {
+        console.error('querying error');
+        throw (e);
+    } finally {
+        client.release();
+    }
 }
-
 
 
 
@@ -293,7 +358,7 @@ export async   function messageExists(senderId: number, receiverId: number, mess
 
 export async function MarkMessageAsRead(messageId: number) {
     const client = await pool.connect();
-    const query = `UPDATE dm SET status = 1 WHERE id = $1` // 1 means the message was read
+    const query = `UPDATE dm SET status = 'read' WHERE id = $1` // 1 means the message was read
 
     try {
         const res = await client.query(query, [messageId]);
@@ -306,16 +371,23 @@ export async function MarkMessageAsRead(messageId: number) {
 }
 
 
-export async function createNewDm(senderId: number, receiverId: number, messageContent: any) {
+export async function createNewDm(senderId: number, receiverId: number, messageType: string, messageContent: any) {
     const   dmCreatationQuery = `INSERT INTO "dm"
-                                (sender_id, receiver_id, content, status) values ($1, $2, $3, $4)
-                                RETURNING id;`
+                                (sender_id, receiver_id, content_type, content) values ($1, $2, $3, $4)
+                                RETURNING id, sent_at, content_type, content;`
 
     const dbClient = await pool.connect();
 
     try {
-        const results = await dbClient.query(dmCreatationQuery, [senderId, receiverId, messageContent, 0]); // ? 0 for unread message
-        return (results.rows[0].id);
+        const results = await dbClient.query(dmCreatationQuery, [senderId, receiverId, messageType, messageContent]); // ? status get default ('unread') 
+        const insertedRow = results.rows[0];
+
+        return ({
+            id: insertedRow.id,
+            messageType: insertedRow.content_type,
+            messageContent: insertedRow.content,
+            sentAt: insertedRow.sent_at,
+        });
     } catch (e) {
         throw (e);
     } finally {

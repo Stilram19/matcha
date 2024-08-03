@@ -9,6 +9,10 @@ GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
 
 \c ${POSTGRES_DB};
 
+
+-- TYPES
+CREATE TYPE MESSAGE_STATUS AS ENUM ('unread', 'read');
+
 -- SCHEMA
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
@@ -75,8 +79,9 @@ CREATE TABLE dm (
     id SERIAL PRIMARY KEY,
     sender_id INTEGER NOT NULL,
     receiver_id INTEGER NOT NULL,
+    content_type VARCHAR(255) NOT NULL CHECK(content_type IN ('text', 'audio')), 
     content TEXT NOT NULL,
-    status INT NOT NULL,
+    status MESSAGE_STATUS DEFAULT 'unread',
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES "user" (id) ON DELETE SET NULL,
     FOREIGN KEY (receiver_id) REFERENCES "user" (id) ON DELETE SET NULL

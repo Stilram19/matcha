@@ -26,7 +26,7 @@ const   ChatBox = () => {
         if (shouldScrollDown)
             chatBoxRef.current.scrollTop = chatBoxRef.current?.scrollHeight;
         else
-            setShowScrollButton(true);
+            setShowScrollButton(true); // !!! bad condition when the dm changes it just displayed (fixed with adding key temperary)
     }, [messages])
 
 
@@ -73,11 +73,15 @@ const   ChatBox = () => {
                                     <div
                                         key={index} // ! add the id of the message instead of the array index
                                         className={`mr-1 my-2 md:my-2 lg:my-3 ${(index > 0 && arr[index-1].isSender != arr[index].isSender ? 'mt-3 md:mt-5 lg:mt-6' : '')} ${index == messages.length - 1 ? 'mb-3' : ''}`}
-                                    >
-                                        { isAudio ? 
-                                            <audio controls src={URL.createObjectURL(new Blob([message.messageContent], {type: 'audio/wav'}))}></audio>
-                                            : <Message  message={message.messageContent as string} sentAt={getFormattedTime()} isSender={message.isSender}  />
-                                        }
+                                        >
+                                        {/* // <audio controls src={URL.createObjectURL(new Blob([message.messageContent], {type: 'audio/wav'}))}></audio> */}
+                                        <Message
+                                            key={message.messageId}
+                                            message={message.messageContent}
+                                            sentAt={getFormattedTime()}
+                                            isSender={message.isSender}
+                                            isAudio={isAudio}
+                                        />
                                     </div>
                                 )
                             })
