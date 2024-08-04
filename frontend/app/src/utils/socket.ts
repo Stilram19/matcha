@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 import { DmListType, PresenceType } from "../types";
-import { Dispatch, SetStateAction } from "react";
-import { useSocket } from "../context/SocketProvider";
+// import { Dispatch, SetStateAction } from "react";
+// import { useSocket } from "../context/SocketProvider";
 
 type    EventHandlerType = [event: string, (data: any) => void];
 

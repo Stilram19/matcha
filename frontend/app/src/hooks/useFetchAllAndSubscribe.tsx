@@ -1,14 +1,15 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DmListType, EventsEnum, IncomingMessagePayload } from "../types";
 import useFetch from "./useFetch";
 import { changeParticipantPresence, prepareSocketEventRegistration } from "../utils/socket";
 import { useSocketEventRegister } from "./useSocketEventResgiter";
 import eventObserver from "../utils/eventObserver";
 import { useActiveDm } from "../context/activeDmProvider";
+import { sendLoggedInGetRequest } from "../utils/httpRequests";
 
 
 // this interface should consistent with data that send by the io server
-type    StatePair = [DmListType[] | undefined, React.Dispatch<React.SetStateAction<DmListType[] | undefined>>];
+// type    StatePair = [DmListType[] | undefined, React.Dispatch<React.SetStateAction<DmListType[] | undefined>>];
 type    ReactSetter<T> = Dispatch<SetStateAction<T>>
 
 
@@ -121,19 +122,74 @@ const   handleFevoritesChange = (dmId: number, setDms: ReactSetter<DmListType[] 
 }
 
 
+function usePaginatedData<T>(url: string) {
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [data, setData] = useFetch<T[]>(url);
+
+    const pageSize = 20;
+
+    console.log(`paginated data ${url}`)
+    const fetchMoreData = async () => {
+        if (!hasMore) return;
+
+        try {
+            const fetchedData: T[] = await sendLoggedInGetRequest(`${url}?page=${page + 1}&pageSize=${pageSize}`);
+            if (!fetchedData.length) {
+                setHasMore(false);
+                return;
+            }
+            setPage(prevPage => prevPage + 1);
+            console.log(`updating ${url}`)
+            setData(prevData => (prevData ? [...prevData, ...fetchedData] : fetchedData));
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    return {
+        data,
+        setData,
+        fetchMoreData,
+    };
+};
+
+const useDirectMessages = () => {
+    const { data: dms, setData, fetchMoreData } = usePaginatedData<DmListType>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+
+    return { 
+        dms,
+        fetchMoreData,
+        setDms: setData
+    };
+};
+
+const useContactList = () => {
+    const { data: contacts, setData: setContacts, fetchMoreData } = usePaginatedData<DmListType>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
+
+    return {
+        contacts,
+        fetchMoreData,
+        setContacts
+    };
+};
 
 
 
-
-const   useFetchAllAndSubscribe: () => {dms: StatePair, contacts: StatePair} = () => {
+interface   FetchedData {
+    data: DmListType[] | undefined;
+    setData: ReactSetter<DmListType[] | undefined>,
+    fetchMoreData: () => Promise<void>
+}
+const   useFetchAllAndSubscribe: () => {dms: FetchedData, contacts: FetchedData} = () => {
     const   { activeDmId } = useActiveDm();
-    const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
-    const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
+    // const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+    // const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
+    const   {dms, setDms, fetchMoreData: fetchMoreDms} = useDirectMessages();
+    const   {contacts, setContacts, fetchMoreData: fetchMoreContacts} = useContactList();
 
 
     registerSocketEvents(activeDmId, setDms, setContacts);
-
-
     useEffect(() => {
         const   handleFavChange = (dmId: number) => handleFevoritesChange(dmId, setDms);
 
@@ -144,7 +200,19 @@ const   useFetchAllAndSubscribe: () => {dms: StatePair, contacts: StatePair} = (
         }
     }, []);
 
-    return {dms: [dms, setDms], contacts: [contacts, setContacts]}
+
+    return {
+        dms: {
+            data: dms,
+            setData: setDms,
+            fetchMoreData: fetchMoreDms
+        },
+        contacts: {
+            data: contacts,
+            setData: setContacts,
+            fetchMoreData: fetchMoreContacts
+        }
+    }
 }
 
 

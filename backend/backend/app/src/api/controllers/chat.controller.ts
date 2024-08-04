@@ -5,11 +5,16 @@ import { getHttpError } from '../helpers/getErrorObject.js';
 
 export async function getUserContacts(request: Request, response: Response) {
     const   userId = request.user.id;
+    console.log(`*******************`)
+    console.log(request.query);
+    const   page = Number(request.query.page) || 1;
+    const   pageSize = Number(request.query.pageSize) || 20;
 
     console.log(`get contacts of userID ${userId}`)
+    console.log(page, pageSize);
 
     try {
-        const   contacts = await getContactsService(userId);
+        const   contacts = await getContactsService(userId, page, pageSize);
         // console.log(contacts);
         response.json(contacts);
     } catch (e) {

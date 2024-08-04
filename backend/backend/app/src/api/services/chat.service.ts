@@ -57,7 +57,9 @@ export async function checkRecordExistence(table: string, recordId: number) {
     }
 }
 
-export async function getContactsService(userId: number) {
+
+
+export async function getContactsService(userId: number, page: number, pageSize: number) {
     let client = await pool.connect();
 
     const   retrieveQuery = `
@@ -74,12 +76,14 @@ export async function getContactsService(userId: number) {
                         )
                         JOIN "user" u
                         ON u.id = matched_user_id
-                        ORDER BY first_name, last_name;
+                        ORDER BY first_name, last_name
+                        OFFSET $2
+                        LIMIT $3;
     `
 
     let results: QueryResult; 
     try {
-        results = await client.query(retrieveQuery, [userId]);
+        results = await client.query(retrieveQuery, [userId, (page - 1) * pageSize, pageSize]);
     } catch (e) {
         console.log(e);
         throw (e);
