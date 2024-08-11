@@ -45,10 +45,10 @@ const LoggedInLayout: FC<Props> = ({children}) =>  {
 
     return (
         <>
-            <SocketProvider>
+            {/* <SocketProvider> */}
                 <LoggedInHeader />
                 {children}
-            </SocketProvider>
+            {/* </SocketProvider> */}
         </>
     )
 }

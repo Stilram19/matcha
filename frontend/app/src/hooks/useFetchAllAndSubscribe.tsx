@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { DmListType, EventsEnum, IncomingMessagePayload } from "../types";
 import useFetch from "./useFetch";
 import { changeParticipantPresence, prepareSocketEventRegistration } from "../utils/socket";
 import { useSocketEventRegister } from "./useSocketEventResgiter";
 import eventObserver from "../utils/eventObserver";
 import { useActiveDm } from "../context/activeDmProvider";
-import { sendLoggedInGetRequest } from "../utils/httpRequests";
+// import { sendLoggedInGetRequest } from "../utils/httpRequests";
 
 
 // this interface should consistent with data that send by the io server
@@ -122,71 +122,17 @@ const   handleFevoritesChange = (dmId: number, setDms: ReactSetter<DmListType[] 
 }
 
 
-function usePaginatedData<T>(url: string) {
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [data, setData] = useFetch<T[]>(url);
 
-    const pageSize = 20;
-
-    console.log(`paginated data ${url}`)
-    const fetchMoreData = async () => {
-        if (!hasMore) return;
-
-        try {
-            const fetchedData: T[] = await sendLoggedInGetRequest(`${url}?page=${page + 1}&pageSize=${pageSize}`);
-            if (!fetchedData.length) {
-                setHasMore(false);
-                return;
-            }
-            setPage(prevPage => prevPage + 1);
-            console.log(`updating ${url}`)
-            setData(prevData => (prevData ? [...prevData, ...fetchedData] : fetchedData));
-        } catch (e) {
-            console.log(e);
-        }
-    };
-
-    return {
-        data,
-        setData,
-        fetchMoreData,
-    };
-};
-
-const useDirectMessages = () => {
-    const { data: dms, setData, fetchMoreData } = usePaginatedData<DmListType>(import.meta.env.VITE_LOCAL_CHAT_DMS);
-
-    return { 
-        dms,
-        fetchMoreData,
-        setDms: setData
-    };
-};
-
-const useContactList = () => {
-    const { data: contacts, setData: setContacts, fetchMoreData } = usePaginatedData<DmListType>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
-
-    return {
-        contacts,
-        fetchMoreData,
-        setContacts
-    };
-};
-
-
-
-interface   FetchedData {
+export interface   FetchedData {
     data: DmListType[] | undefined;
     setData: ReactSetter<DmListType[] | undefined>,
-    fetchMoreData: () => Promise<void>
 }
-const   useFetchAllAndSubscribe: () => {dms: FetchedData, contacts: FetchedData} = () => {
+
+
+const   useFetchAllAndSubscribe: () => {dms: FetchedData, contacts: FetchedData, favorites: {data: DmListType[]}} = () => {
     const   { activeDmId } = useActiveDm();
-    // const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
-    // const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
-    const   {dms, setDms, fetchMoreData: fetchMoreDms} = useDirectMessages();
-    const   {contacts, setContacts, fetchMoreData: fetchMoreContacts} = useContactList();
+    const   [dms, setDms] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+    const   [contacts, setContacts] = useFetch<DmListType[]>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
 
 
     registerSocketEvents(activeDmId, setDms, setContacts);
@@ -205,12 +151,13 @@ const   useFetchAllAndSubscribe: () => {dms: FetchedData, contacts: FetchedData}
         dms: {
             data: dms,
             setData: setDms,
-            fetchMoreData: fetchMoreDms
         },
         contacts: {
             data: contacts,
             setData: setContacts,
-            fetchMoreData: fetchMoreContacts
+        },
+        favorites: {
+            data: dms?.filter(dm => dm.isFavorite) || []
         }
     }
 }
@@ -220,9 +167,76 @@ export default useFetchAllAndSubscribe;
 
 
 /*
-SELECT * FROM dms
-JOIN attachement ON attachement.dm_id = dms.id
-WHERE 
-  (m.senderId = userId1 AND m.receiverId = userId2)
-   OR (m.senderId = userId2 AND m.receiverId = userId1)
+fetching data
+    *provide a way to paginate the data
+    *socket events handler
+    *search input change for each tab means re-fetching data, reset pagination
+
+*/
+
+
+/*
+
+
+function usePaginatedData<T>(url: string) {
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [searchInput, setSearchInput] = useState('');
+    const [data, setData] = useFetch<T[]>(`${url}?${searchInput.length > 0 ? `search=${searchInput}` : ''}`);
+
+    const pageSize = 20;
+
+    // resiting pagination states when search input changes
+    useEffect(() => {
+        setPage(1);
+        setHasMore(true);
+    }, [searchInput])
+
+    console.log(`paginated data ${url}`)
+    const fetchMoreData = async () => {
+        if (!hasMore) return;
+
+        try {
+            const fetchedData: T[] = await sendLoggedInGetRequest(`${url}?${searchInput.length > 0 ? `search=${searchInput}` : ''}&page=${page + 1}&pageSize=${pageSize}`);
+            if (!fetchedData.length) {
+                setHasMore(false);
+                return;
+            }
+            setPage(prevPage => prevPage + 1);
+            console.log(`updating ${url}`)
+            setData(prevData => (prevData ? [...prevData, ...fetchedData] : fetchedData));
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    return {
+        data,
+        setData,
+        fetchMoreData,
+        setSearchInput
+    };
+};
+
+const useDirectMessages = () => {
+    const { data: dms, setData, fetchMoreData, setSearchInput } = usePaginatedData<DmListType>(import.meta.env.VITE_LOCAL_CHAT_DMS);
+
+    return { 
+        dms,
+        fetchMoreData,
+        setDms: setData,
+        setSearchInput
+    };
+};
+
+const useContactList = () => {
+    const { data: contacts, setData: setContacts, fetchMoreData, setSearchInput} = usePaginatedData<DmListType>(import.meta.env.VITE_LOCAL_CHAT_CONTACTS);
+
+    return {
+        contacts,
+        fetchMoreData,
+        setContacts,
+        setSearchInput,
+    };
+};
 */

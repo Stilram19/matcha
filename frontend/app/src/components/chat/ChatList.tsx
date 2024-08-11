@@ -1,7 +1,7 @@
 import { DmListType } from "../../types";
 import { ChatListProps } from "../../types";
-import { FC, useState } from "react";
-import useFetchAllDms from "../../hooks/useFetchAllAndSubscribe";
+import { FC, useEffect, useRef, useState } from "react";
+import useFetchAllAndSubscribe, { FetchedData } from "../../hooks/useFetchAllAndSubscribe";
 import MessageBar from "./MessageBar";
 import ChatListHeader from "./ChatListHeader";
 // import useFetch from "../../hooks/useFetch";
@@ -11,14 +11,13 @@ import ChatListHeader from "./ChatListHeader";
 // i should add a unique and consistent key which is the dmId (since no two Dms bar will have the same id)
 // to make the rendering more efficient, because sometimes i'm inserting new Dms in the front
 // it will be naive to mutate every dm in the DOM redundantly (lastly i understand why the index of the array should not be used as a key)
-const   DmsList = ({dms, onClick, searchInput} : {dms: DmListType[], onClick: (id: number) => void, searchInput: string}) => {
+const   DmsList = ({data, onClick} : {data: DmListType[], onClick: (id: number) => void}) => {
 
     // ! the data should arrive in the way that it gonne be displayed, no need for filtering
-    console.log(dms);
-    const data = dms?.filter((dm) =>  `${dm.firstName} ${dm.lastName}`.toLowerCase().includes(searchInput));
+    console.log(data);
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full" >
             {(data) && data.map((dm) => {
                 return (
                     <div key={dm.id}  onClick={() => onClick(dm.id)}>
@@ -28,6 +27,28 @@ const   DmsList = ({dms, onClick, searchInput} : {dms: DmListType[], onClick: (i
             })}
         </div>
     )
+}
+
+
+function    DirectMessageList({data, onClick, handleMoreDataFetching}:
+    {
+        data: DmListType[],
+        onClick: (id: number) => void,
+        handleMoreDataFetching: () => void
+    }) {
+        console.log(data);
+    
+        return (
+            <div className="w-full h-full overflow-y-auto scrollbar" >
+                {(data) && data.map((dm) => {
+                    return (
+                        <div key={dm.id}  onClick={() => onClick(dm.id)}>
+                            <MessageBar {...dm}/>
+                        </div>
+                    )
+                })}
+            </div>
+        )
 }
 
 
@@ -42,29 +63,76 @@ function    markAsReadById(dms: DmListType[] | undefined, dmId: number): DmListT
 }
 
 
-// function constructorFunc() {
-//     return {
-//         contacts: {
-//             contacts,
-//             fetchMoreData,
-//             add other functionalities
-//         },
-//         dms: {
-//             dms,
-//             fetchMoreData,
-//         }
-//     }
-// }
+
+const    ChatSearchResults = ({data, searchInput, onClick}: {searchInput: string, data: {dms: FetchedData, contacts: FetchedData, favorites: {data: DmListType[]}}, onClick: (dmId: number) => void}) => {
+    const fullname = (firstName: string, lastName: string) => (firstName + ' ' + lastName);
+
+    const dms = data.dms.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput)) || [];
+    const contacts = data.contacts.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput)) || [];
+
+    return (
+        <div className="h-ful w-full">
+            <div className="text-lg font-semibold">Chats</div>
+            <DmsList data={dms} onClick={onClick} />
+            <div className="text-lg font-semibold">Contacts</div>
+            <DmsList data={contacts} onClick={onClick} />
+        </div>
+    )
+} 
+
+
+
 
 
 const   ChatList: FC<ChatListProps> = ({onClick}) => {
     const   [tab, setTab] = useState<string>('dms');
-    const   [searchInput, setSearchInput] = useState<string>('');
-    const   {dms, contacts} = useFetchAllDms();
+    const   [searchInput, setSearchInput] = useState('');
+    const   data = useFetchAllAndSubscribe();
+
+    const handleConversationClick = (dmId: number) => {
+        data.dms.setData((prev) => markAsReadById(prev, dmId))
+        onClick(dmId);
+    }
+
+    const   currentTabData = data[tab as keyof typeof data].data || [];
+
+    return (
+        <div className="w-full h-full pb-1">
+            {/* <SocketManager /> */}
+            <ChatListHeader
+                currentTab={tab}
+                onTabChange={(tab) => setTab(tab)}
+                onSearchChange={(search: string) => setSearchInput(search)}
+            />
+
+            <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar">
+                {
+                    searchInput.length > 0 ?
+                        <ChatSearchResults data={data} searchInput={searchInput} onClick={handleConversationClick} />
+                    :
+                        <DmsList
+                            data={currentTabData} // *listed data 
+                            onClick={handleConversationClick}
+                        />
+                }
+                {/* <DirectMessageList data={currentTabData || []} onClick={handleContactClick} handleMoreDataFetching={handl} /> */}
+            </div>
+        </div>
+    )
+}
+
+
+/*
+const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // const scrollRefs = useRef<Record<string, number>>({ dms: 0, favorites: 0, contacts: 0 });
+
+    const [isScrollEnabled, setScrollEnabled] = useState<boolean>(true);
+
 
     // this maps the a tab to its data, to be listed
     const   tabMap: Record<string, DmListType[] | undefined> = {
-        dms: dms.data,
+        dms: [{lastMessage: 'helllo'}, {lastMessage: 'jhfkdh'}],
         favorites: dms.data?.filter((dm) => dm.isFavorite),
         contacts: contacts.data,
     }
@@ -77,57 +145,52 @@ const   ChatList: FC<ChatListProps> = ({onClick}) => {
 
     // fetch more data based on the current selected tab
     const handleDmListScroll = async (e: React.UIEvent<HTMLDivElement>) => {
+        console.log(isScrollEnabled)
+        if (!isScrollEnabled) {
+            return ;
+        }
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-        
+        // scrollRefs.current[tab] = scrollTop; // Update the scroll position for the current tab
+
+        // console.log(`tabScroll: ${scrollRefs.current[tab]}`);
         console.log(`dmList scroll: ${scrollTop} ${scrollHeight} ${clientHeight}`)
-        if (scrollHeight - scrollTop == clientHeight && scrollHeight !== clientHeight) {
-            // // const [data] = useFetch<DmListType[]>(`${import.meta.env.VITE_LOCAL_CHAT_CONTACTS}?page=${(contacts?.length || 0) / 20}&pageSize=20}`)
-            // console.log(`fetching: ${import.meta.env.VITE_LOCAL_CHAT_CONTACTS}?page=${((contacts?.length || 0) / 20) + 1}&pageSize=20`)
-            // try {
-            //     const data: DmListType[] = await sendLoggedInGetRequest(`${import.meta.env.VITE_LOCAL_CHAT_CONTACTS}?page=${((contacts?.length || 0) / 20) + 1}&pageSize=20`);
-            //     console.log(data);
-    
-            //     setContacts((prev) => {
-            //         if (!prev || !data || !data.length)
-            //             return (prev);
-            //         return [...prev, ...data]
-            //     })
-            // } catch (e) {
-            //     console.log(e);
-            // }
+        if (scrollHeight - scrollTop <= clientHeight + 10) {
 
             if (tab === 'dms') {
                 // when switching tabs it gets called
                 console.log('fetching more dms')
-                dms.fetchMoreData();
+                // dms.fetchMoreData();
             }
             else if (tab === 'contacts') {
                 console.log('fetching more contacts')
-                contacts.fetchMoreData();
+                // contacts.fetchMoreData();
             }
         }
     }
 
 
-    return (
-        <div className="w-full h-full pb-1">
-            {/* <SocketManager /> */}
-            <ChatListHeader
-                currentTab={tab}
-                onTabChange={setTab}
-                onSearchChange={(searchInput: string) => setSearchInput(searchInput)}
-            />
+    useEffect(() => {
+        // Reset scroll position on tab change to avoid triggering scroll events
+        // const currentScrollTop = scrollRefs.current[tab];
+        // document.querySelector('.scrollable-div')?.scrollTo(0, currentScrollTop);
+        setScrollEnabled(false);
+        const timer = setTimeout(() => setScrollEnabled(true), 2000);
 
-            <div className="flex flex-col max-h-[calc(100%-100px)] overflow-y-auto scrollbar" onScroll={handleDmListScroll}>
-                <DmsList
-                    dms={tabMap[tab] || []} // *listed data 
-                    searchInput={searchInput}
-                    onClick={conversationOnClick}
-                />
-            </div>
-        </div>
-    )
-}
+        return () => clearTimeout(timer);
+    }, [tab]);
+    
+    const   onTabSwitch = (tab: string) => {
+        setScrollEnabled(false);
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            console.log('clearing')
+        }
+
+        timerRef.current = setTimeout(() => setScrollEnabled(true), 2000);
+        setTab(tab)
+    }
+
+*/
 
 
 export default ChatList;

@@ -59,7 +59,7 @@ export async function checkRecordExistence(table: string, recordId: number) {
 
 
 
-export async function getContactsService(userId: number, page: number, pageSize: number) {
+export async function getContactsService(userId: number) {
     let client = await pool.connect();
 
     const   retrieveQuery = `
@@ -76,14 +76,12 @@ export async function getContactsService(userId: number, page: number, pageSize:
                         )
                         JOIN "user" u
                         ON u.id = matched_user_id
-                        ORDER BY first_name, last_name
-                        OFFSET $2
-                        LIMIT $3;
+                        ORDER BY first_name, last_name;
     `
 
     let results: QueryResult; 
     try {
-        results = await client.query(retrieveQuery, [userId, (page - 1) * pageSize, pageSize]);
+        results = await client.query(retrieveQuery, [userId]);
     } catch (e) {
         console.log(e);
         throw (e);
@@ -184,9 +182,11 @@ export async function retrieveDms(userId: number) {
 }
 
 
-export async function getChatHistory(userId: number, participantId: number) {
-    if (await isBlockedService(participantId, userId))
-        throw new HttpError(403, 'Forbidden');
+
+// ? add pagination functionality for this service
+export async function getChatHistory(userId: number, participantId: number, page: number, pageSize: number) {
+    // if (await isBlockedService(participantId, userId))
+    //     throw new HttpError(403, 'Forbidden');
 
 // get Conversation history with the participant id, and set the unread messages to read 
     const   client = await pool.connect();
@@ -199,19 +199,21 @@ export async function getChatHistory(userId: number, participantId: number) {
                 content,
                 sent_at,
                 CASE
-                    WHEN sender_id = $1
-                    THEN true
+                    WHEN sender_id = $1 THEN true
                     ELSE false
                 END AS is_sender
             FROM "dm"
             WHERE
                 (receiver_id, sender_id) IN (($1, $2), ($2, $1))
             ORDER BY sent_at DESC
-            LIMIT 20
+            LIMIT $2 $3
         `
 
+    const offset = (page * pageSize);
+    const limit = pageSize;
+
     try {
-        const results = await client.query(query, [userId, participantId]);
+        const results = await client.query(query, [userId, participantId, offset, limit]);
         
         // console.log(results.rows);
         return (results.rows.map((chat) => ({
@@ -282,15 +284,30 @@ export async function getParticipantInfoById(userId: number, participantId: numb
             last_name,
             profile_picture,
             CASE
-                WHEN ufc.id IS NULL
-                THEN false
+                WHEN ufc.id IS NULL THEN false
                 ELSE true
-            END 
+            END AS is_favorite
         FROM "user" u
         LEFT JOIN "user_favorite_contacts" ufc
             ON ufc.user_id = $1 AND ufc.favorite_user_id = u.id
         WHERE u.id = $2;
     `
+
+    /*
+        SELECT
+            u.id,
+            username,
+            first_name,
+            last_name,
+            profile_picture,
+            EXISTS (
+                SELECT 1
+                FROM "user_favorite_contacts"
+                WHERE user_id = $1 AND favorite_user_id = $2
+            ) AS is_favorite
+        FROM "user" u
+        WHERE u.id = $2;
+    */
 
     const client = await pool.connect();
     try {

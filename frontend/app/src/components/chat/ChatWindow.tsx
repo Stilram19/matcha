@@ -11,6 +11,7 @@ import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import MessagesProvider from "../../context/messagesProvider";
 import useFetch from "../../hooks/useFetch";
 import { GlobalEventEnum } from "../../types/globalEventEnum";
+import usePaginatedFetch from "../../hooks/usePaginatedFetch";
 
 function    getFormattedTime() {
     const   dateNow = new Date();
@@ -69,11 +70,11 @@ function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[] | u
 
 const ChatWindow = () => {
     const   {activeDmId} = useActiveDm();
-    const   [messages, setMessages] = useFetch<MessageType[]>(`${import.meta.env.VITE_LOCAL_CHAT_DMS}/${activeDmId}`);
+    const   messages = usePaginatedFetch<MessageType>(`${import.meta.env.VITE_LOCAL_CHAT_DMS}/${activeDmId}`);
     const   [participant, setParticipant] = useFetch<ParticipantUser>(`${import.meta.env.VITE_LOCAL_CHAT_DM_PARTICIPANT}/${activeDmId}`);
     // const   [participant, setParticipant] = useState<ParticipantUser>();
 
-    registerEventHandlers(setMessages, setParticipant);
+    registerEventHandlers(messages.setData, setParticipant);
     const   handleFavoriteClick = (conversationId: number) => {
         setParticipant((prev) => {
             if (!prev)
@@ -85,7 +86,15 @@ const ChatWindow = () => {
     }
 
     return (
-        <MessagesProvider value={{messages: messages || [], setMessages}}>
+        <MessagesProvider
+            value={
+                {
+                    messages: messages.data || [],
+                    setMessages: messages.setData,
+                    fetchMoreMessages: messages.fetchMoreData
+                }
+            }
+        >
             <div className="w-full h-full flex flex-col">
                 {/* normally the passed user will be the participant in user in the conversation */}
                 {participant && 

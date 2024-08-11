@@ -23,17 +23,6 @@ function useFetch<T>(url: string, dependency?: any[]): [T | undefined, React.Dis
             }
         }
 
-        // const fetchData = async () => {
-        //     try {
-        //         const response = await fetch(url);
-        //         const data = await response.json();
-
-        //         setData(data);
-        //     } catch (e) {
-        //         console.log(e);
-        //     }
-        // }
-
         fetchData();
         console.log("fetching.....");
     }, [url, ...(dependency ? dependency : [])])

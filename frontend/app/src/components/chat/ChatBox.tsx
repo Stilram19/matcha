@@ -15,7 +15,7 @@ function    getFormattedTime() {
 const   ChatBox = () => {
     const {activeDmId} = useActiveDm();
     const chatBoxRef = useRef<HTMLDivElement>(null);
-    const { messages } = useMessages();
+    const { messages, fetchMoreMessages } = useMessages();
     const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
     // ? this will be true if new messages arrived or the user viewing older messages
@@ -41,8 +41,8 @@ const   ChatBox = () => {
         }
         
         if (scrollTop === 0) {
-            // fetchMoreMessages(); // ? this function should fetch more data when the user consume all the dms history
             console.log('MORE DMS');
+            fetchMoreMessages(); // ? this function should fetch more data when the user consume all the dms history
         }
     }
 
