@@ -5,10 +5,12 @@ import { retrieveNotifications, notificationMarkAsReadService } from '../service
 
 
 export async function notificationController(request: Request, response: Response) {
-    const   userId = request.user.id;  
+    const   userId = request.user.id;
+    const   page = Number(request.query.page) || 0;
+    const   pageSize = Number(request.query.pageSize) || 20;
 
     try {
-        const notifications = await retrieveNotifications(userId);
+        const notifications = await retrieveNotifications(userId, page, pageSize);
         response.json(notifications);
     } catch (e) {
         console.log(e);

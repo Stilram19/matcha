@@ -1,12 +1,14 @@
 import { Socket } from "socket.io";
-import { extractUserId } from "./socket.service.js";
+import { emitNotificationEvent, extractUserId } from "./socket.service.js";
 import { isValidUserEventData } from "../validators/socketEventValidator.js";
-import { UserEventData } from "../types/chat.type.js";
+import { IUserBrief, UserEventData } from "../types/chat.type.js";
 import { ApplicationError } from "../helpers/ApplicationError.js";
-import ioEmitter from "./emitter.service.js";
-import { ACTOR_NAME_PLACEHOLDER, EmittedEvents } from "../types/enums.js";
+import { EmittedEvents, NotificationTypesEnum } from "../types/enums.js";
 import pool from "../model/pgPoolConfig.js";
 import { INotification } from "../types/notification.type.js";
+import { isBlockedService } from "./profile.js";
+import { getUserBrief, substituteActorInNotificationDesc } from "./helper.service.js";
+import { areMatched } from "./chat.service.js";
 
 
 // function validateAndExtractUserId(client: Socket, data: UserEventData): { userId: number; targetUserId: number } {
@@ -29,14 +31,18 @@ export async function    profileVisitNotificationHandler(client: Socket, data: U
 
     if (visitedProfileId === userId)
         return ;
-    ioEmitter.emitToClientSockets(visitedProfileId, EmittedEvents.VISITED, {
-        visitor: userId,
-        title: 'visit',
-        content: "you've been visited by ..."
-    })
+    if (await isBlockedService(visitedProfileId, userId))
+        throw new ApplicationError('user profile not found');
 
-    // add to the history of the userId
+    const   userBrief = await getUserBrief(userId);
+    // Latter defining where to add it to the history. here or on an http endpoint
+    const   notification: INotification = await createNewNotification(visitedProfileId, userBrief, NotificationTypesEnum.PROFILE_VISIT);
+
+    emitNotificationEvent(visitedProfileId, notification);
 }
+
+
+
 
 export async function userUnlikedNotificationHandler(client: Socket, data: UserEventData) {
     // validate data object
@@ -49,42 +55,46 @@ export async function userUnlikedNotificationHandler(client: Socket, data: UserE
     if (unlikedUserId === userId) // !! or unlikeduserId doesn't exists or if the user has not previously liked the unlikedUserId
         return ;
 
-    ioEmitter.emitToClientSockets(unlikedUserId, EmittedEvents.UNLIKED, {
-        unlikerId: userId,
-        title: 'unlike',
-        content: `You've been unliked`,
-    });
+    const   userBrief = await getUserBrief(userId);
+    const   notification: INotification = await createNewNotification(unlikedUserId, userBrief, NotificationTypesEnum.UNLIKE);
 
-
-    // remove record
+    emitNotificationEvent(unlikedUserId, notification);
 }
 
 
 
 export async function userLikeNotificationHandler(client: Socket, data: UserEventData) {
-        // validate data, data should have the likedUserId.
-        if (!isValidUserEventData(data))
-            throw new ApplicationError('Invalid visit event data')
+    // validate data, data should have the likedUserId.
+    if (!isValidUserEventData(data))
+        throw new ApplicationError('Invalid visit event data')
 
-        const   userId = extractUserId(client);
-        const   likedUserId = data.targetUserId;
+    const   userId = extractUserId(client);
+    const   likedUserId = data.targetUserId;
 
-        if (userId === likedUserId) { // or pairs already matched
-            return ;
-        }
+    if (userId === likedUserId) { // or pairs already matched
+        return ;
+    }
 
-        ioEmitter.emitToClientSockets(likedUserId, EmittedEvents.LIKED, {
-            likerId: userId,
-            title: 'liked',
-            content: `You've been liked`, // checking for if it's a match
-        });
+    // * there is a problem when this function get triggered without perfoming
+    // * any checks like if they are already matched it will create a new record in the database
+    // * and it gonna be multiple rows saying the same thing
+    // * i don't know if i should handle that here, but i find out that when this function get triggered the
+    // * post request will be already made and the likes record exists in the DB (maybe they are matched)
 
-        /*
-            likeModel.create new record with userId and likedUserId
-        */
+    const   userBrief = await getUserBrief(userId);
+    const notification: INotification = await createNewNotification(likedUserId, userBrief, NotificationTypesEnum.LIKE);
+    emitNotificationEvent(likedUserId, notification);
 }
 
 
+
+
+
+
+
+
+
+// ? ====== HELPER FUNCTION ======
 export async function getNotificationDetailsByType(notificationType: string) {
     const   client = await pool.connect();
     
@@ -109,17 +119,51 @@ export async function getNotificationDetailsByType(notificationType: string) {
     }
 }
 
+export async function createNewNotification(notifierId: number, actorUser: IUserBrief, notificationType: string): Promise<INotification> {
+    const query = `INSERT INTO "notifications"
+                    (actor_id, notifier_id, notification_type_id)
+                    VALUES ($1, $2, $3)
+                    RETURNING id;
+                `
 
-// ? helper function
-export function substituteActorInNotificationDesc(description: string, fullname: string) : string {
-    return (description.replace(ACTOR_NAME_PLACEHOLDER, fullname));
+    const notificationDetails = await getNotificationDetailsByType(notificationType);
+    const   client = await pool.connect();
+
+    try {
+        const notificationResult = await client.query(query, [actorUser.id, notifierId, notificationDetails.id]);
+        const createdNotification = notificationResult.rows[0];
+
+        return {
+            id: createdNotification.id as number,
+            type: notificationDetails.type as string,
+            title: notificationDetails.title as string,
+            message: substituteActorInNotificationDesc(notificationDetails.description, `${actorUser.firstName} ${actorUser.lastName}`),
+            actorId: actorUser.id,
+            profilePicture: actorUser.profilePicture,
+            firstName: actorUser.firstName,
+            lastName: actorUser.lastName,
+            notificationStatus: false,
+        };
+
+    } catch (e) {
+        throw e;
+    } finally {
+        client.release();
+    }
 }
+
+
+
+
+
+
 
 
 
 // ? HTTP Services
 // SORT NOTIFICATION BY the creatation time
-export async function retrieveNotifications(userId: number): Promise<INotification[]> {
+// ! adding pagination feature
+export async function retrieveNotifications(userId: number, page: number, pageSize: number): Promise<INotification[]> {
 
     /*
         id: number;
@@ -150,15 +194,18 @@ export async function retrieveNotifications(userId: number): Promise<INotificati
             JOIN "user" u
                 ON u.id = n.actor_id
             WHERE notifier_id = $1
-            LIMIT 20
+            LIMIT $2, $3
         `;
         // ORDER BY n.created_at DESC
+        
+    const offset = page * pageSize;
+    const limit = pageSize;
 
     const client = await pool.connect();
 
     let   results;
     try {
-        results = await client.query(query, [userId]);
+        results = await client.query(query, [userId, offset, limit]);
     } catch (e) {
         throw (e);
     } finally {

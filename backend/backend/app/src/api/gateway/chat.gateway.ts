@@ -1,74 +1,13 @@
 import { Socket } from "socket.io";
-import { emitChatMessageEvent, emitNotificationEvent, eventHandlerWithErrorHandler, extractUserId, isUserOnline } from "../services/socket.service.js";
-import { IDirectMessage, IncomingMessagePayload, IUserBrief, OutgoingMessagePayload } from "../types/chat.type.js";
-import { validateMessageData } from "../validators/socketEventValidator.js";
+import { emitChatMessageEvent, emitNotificationEvent, eventHandlerWithErrorHandler, extractUserId } from "../services/socket.service.js";
+import { IDirectMessage, IncomingMessagePayload } from "../types/chat.type.js";
 import ioEmitter from '../services/emitter.service.js';
 import { ApplicationError } from "../helpers/ApplicationError.js";
-import { areMatched, checkRecordExistence, createNewDm, createNewNotification, MarkMessageAsRead, messageExists } from "../services/chat.service.js";
-import { writeFile } from "fs";
-import { fileTypeFromBuffer } from "file-type";
-import path from "path";
-import pool from "../model/pgPoolConfig.js";
+import { areMatched, createNewDm, MarkMessageAsRead, messageExists } from "../services/chat.service.js";
 import { NotificationTypesEnum } from "../types/enums.js";
+import { createNewNotification } from "../services/notification.service.js";
+import { generateAudioFileName, getUserBrief, saveAudioFile } from "../services/helper.service.js";
 
-
-async function    validateUploadedFile(view: Uint8Array) {
-    const   type = await fileTypeFromBuffer(view)
-    console.log(type)
-    return (type && type.mime === 'video/webm');
-}
-
-function generateAudioFileName(userId: number) {
-    let fileName: string;
-
-    fileName = `audio-${Date.now()}_${userId}.wav`
-    return (fileName);
-}
-
-async function saveAudioFile(audioData: ArrayBuffer, filename: string) {
-    const view = new Uint8Array(audioData);
-
-    if (!await validateUploadedFile(view))
-        throw new ApplicationError('Invalid audio file type. Please upload a WAV file.');
-
-    let audioFileName = `uploads/${filename}`;
-
-    writeFile(path.join(path.resolve(), 'uploads', filename), view, (err) => {
-        if (err) {
-            console.log('write error:');
-            console.log(err);
-        }
-    });
-    return (audioFileName);
-}
-
-// helper function
-async function getUserBrief(userId: number): Promise<IUserBrief | undefined> {
-    const client = await pool.connect();
-
-    const query = `SELECT id, first_name, last_name, username, profile_picture FROM "user" WHERE id = $1;`
-    
-    let results;
-    try {
-        results = await client.query(query, [userId]);
-    } catch (e) {
-        throw e;
-    } finally {
-        client.release();
-    }
-
-    if (results.rowCount === 0)
-        return (undefined);
-
-    const user = results.rows[0];
-    return {
-        id: user.id,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        profilePicture: process.env.BASE_URL + '/' + user.profile_picture, // put this in it own function
-        status: (isUserOnline(userId) ? 'online' : 'offline') as 'online' | 'offline',
-    };
-}
 
 async   function messagePersistencyHandler(senderId: number, receiverId: number, messageType: string, messageContent: string | ArrayBuffer) {
     let audioFileName: string = '';
@@ -99,9 +38,6 @@ async function sendMessageHandler(client: Socket, message: IncomingMessagePayloa
         return ;
 
     let receiverBreif = await getUserBrief(receiverId);
-    if (!receiverBreif)
-        throw new ApplicationError('User not found');
-
     // checking if they are matched
     if (!await areMatched(senderId, receiverId))
         throw new ApplicationError('you\'re not matched');
@@ -113,7 +49,7 @@ async function sendMessageHandler(client: Socket, message: IncomingMessagePayloa
     // const messageId = await createNewDm(senderId, receiverId, message.messageContent);
 
     emitChatMessageEvent(senderId, receiverId, true, createdDm, receiverBreif);
-    emitChatMessageEvent(senderId, receiverId, false, createdDm, senderBrief!);
+    emitChatMessageEvent(senderId, receiverId, false, createdDm, senderBrief);
 
 
     const notification = await createNewNotification(receiverId, senderBrief!, NotificationTypesEnum.NEW_MESSAGE);

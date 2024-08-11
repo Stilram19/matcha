@@ -21,7 +21,6 @@ export function eventHandlerWithErrorHandler(fn: EventHandler) {
         } catch (e) {
             const { message } = getApplicationError(e);
             console.log(e);
-            console.log('event handler wrapper')
             console.log(message)
             client.emit('error', {message: message});
         }

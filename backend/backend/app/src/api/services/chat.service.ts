@@ -1,14 +1,5 @@
 import { QueryResult } from "pg";
-import { ApplicationError } from "../helpers/ApplicationError.js";
-import { dummyDms } from "../helpers/dummyDms.js";
-import HttpError from "../helpers/HttpError.js";
-import { execute } from "../model/execute.js";
 import pool from "../model/pgPoolConfig.js";
-import { IUserBrief } from "../types/chat.type.js";
-import { ACTOR_NAME_PLACEHOLDER } from "../types/enums.js";
-import { INotification } from "../types/notification.type.js";
-import { getNotificationDetailsByType, substituteActorInNotificationDesc } from "./notification.service.js";
-import { isBlockedService } from "./profile.js";
 import { isUserOnline } from "./socket.service.js";
 
 // type DmListType = {
@@ -206,7 +197,7 @@ export async function getChatHistory(userId: number, participantId: number, page
             WHERE
                 (receiver_id, sender_id) IN (($1, $2), ($2, $1))
             ORDER BY sent_at DESC
-            LIMIT $2 $3
+            LIMIT $2, $3
         `
 
     const offset = (page * pageSize);
@@ -434,43 +425,6 @@ export async function areMatched(userId1: number, userId2: number) {
         client.release();
     }
 }
-
-
-
-// ! move this to the notifications service
-export async function createNewNotification(notifierId: number, actorUser: IUserBrief, notificationType: string): Promise<INotification> {
-    const   client = await pool.connect();
-
-    const query = `INSERT INTO "notifications"
-                    (actor_id, notifier_id, notification_type_id)
-                    VALUES ($1, $2, $3)
-                    RETURNING id;
-            `
-
-    try {
-        const notificationDetails = await getNotificationDetailsByType(notificationType);
-        const notificationResult = await client.query(query, [actorUser.id, notifierId, notificationDetails.id]);
-        const createdNotification = notificationResult.rows[0];
-
-        return {
-            id: createdNotification.id as number,
-            type: notificationDetails.type as string,
-            title: notificationDetails.title as string,
-            message: substituteActorInNotificationDesc(notificationDetails.description, `${actorUser.firstName} ${actorUser.lastName}`),
-            actorId: actorUser.id,
-            profilePicture: actorUser.profilePicture,
-            firstName: actorUser.firstName,
-            lastName: actorUser.lastName,
-            notificationStatus: false,
-        };
-
-    } catch (e) {
-        throw e;
-    } finally {
-        client.release();
-    }
-}
-
 
 
 

@@ -6,6 +6,7 @@ import useOutsideClick from "../../hooks/useOutsideClick";
 import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import { sendLoggedInActionRequest } from "../../utils/httpRequests";
+import usePaginatedFetch from "../../hooks/usePaginatedFetch";
 
 
 function registerEventHandlers(setNotifications: Dispatch<SetStateAction<INotification[] | undefined>>) {
@@ -43,7 +44,8 @@ async function markNotificationAsRead() {
 
 const   Notification = () => {
     const   [isOpen, setIsOpen] = useState<boolean>(false);
-    const   [notifications, setNotifications] = useFetch<INotification[]>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL);    
+    // const   [notifications, setNotifications] = useFetch<INotification[]>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL);   
+    const   {data: notifications, setData: setNotifications, fetchMoreData: fetchMoreNotifications} = usePaginatedFetch<INotification>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL) 
     const   notificationRef = useOutsideClick(() => setIsOpen(false))
     const   [unreadCount, setUnreadCount] = useState<number>(0);
 
@@ -95,7 +97,7 @@ const   Notification = () => {
                                 notifications && <NotificationList notifications={notifications} />
                             }
                         </div>
-                        <div className="w-full text-center cursor-pointer hover:bg-blue-50">load more</div>
+                        <div className="w-full text-center cursor-pointer hover:bg-blue-50" onClick={fetchMoreNotifications}>load more</div>
                     </div>
                 </div>
             }
