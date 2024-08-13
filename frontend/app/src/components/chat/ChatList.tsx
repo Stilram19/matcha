@@ -12,9 +12,7 @@ import ChatListHeader from "./ChatListHeader";
 // to make the rendering more efficient, because sometimes i'm inserting new Dms in the front
 // it will be naive to mutate every dm in the DOM redundantly (lastly i understand why the index of the array should not be used as a key)
 const   DmsList = ({data, onClick} : {data: DmListType[], onClick: (id: number) => void}) => {
-
-    // ! the data should arrive in the way that it gonne be displayed, no need for filtering
-    console.log(data);
+    // console.log(data);
 
     return (
         <div className="w-full h-full" >
@@ -30,26 +28,26 @@ const   DmsList = ({data, onClick} : {data: DmListType[], onClick: (id: number) 
 }
 
 
-function    DirectMessageList({data, onClick, handleMoreDataFetching}:
-    {
-        data: DmListType[],
-        onClick: (id: number) => void,
-        handleMoreDataFetching: () => void
-    }) {
-        console.log(data);
+// function    DirectMessageList({data, onClick, handleMoreDataFetching}:
+//     {
+//         data: DmListType[],
+//         onClick: (id: number) => void,
+//         handleMoreDataFetching: () => void
+//     }) {
+//         console.log(data);
     
-        return (
-            <div className="w-full h-full overflow-y-auto scrollbar" >
-                {(data) && data.map((dm) => {
-                    return (
-                        <div key={dm.id}  onClick={() => onClick(dm.id)}>
-                            <MessageBar {...dm}/>
-                        </div>
-                    )
-                })}
-            </div>
-        )
-}
+//         return (
+//             <div className="w-full h-full overflow-y-auto scrollbar" >
+//                 {(data) && data.map((dm) => {
+//                     return (
+//                         <div key={dm.id}  onClick={() => onClick(dm.id)}>
+//                             <MessageBar {...dm}/>
+//                         </div>
+//                     )
+//                 })}
+//             </div>
+//         )
+// }
 
 
 function    markAsReadById(dms: DmListType[] | undefined, dmId: number): DmListType[] | undefined {
@@ -95,6 +93,9 @@ const   ChatList: FC<ChatListProps> = ({onClick}) => {
     }
 
     const   currentTabData = data[tab as keyof typeof data].data || [];
+
+    // console.log('current tab list')
+    // console.log(currentTabData)
 
     return (
         <div className="w-full h-full pb-1">

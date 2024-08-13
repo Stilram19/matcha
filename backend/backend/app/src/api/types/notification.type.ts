@@ -10,4 +10,5 @@ export interface INotification {
     firstName: string;
     lastName: string;
     notificationStatus: boolean; // read (true)/unread
+    createdAt: string;
 }

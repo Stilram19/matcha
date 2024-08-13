@@ -17,16 +17,21 @@ const   ChatBox = () => {
     const chatBoxRef = useRef<HTMLDivElement>(null);
     const { messages, fetchMoreMessages } = useMessages();
     const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
-    const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
-    // ? this will be true if new messages arrived or the user viewing older messages
+    const [showScrollButton, setShowScrollButton] = useState<boolean>(false); // ? this will be true if the user viewing older messages
+    const [prevScrollHeight, setPrevScrollHeight] = useState(0);
+    const [moreData, setMoreData] = useState(false);
+
 
     useEffect(() => {
         if (!chatBoxRef.current)
             return ;
         if (shouldScrollDown)
             chatBoxRef.current.scrollTop = chatBoxRef.current?.scrollHeight;
-        else
-            setShowScrollButton(true); // !!! bad condition when the dm changes it just displayed (fixed with adding key temperary)
+        else if (moreData) {
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight - prevScrollHeight;
+            setMoreData(false);
+            setShowScrollButton(true);
+        }
     }, [messages])
 
 
@@ -43,6 +48,8 @@ const   ChatBox = () => {
         if (scrollTop === 0) {
             console.log('MORE DMS');
             fetchMoreMessages(); // ? this function should fetch more data when the user consume all the dms history
+            setMoreData(true);
+            setPrevScrollHeight(scrollHeight)
         }
     }
 
@@ -55,6 +62,7 @@ const   ChatBox = () => {
     return (
         <>
             <div className="h-full w-full overflow-hidden">
+
                 {showScrollButton && 
                 <div
                     onClick={handleScrollButtonClick}

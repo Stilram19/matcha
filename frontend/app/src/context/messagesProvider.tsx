@@ -6,6 +6,7 @@ type    MessageContextType = {
     messages: MessageType[],
     setMessages: Dispatch<SetStateAction<MessageType[] | undefined>>,
     fetchMoreMessages: () => void;
+    hasMore: boolean;
 }
 
 const MessagesContext = createContext<MessageContextType>({} as MessageContextType);

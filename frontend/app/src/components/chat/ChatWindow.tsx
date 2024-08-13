@@ -35,14 +35,14 @@ function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[] | u
                 if (!prev)
                     return (prev);
                 return [
-                    ...prev, 
                     {
                         id: message.messageId,
                         isSender: message.isSender,
                         sentAt: getFormattedTime(),
                         messageType: message.messageType,
                         messageContent: message.messageContent
-                    }
+                    },
+                    ...prev 
                 ]
             });
             // !!!!!!!!! emit that the message read
@@ -82,16 +82,22 @@ const ChatWindow = () => {
             return ({...prev, isFavorite: !prev.isFavorite})
         });
         eventObserver.publish(EventsEnum.APP_FAVORITE_CHANGE, conversationId);
-        // ! Post it
+        // ! Patch it
     }
+
+    const   reversed_data = [...(messages.data || [])];
+    reversed_data.reverse();
+
+    console.log(reversed_data);
 
     return (
         <MessagesProvider
             value={
                 {
-                    messages: messages.data || [],
+                    messages: reversed_data,
                     setMessages: messages.setData,
-                    fetchMoreMessages: messages.fetchMoreData
+                    fetchMoreMessages: messages.fetchMoreData,
+                    hasMore: messages.hasMore
                 }
             }
         >

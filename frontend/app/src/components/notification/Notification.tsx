@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import useFetch from "../../hooks/useFetch";
 import { FaBell } from "react-icons/fa6";
 import NotificationList, { INotification } from "./NotificationList";
 import useOutsideClick from "../../hooks/useOutsideClick";
@@ -13,6 +12,7 @@ function registerEventHandlers(setNotifications: Dispatch<SetStateAction<INotifi
 
     const   handleNewNotification = (notification: INotification) => {
         // i think, i should not overwhelmed user, with message notifications when the chat is open
+        console.log(notification);
         setNotifications((prev) => {
             if (!prev)
                 return (prev);

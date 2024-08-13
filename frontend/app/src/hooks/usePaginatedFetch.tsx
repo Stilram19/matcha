@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "./useFetch";
 import { sendLoggedInGetRequest } from "../utils/httpRequests";
 
@@ -6,6 +6,7 @@ interface data<T> {
     data: T[] | undefined;
     setData: React.Dispatch<React.SetStateAction<T[] | undefined>>;
     fetchMoreData: () => void;
+    hasMore: boolean;
 }
 
 // the given url should not contain any query paramaters
@@ -15,6 +16,15 @@ function usePaginatedFetch<T>(url: string) : data<T> {
     const [hasMore, setHasMore] = useState(true);
 
     const PAGE_SIZE = 20;
+
+    useEffect(() => {
+        // when url change reset the page number ans hasMore state
+        setPage(1);
+        setHasMore(true);
+    }, [url])
+
+    console.log('Fetched dmssssssss')
+    console.log(data)
 
     const   fetchMoreData = async () => {
         if (!hasMore) {
@@ -39,7 +49,8 @@ function usePaginatedFetch<T>(url: string) : data<T> {
     return {
         data,
         setData,
-        fetchMoreData
+        fetchMoreData,
+        hasMore
     }
 }
 

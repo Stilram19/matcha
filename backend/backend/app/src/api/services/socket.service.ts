@@ -16,6 +16,7 @@ type EventHandler = (client: Socket, data: any) => Promise<any>;
 
 export function eventHandlerWithErrorHandler(fn: EventHandler) {
     return  async (client: Socket, data: any) => {
+        console.log('dataaaaaaaaaaaa')
         try {
              await fn(client, data);
         } catch (e) {

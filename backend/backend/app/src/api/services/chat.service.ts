@@ -197,23 +197,25 @@ export async function getChatHistory(userId: number, participantId: number, page
             WHERE
                 (receiver_id, sender_id) IN (($1, $2), ($2, $1))
             ORDER BY sent_at DESC
-            LIMIT $2, $3
+            LIMIT $3
+            OFFSET $4
         `
 
     const offset = (page * pageSize);
     const limit = pageSize;
 
     try {
-        const results = await client.query(query, [userId, participantId, offset, limit]);
+        const results = await client.query(query, [userId, participantId, limit, offset]);
         
         // console.log(results.rows);
         return (results.rows.map((chat) => ({
-            id: chat.id,
-            isSender: chat.is_sender,
-            messageType: chat.content_type,
-            messageContent: chat.content_type === 'text' ? chat.content : process.env.BASE_URL + '/' + chat.content,
-            sentAt: chat.sent_at,
-        })).reverse());
+                id: chat.id,
+                isSender: chat.is_sender,
+                messageType: chat.content_type,
+                messageContent: chat.content_type === 'text' ? chat.content : process.env.BASE_URL + '/' + chat.content,
+                sentAt: chat.sent_at,
+            })
+        ));
     } catch (e) {
         throw e;
     } finally {

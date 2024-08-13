@@ -34,6 +34,7 @@ async function sendMessageHandler(client: Socket, message: IncomingMessagePayloa
     // checking the message type should be either 'text' ot 'audio'
     console.log(`senderId: ${senderId}`)
     console.log(`receiverId: ${receiverId}`)
+    console.log('dataaaaaaaaaaaaaaa')
     if (senderId === receiverId)
         return ;
 

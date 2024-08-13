@@ -123,7 +123,7 @@ export async function createNewNotification(notifierId: number, actorUser: IUser
     const query = `INSERT INTO "notifications"
                     (actor_id, notifier_id, notification_type_id)
                     VALUES ($1, $2, $3)
-                    RETURNING id;
+                    RETURNING id, created_at;
                 `
 
     const notificationDetails = await getNotificationDetailsByType(notificationType);
@@ -143,6 +143,7 @@ export async function createNewNotification(notifierId: number, actorUser: IUser
             firstName: actorUser.firstName,
             lastName: actorUser.lastName,
             notificationStatus: false,
+            createdAt: new Date(notificationResult.rows[0].created_at).toISOString()
         };
 
     } catch (e) {
@@ -187,14 +188,17 @@ export async function retrieveNotifications(userId: number, page: number, pageSi
                 nt.type,
                 nt.title,
                 nt.description,
-                n.status
+                n.status,
+                n.created_at
             FROM "notifications" n
             JOIN "notification_types" nt
                 ON n.notification_type_id = nt.id
             JOIN "user" u
                 ON u.id = n.actor_id
             WHERE notifier_id = $1
-            LIMIT $2, $3
+            ORDER BY n.created_at DESC
+            LIMIT $2
+            OFFSET $3;
         `;
         // ORDER BY n.created_at DESC
         
@@ -205,7 +209,7 @@ export async function retrieveNotifications(userId: number, page: number, pageSi
 
     let   results;
     try {
-        results = await client.query(query, [userId, offset, limit]);
+        results = await client.query(query, [userId, limit, offset]);
     } catch (e) {
         throw (e);
     } finally {
@@ -222,7 +226,9 @@ export async function retrieveNotifications(userId: number, page: number, pageSi
         lastName: notification.last_name,
         profilePicture: process.env.BASE_URL + '/' + notification.profile_picture,
         notificationStatus: notification.status,
+        createdAt: new Date(notification.created_at).toISOString(),
     }))
+
 
     return (mappedResults);
 }

@@ -38,6 +38,8 @@ const   ChatInputField = ({onSend}: {onSend: () => void}) => {
             messageContent: content,
         }
         console.log('emitting')
+        console.log(socket);
+        console.log(EventsEnum.CHAT_SEND);
         socket?.emit(EventsEnum.CHAT_SEND, messageDetails);
     }
 
