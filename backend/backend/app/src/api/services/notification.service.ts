@@ -3,12 +3,12 @@ import { emitNotificationEvent, extractUserId } from "./socket.service.js";
 import { isValidUserEventData } from "../validators/socketEventValidator.js";
 import { IUserBrief, UserEventData } from "../types/chat.type.js";
 import { ApplicationError } from "../helpers/ApplicationError.js";
-import { EmittedEvents, NotificationTypesEnum } from "../types/enums.js";
+import { NotificationTypesEnum } from "../types/enums.js";
 import pool from "../model/pgPoolConfig.js";
 import { INotification } from "../types/notification.type.js";
 import { isBlockedService } from "./profile.js";
 import { getUserBrief, substituteActorInNotificationDesc } from "./helper.service.js";
-import { areMatched } from "./chat.service.js";
+// import { areMatched } from "./chat.service.js";
 
 
 // function validateAndExtractUserId(client: Socket, data: UserEventData): { userId: number; targetUserId: number } {
@@ -32,7 +32,7 @@ export async function    profileVisitNotificationHandler(client: Socket, data: U
     if (visitedProfileId === userId)
         return ;
     if (await isBlockedService(visitedProfileId, userId))
-        throw new ApplicationError('user profile not found');
+        throw new ApplicationError('forbidden: you cannot do this action on this user');
 
     const   userBrief = await getUserBrief(userId);
     // Latter defining where to add it to the history. here or on an http endpoint
@@ -54,6 +54,9 @@ export async function userUnlikedNotificationHandler(client: Socket, data: UserE
 
     if (unlikedUserId === userId) // !! or unlikeduserId doesn't exists or if the user has not previously liked the unlikedUserId
         return ;
+    
+    if (await isBlockedService(unlikedUserId, userId))
+        throw new ApplicationError('forbidden: you cannot do this action on this user');
 
     const   userBrief = await getUserBrief(userId);
     const   notification: INotification = await createNewNotification(unlikedUserId, userBrief, NotificationTypesEnum.UNLIKE);
@@ -66,14 +69,18 @@ export async function userUnlikedNotificationHandler(client: Socket, data: UserE
 export async function userLikeNotificationHandler(client: Socket, data: UserEventData) {
     // validate data, data should have the likedUserId.
     if (!isValidUserEventData(data))
-        throw new ApplicationError('Invalid visit event data')
+        throw new ApplicationError('like handler: Invalid event data')
 
     const   userId = extractUserId(client);
     const   likedUserId = data.targetUserId;
 
+
     if (userId === likedUserId) { // or pairs already matched
         return ;
     }
+
+    if (await isBlockedService(likedUserId, userId))
+        throw new ApplicationError('forbidden: you cannot do this action on this user');
 
     // * there is a problem when this function get triggered without perfoming
     // * any checks like if they are already matched it will create a new record in the database
@@ -221,7 +228,7 @@ export async function retrieveNotifications(userId: number, page: number, pageSi
         type: notification.type,
         title: notification.title,
         message: substituteActorInNotificationDesc(notification.description, `${notification.first_name} ${notification.last_name}`),
-        actorId: notification.id,
+        actorId: notification.actor_id,
         firstName: notification.first_name,
         lastName: notification.last_name,
         profilePicture: process.env.BASE_URL + '/' + notification.profile_picture,

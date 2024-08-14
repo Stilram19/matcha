@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { DmListType, EventsEnum, IncomingMessagePayload } from "../types";
+import { DmListType, IncomingMessagePayload } from "../types";
 import useFetch from "./useFetch";
 import { changeParticipantPresence, prepareSocketEventRegistration } from "../utils/socket";
 import { useSocketEventRegister } from "./useSocketEventResgiter";
 import eventObserver from "../utils/eventObserver";
 import { useActiveDm } from "../context/activeDmProvider";
+import { EventsEnum } from "../types";
 // import { sendLoggedInGetRequest } from "../utils/httpRequests";
 
 
@@ -13,27 +14,18 @@ import { useActiveDm } from "../context/activeDmProvider";
 type    ReactSetter<T> = Dispatch<SetStateAction<T>>
 
 
-function formatMessage(messageType: 'text' | 'audio', message: string, isSender: boolean) {
-    let displayedMessage = message; 
-    if (messageType === 'audio')
-        displayedMessage = 'audio message 🎙';
-    
-    return `${isSender ? 'You: ' : ''}${displayedMessage}`;
-}
 
-
-
+// ! refactor this function, bunch of repeated code part
 function createDmsUpdateFunc(activeDmId: number, data: IncomingMessagePayload) {
     return (prevDms: DmListType[] | undefined): DmListType[] | undefined => {
         if (!prevDms) return;
 
-        const formattedLastMessage = formatMessage(data.messageType, data.messageContent, data.isSender);
         // console.log(data);
         
         if (data.isSender) {
             const index = prevDms.findIndex((dm) => dm.id === data.to);
             if (index !== -1) {
-                const updatedDm = { ...prevDms[index], lastMessage: formattedLastMessage };
+                const updatedDm = { ...prevDms[index], lastMessage: data.messageContent, messageType: data.messageType, isSender: true };
                 return [updatedDm, ...prevDms.slice(0, index), ...prevDms.slice(index + 1)];
             }
 
@@ -41,11 +33,13 @@ function createDmsUpdateFunc(activeDmId: number, data: IncomingMessagePayload) {
                 id: data.to,
                 firstName: data.firstName,
                 lastName: data.lastName,
-                lastMessage: formattedLastMessage,
+                lastMessage: data.messageContent,
+                messageType: data.messageType,
                 profilePicture: data.profilePicture,
                 isFavorite: data.isFavorite,
                 status: data.status,
                 unreadCount: 0,
+                isSender: true,
             };
             return [newDm, ...prevDms];
         }
@@ -55,8 +49,10 @@ function createDmsUpdateFunc(activeDmId: number, data: IncomingMessagePayload) {
             const unreadCount = prevDms[index].unreadCount + (activeDmId === data.from ? 0 : 1);
             const updatedDm = {
                 ...prevDms[index],
-                lastMessage: formattedLastMessage,
+                messageType: data.messageType,
+                lastMessage: data.messageContent,
                 unreadCount,
+                isSender: false,
             };
             return [updatedDm, ...prevDms.slice(0, index), ...prevDms.slice(index + 1)];
         }
@@ -65,11 +61,13 @@ function createDmsUpdateFunc(activeDmId: number, data: IncomingMessagePayload) {
             id: data.from,
             firstName: data.firstName,
             lastName: data.lastName,
-            lastMessage: formattedLastMessage,
+            messageType: data.messageType,
+            lastMessage: data.messageContent,
             profilePicture: data.profilePicture,
             isFavorite: data.isFavorite,
             status: data.status,
             unreadCount: 1,
+            isSender: false,
         };
         return [newMessage, ...prevDms];
     };

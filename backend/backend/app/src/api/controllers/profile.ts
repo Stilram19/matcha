@@ -28,8 +28,6 @@ export async function getCurrProfileInfosController(request: Request, response: 
     try {
         const accessToken = request.cookies['AccessToken'] as string;
         const { userId } = getUserIdFromJwtService(accessToken);
-
-        console.log(userId);
         const profileInfos = await getProfileInfosService(userId as number, userId as number);
 
         if (!profileInfos) {

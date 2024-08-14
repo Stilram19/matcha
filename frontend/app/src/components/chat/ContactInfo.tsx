@@ -9,6 +9,7 @@ import useFetch from "../../hooks/useFetch";
 import { ContactDetailsType, EventsEnum } from "../../types";
 import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
+import { Link } from "react-router-dom";
 
 type    DropdownItemType = {
     title: string,
@@ -131,7 +132,7 @@ const ContactInfo = () => {
                     <img src={contactDetails.profilePicture} className=" h-40 w-40 object-cover rounded-full p-1 bg-pink" />
                     <h1 className="text-xl">{contactDetails.firstName + " " + contactDetails.lastName}</h1>
                     <p className={`${contactDetails.status === 'online' ? 'text-green-700' : 'text-black'} mb-3`}>{contactDetails.status}</p>
-                    <a href="#" className="w-[80%] bg-black text-white p-2 rounded-lg hover:text-pink text-center">View Profile</a>
+                    <Link to={`/profile/${activeDmId}`} className="w-[80%] bg-black text-white p-2 rounded-lg hover:text-pink text-center">View Profile</Link>
                     <span className="border my-4 w-full" />
                     <div className="self-start flex flex-col items-start mb-4">
                         <h1 className="text-xl font-semibold tracking-wide">username</h1>

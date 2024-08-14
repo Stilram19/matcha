@@ -13,6 +13,7 @@ import { IncomingMessagePayload, UserEventData} from "../types/chat.type.js";
 export function isValidUserEventData(data: UserEventData) {
     if (!data.targetUserId)
         return (false);
+
     if (!(typeof data.targetUserId === 'number'))
         return (false);
     return (true);

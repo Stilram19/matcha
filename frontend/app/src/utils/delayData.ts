@@ -6,7 +6,7 @@ export const delayData = (then: (data: any) => void) => {
             setTimeout(() => resolve(1), 5000);
         })
         promise.then(() => {
-            console.log('setitng favs');
+            // console.log('setting favs');
             then([
                 {
                     "id": 0,

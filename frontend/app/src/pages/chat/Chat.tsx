@@ -58,9 +58,10 @@ const Chat = () => {
     const [activeDmId, setActiveDmId] = useState(-1);
 
     useEffect(() => {
-        if (!conversationId)
+        if (!conversationId || !Number(conversationId))
             return ;
         setActiveDmId(+conversationId);
+        markMessagesAsRead(+conversationId);
     }, [conversationId])
 
     const isDmActive = activeDmId !== -1;

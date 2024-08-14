@@ -1,7 +1,7 @@
 import ChatBox from "./ChatBox";
 import ConversationHeader from "./ConversationHeader";
 import { EventsEnum, MessageType, ParticipantUser } from "../../types";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 // import users from '../../data/users.json' // dummy data , previwing rendering
 // import dmMessages from '../../data/messages.json' // dummy data , previwing rendering
 import eventObserver from "../../utils/eventObserver";
@@ -10,7 +10,6 @@ import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import MessagesProvider from "../../context/messagesProvider";
 import useFetch from "../../hooks/useFetch";
-import { GlobalEventEnum } from "../../types/globalEventEnum";
 import usePaginatedFetch from "../../hooks/usePaginatedFetch";
 
 function    getFormattedTime() {

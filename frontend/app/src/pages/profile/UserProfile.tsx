@@ -16,8 +16,14 @@ import { sendLoggedInActionRequest, sendLoggedInGetRequest } from "../../utils/h
 import AreYouSureOverlay from "../../components/profile/AreYouSureOverlay";
 import ErrorOccurred from "../../components/utils/error-occurred/ErrorOccurred";
 import { isOfProfileInfosType } from "../../utils/typeGuards";
+import { useSocket } from "../../context/SocketProvider";
+import { EventsEnum } from "../../types";
 
 function UserProfile() {
+    // ? By OUSSAMA
+    const socket = useSocket();
+    // ? ********
+
     let [profileInfos, setProfileInfos] = useState<ProfileInfos>();
     let { userId } = useParams();
     let [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
@@ -43,6 +49,11 @@ function UserProfile() {
 
                 responseBody.profileInfos.interests = new Set(responseBody.profileInfos.interests);
                 setProfileInfos(responseBody.profileInfos);
+
+                // ? *******
+                if (userId)
+                    socket?.emit(EventsEnum.NOTIFICATION_VISIT, {targetUserId: userId});
+                // ? *******
             } catch(err) {
                 setErrorOccurred(true);
                 // navigate to a not found or error occured page
@@ -85,6 +96,9 @@ function UserProfile() {
 
             profileInfosCopy.userInfos.isLiked = true;
             setProfileInfos(profileInfosCopy);
+            // ? BY OUSSMA *********
+                socket?.emit(EventsEnum.NOTIFICATION_LIKE, {targetUserId: Number(userId)});
+            // ? **************
         }
         catch (err) {
             return ;
@@ -104,6 +118,9 @@ function UserProfile() {
 
             profileInfosCopy.userInfos.isLiked = false;
             setProfileInfos(profileInfosCopy);
+            // ? BY OUSSMA *********
+            socket?.emit(EventsEnum.NOTIFICATION_UNLIKE, {targetUserId: Number(userId)});
+            // ? **************
         }
         catch (err) {
             console.log(err);

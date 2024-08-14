@@ -1,6 +1,14 @@
 import { DmListType } from "../../types";
 
 // Dm bar
+function formatMessage(messageType: 'text' | 'audio', message: string, isSender: boolean) {
+    let displayedMessage = message; 
+    if (messageType === 'audio')
+        displayedMessage = 'audio message 🎙';
+    
+    return `${isSender ? 'You: ' : ''}${displayedMessage}`;
+}
+
 const   MessageBar = (props: DmListType) => {
 
     return (
@@ -24,7 +32,9 @@ const   MessageBar = (props: DmListType) => {
                 {
                     props.lastMessage &&
                     <p className="text-gray-500 truncate text-sm">
-                        {props.lastMessage}
+                        {/* {props.isSender && "You: "}
+                        {props.lastMessage} */}
+                        {formatMessage(props.messageType, props.lastMessage, props.isSender)}
                     </p>
                 }
             </div>

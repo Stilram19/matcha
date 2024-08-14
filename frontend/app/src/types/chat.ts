@@ -19,9 +19,11 @@ export type UserType = {
     status: PresenceType,
 }
 
+type messageContentTypes = 'audio' | 'text';
+
 export type ParticipantUser = UserType & {isFavorite: boolean}
 
-export type DmListType = ParticipantUser & {lastMessage: string, unreadCount: number}
+export type DmListType = ParticipantUser & {lastMessage: string, isSender: boolean, messageType: messageContentTypes, unreadCount: number}
 
 export type ContactDetailsType = UserType & {biography: string}
 
@@ -32,7 +34,6 @@ export type MessageProps = {
     sentAt: string,
 }
 
-type messageContentTypes = 'audio' | 'text';
 
 
 export interface MessageType {
@@ -59,13 +60,7 @@ export interface IncomingMessagePayload {
 
 
 
-export enum    EventsEnum {
-    CHAT_SEND = 'chat:send',
-    CHAT_RECEIVE = 'chat:message',
-    GLOBAL_PRESENCE = 'global:online-users',
-    APP_FAVORITE_CHANGE = 'app:favorite',
-    APP_SEND_MESSAGE = 'app:send',
-}
+
 
 
 // export type ChatListStateType = {
