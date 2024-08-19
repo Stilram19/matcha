@@ -2,7 +2,7 @@
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
-import { sendActionRequest } from '../../utils/httpRequests';
+import { sendActionRequest, sendGetRequest } from '../../utils/httpRequests';
 import { getFormError } from '../../utils/typeGuards';
 
 const SignupSchema = Yup.object().shape({
@@ -84,6 +84,10 @@ const SignUp = () => {
             setSubmitting(false);
         }
     };
+
+    const handleSignupWithGoogle = async () => {
+        window.location.href = import.meta.env.VITE_SIGNIN_WITH_GOOGLE_API_URL as string;
+    }
 
     return (
         <div className="flex w-full h-screen">
@@ -174,7 +178,7 @@ const SignUp = () => {
                     <p className="text-continue">or continue with</p>
                     <hr className="w-24 border-none h-[1px] bg-gray-300" />
                 </div>
-                <button className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
+                <button onClick={handleSignupWithGoogle} className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
                     <img src="/google.svg" alt="Google" />Google
                 </button>
                 <p className="text-center w-96 mt-3">

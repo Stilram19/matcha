@@ -79,12 +79,13 @@ function UserProfile() {
 
         // send like request
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${userId}`);
-
             const profileInfosCopy = Object.create(profileInfos);
 
             profileInfosCopy.userInfos.isLiked = true;
             setProfileInfos(profileInfosCopy);
+
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${userId}`);
+
         }
         catch (err) {
             return ;
@@ -98,12 +99,12 @@ function UserProfile() {
 
         // send like request
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_UNLIKE_API_URL + `/${userId}`);
-
             const profileInfosCopy = Object.create(profileInfos);
 
             profileInfosCopy.userInfos.isLiked = false;
             setProfileInfos(profileInfosCopy);
+
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_UNLIKE_API_URL + `/${userId}`);
         }
         catch (err) {
             console.log(err);
