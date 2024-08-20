@@ -36,6 +36,8 @@ function UserProfile() {
                 const profileInfosUrl = (userId ? import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}` : import.meta.env.VITE_LOCAL_CURR_PROFILE_INFOS_API_URL);
                 const responseBody = await sendLoggedInGetRequest(profileInfosUrl);
 
+                console.log('profilePicture: ' + responseBody.profileInfos.userInfos.profilePicture);
+
                 if (!responseBody || !isOfProfileInfosType(responseBody.profileInfos)) {
                     setErrorOccurred(true);
                     return ;
