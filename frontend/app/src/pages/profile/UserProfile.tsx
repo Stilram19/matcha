@@ -36,6 +36,8 @@ function UserProfile() {
                 const profileInfosUrl = (userId ? import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}` : import.meta.env.VITE_LOCAL_CURR_PROFILE_INFOS_API_URL);
                 const responseBody = await sendLoggedInGetRequest(profileInfosUrl);
 
+                console.log('profilePicture: ' + responseBody.profileInfos.userInfos.profilePicture);
+
                 if (!responseBody || !isOfProfileInfosType(responseBody.profileInfos)) {
                     setErrorOccurred(true);
                     return ;
@@ -79,12 +81,13 @@ function UserProfile() {
 
         // send like request
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${userId}`);
-
             const profileInfosCopy = Object.create(profileInfos);
 
             profileInfosCopy.userInfos.isLiked = true;
             setProfileInfos(profileInfosCopy);
+
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${userId}`);
+
         }
         catch (err) {
             return ;
@@ -98,12 +101,12 @@ function UserProfile() {
 
         // send like request
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_UNLIKE_API_URL + `/${userId}`);
-
             const profileInfosCopy = Object.create(profileInfos);
 
             profileInfosCopy.userInfos.isLiked = false;
             setProfileInfos(profileInfosCopy);
+
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_UNLIKE_API_URL + `/${userId}`);
         }
         catch (err) {
             console.log(err);

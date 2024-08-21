@@ -56,6 +56,10 @@ export default function Login() {
         }
     };
 
+    const handleSigninWithGoogle = async () => {
+        window.location.href = import.meta.env.VITE_SIGNIN_WITH_GOOGLE_API_URL as string;
+    }
+
     return (
         <div className="flex relative w-screen h-screen">
             <div className="flex justify-center w-full md:w-[60%]">
@@ -123,7 +127,7 @@ export default function Login() {
                         <p className="text-continue">or continue with</p>
                         <hr className="w-24 border-none h-[1px] bg-gray-300" />
                     </div>
-                    <button className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
+                    <button onClick={handleSigninWithGoogle} className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
                         <img src="/google.svg" alt="Google" />
                         Google
                     </button>

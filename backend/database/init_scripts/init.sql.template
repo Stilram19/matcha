@@ -12,6 +12,7 @@ GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
 -- SCHEMA
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
+    discord_id VARCHAR(255) UNIQUE,
     email VARCHAR(50) UNIQUE NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL, -- hashed --
@@ -24,8 +25,9 @@ CREATE TABLE "user" (
     age INTEGER,
     gender VARCHAR(20),
     sexual_preference VARCHAR(20),
-    fame_rating INTEGER DEFAULT 0,
-    report_count INTEGER DEFAULT 0,
+    fame_rating INTEGER DEFAULT 1,
+    likes_count INTEGER DEFAULT 0,
+    fake_account_reports_count INTEGER DEFAULT 0,
     profile_picture VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -99,4 +101,14 @@ CREATE TABLE blocked_users (
     FOREIGN KEY (blocking_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
     FOREIGN KEY (blocked_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
     UNIQUE (blocking_user_id, blocked_user_id)
+);
+
+CREATE TABLE fake_account_report (
+    id SERIAL PRIMARY KEY,
+    reporting_user_id INTEGER NOT NULL,
+    reported_user_id INTEGER NOT NULL,
+    blocked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reporting_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    FOREIGN KEY (reported_user_id) REFERENCES "user" (id) ON DELETE CASCADE,
+    UNIQUE (reporting_user_id, reported_user_id)
 );

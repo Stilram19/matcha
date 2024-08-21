@@ -4,6 +4,8 @@ import routes from './api/routers/index.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import fs from 'fs'
+import passport from 'passport'
+import { setupOauth } from './api/middlewares/oauthSetup.js'
 
 dotenv.config();
 
@@ -30,4 +32,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/uploads', express.static(uploadDir));
+
+setupOauth(passport);
+app.use(passport.initialize());
+
 app.use(routes);
