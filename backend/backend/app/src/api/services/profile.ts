@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 
 dotenv.config();
 
-async function getUserInterests(userId: number): Promise<string[]> {
+export async function getUserInterests(userId: number): Promise<string[]> {
     let client;
 
     try {

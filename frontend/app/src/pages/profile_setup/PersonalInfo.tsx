@@ -259,7 +259,7 @@ const PersonalInfo = () => {
                             <div className="flex">
                                 <div className="flex flex-col h-full">
                                     <label htmlFor="gender">Gender</label>
-                                    <Select name='gender' defaultOption='Gender' options={[{ value: 'male', label: "Male" }, { value: 'female', label: "Female" }, { value: 'transgender', label: 'Transgender' } ]} />
+                                    <Select name='gender' defaultOption='Gender' options={[{ value: 'male', label: "Male" }, { value: 'female', label: "Female" }, { value: 'transgender-male', label: 'Transgender_Male' }, { value: 'transgender-female', label: 'Transgender_Female' } ]} />
                                     <ErrorMessage name="gender" component="div" className="text-red-600 text-sm mt-1" />
                                 </div>
                                 <div className="flex flex-col h-full">

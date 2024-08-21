@@ -217,7 +217,8 @@ function EditProfileOverlay({ profileInfos, handleEditOverlayClose }: EditProfil
                                         <option value="" disabled>Gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
-                                        <option value="transgender">Transgender</option>
+                                        <option value="transgender-male">Transgender_Male</option>
+                                        <option value="transgender-female">Transgender_Female</option>
                                     </Field>
                                     <ErrorMessage name="gender" component="div" className="text-red-500" />
                                 </div>
