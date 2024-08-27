@@ -40,6 +40,7 @@ function useError() {
     return error;
 }
 
+// ! move to helpers
 async function markMessagesAsRead(id: number) {
     try {
         console.log(`marking for: ${(import.meta.env.VITE_LOCAL_CHAT_MARK_AS_READ as string).replace(':userId', String(id))}`)

@@ -63,13 +63,14 @@ function    markAsReadById(dms: DmListType[] | undefined, dmId: number): DmListT
 
 
 const    ChatSearchResults = ({data, searchInput, onClick}: {searchInput: string, data: {dms: FetchedData, contacts: FetchedData, favorites: {data: DmListType[]}}, onClick: (dmId: number) => void}) => {
-    const fullname = (firstName: string, lastName: string) => (firstName + ' ' + lastName);
+    const fullname = (firstName: string, lastName: string) => ((firstName + ' ' + lastName).toLowerCase());
 
-    const dms = data.dms.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput)) || [];
+    console.log(searchInput);
+    const dms = data.dms.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput) || dm.username) || [];
     const contacts = data.contacts.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput)) || [];
 
     return (
-        <div className="h-ful w-full">
+        <div className="h-ful w-full pl-2">
             <div className="text-lg font-semibold">Chats</div>
             <DmsList data={dms} onClick={onClick} />
             <div className="text-lg font-semibold">Contacts</div>

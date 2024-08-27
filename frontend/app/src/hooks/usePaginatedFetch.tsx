@@ -10,21 +10,23 @@ interface data<T> {
 }
 
 // the given url should not contain any query paramaters
-function usePaginatedFetch<T>(url: string) : data<T> {
-    const [data, setData] = useFetch<T[]>(url);
+function usePaginatedFetch<T>(url: string, uriQuery?: Record<string, string>) : data<T> {
+
+    const queryString = uriQuery ? Object.entries(uriQuery).map(([key, value]) => `${key}=${value}`).join("&") : '';
+    const initialUrl = `${url}${queryString.length > 0 ? `?${queryString}` : ''}`;
+
+    const [data, setData] = useFetch<T[]>(initialUrl);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
     const PAGE_SIZE = 20;
 
     useEffect(() => {
-        // when url change reset the page number ans hasMore state
+        // when url change reset the page number and hasMore state
         setPage(1);
         setHasMore(true);
-    }, [url])
+    }, [initialUrl])
 
-    console.log('Fetched dmssssssss')
-    console.log(data)
 
     const   fetchMoreData = async () => {
         if (!hasMore) {
@@ -33,9 +35,12 @@ function usePaginatedFetch<T>(url: string) : data<T> {
         }
 
         try {
-            const data = await sendLoggedInGetRequest(`${url}?page=${page}&pageSize=${PAGE_SIZE}`) as T[];
+            const paginatedUrl = `${url}?${queryString}&page=${page}&pageSize=${PAGE_SIZE}`;
+
+            const data = await sendLoggedInGetRequest(paginatedUrl) as T[];
             if (!(data.length > 0)) {
                 setHasMore(false);
+                console.log("WTFFFFFFFFFFFFFFFFFFF")
                 return ;
             }
             setData((prev) => [...(prev || []), ...data]);

@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import dummySearchResults from '../utils/dummySearchResults';
 import Gender from '../utils/Gender';
 import SexualPreferences from '../utils/SexualPreferences';
+import { UserInfos } from '../../types/profile';
+import { sendLoggedInGetRequest } from '../../utils/httpRequests';
 
 type SearchProps = {
     isSmallSearchOpen: boolean;
@@ -16,6 +18,7 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
     let [query, setQuery] = useState('');
     const searchRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
+    const [searchResults, setSearchResults] = useState<UserInfos[]>([]);
 
     useEffect(() => {
         if (searchRef.current && isSmallSearchOpen) {
@@ -31,11 +34,22 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
     function handleBlur() {
         console.log('blurr')
         setIsSearchOnFocus(false);
+        setSearchResults([]);
         handleSearchClose();
     }
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value);
+        (async function () {
+            if (!e.target.value)
+                return ;
+            try {
+                const data = await sendLoggedInGetRequest(`${import.meta.env.VITE_LOCAL_SEARCH}?s=${e.target.value}`);
+                setSearchResults(data);
+            } catch (e) {
+                console.log('search results Request Error')
+            }
+        })()
     }
 
     function handleCrossMouseDown(e: React.MouseEvent<HTMLButtonElement | HTMLImageElement>) {
@@ -72,10 +86,10 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
             </div>
             <div className="absolute bg-white z-50" style={{width: "calc(100vw - 40px)"}}>
                 {
-                    isSearchOnFocus && dummySearchResults && dummySearchResults.length > 0 ?
-                    dummySearchResults.map(
+                    isSearchOnFocus && searchResults && searchResults.length > 0 ?
+                    searchResults.map(
                         (result) => (
-                            <Link to="#">
+                            <Link to={`profile/${result.id}`}>
                                 <div className="flex items-center search-result-bg round-7px">
                                     <img src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
                                     <p style={{width: 90, marginRight: 8}}>{result.userName}</p>
