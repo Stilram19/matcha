@@ -6,12 +6,14 @@ import profileRouter from './profile.js'
 import completeProfileRouter from './complete-profile.js'
 import exploreRouter from './explore.js'
 import searchRouter from './search.js'
+import oauthRouter from './oauth.js'
 
 const router = Router();
 
 router.use(authenticationRouter);
 router.use(registrationRouter);
 
+router.use(oauthRouter);
 router.use(profileRouter);
 router.use(protectedRouter);
 router.use(completeProfileRouter);

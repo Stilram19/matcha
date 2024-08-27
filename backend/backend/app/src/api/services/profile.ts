@@ -1,6 +1,9 @@
 import interestsList from "../helpers/interestsList.js";
 import pool from "../model/pgPoolConfig.js";
 import { BriefProfileInfos, ProfileInfos, UserInfos } from "../types/profile.js";
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 async function getUserInterests(userId: number): Promise<string[]> {
     let client;
@@ -96,6 +99,7 @@ async function getUserInfos(userId: number, visitorUserId: number): Promise<User
 
         const profilePicture = user.profile_picture ? process.env.BASE_URL as string + '/' + user.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string;
 
+
         return ({
             id: String(userId),
             firstName: user.first_name,
@@ -127,7 +131,6 @@ export async function getProfileInfosService(userId: number, visitorUserId: numb
     }
 
     const userInfos = await getUserInfos(userId, visitorUserId);
-    console.log('helooooo');
     const interests = await getUserInterests(userId);
     const userPhotos = await getUserPhotos(userId);
 

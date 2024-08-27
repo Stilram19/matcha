@@ -154,3 +154,32 @@ export async function sendLoggedInGetRequest(url: string) {
 
 
 // ! why if the endpoint not found the server respond with unauthorized
+export async function sendGetRequest(url: string) {
+    const response = await fetch(url, {
+        method: "GET",
+        credentials: 'include',
+    });
+
+    let responseBody: any;
+
+    try {
+        responseBody = await response.json();
+    } catch (err) {
+        responseBody = null;
+    }
+
+    if (response.status === 401) {
+        document.location.href = import.meta.env.VITE_LOCAL_FRONTEND_LOGIN_URL;
+    }
+
+    if (response.status === 403 && responseBody.url) {
+        document.location.href = responseBody.url;
+    }
+
+    if (!response.ok) {
+        throw (responseBody?.error ?? responseBody ?? 'uknown error occurred');
+    }
+
+    return (responseBody);
+}
+
