@@ -39,7 +39,7 @@ const   ChatBox = () => {
             setShouldScrollDown(false);
         }
         
-        if (scrollTop === 0) {
+        if (scrollTop === 0 && hasMore) {
             console.log('MORE DMS');
             fetchMoreMessages(); // ? this function should fetch more data when the user consume all the dms history
             setMoreData(true);
