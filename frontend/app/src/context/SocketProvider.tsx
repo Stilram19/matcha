@@ -1,4 +1,4 @@
-import { createContext, KeyboardEvent, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 import { io, Socket } from "socket.io-client";
 // import eventObserver from '../utils/eventObserver';
 // import { GlobalEventEnum } from '../types/globalEventEnum';

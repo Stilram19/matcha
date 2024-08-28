@@ -1,6 +1,6 @@
 import { DmListType } from "../../types";
 import { ChatListProps } from "../../types";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import useFetchAllAndSubscribe, { FetchedData } from "../../hooks/useFetchAllAndSubscribe";
 import MessageBar from "./MessageBar";
 import ChatListHeader from "./ChatListHeader";
@@ -66,15 +66,25 @@ const    ChatSearchResults = ({data, searchInput, onClick}: {searchInput: string
     const fullname = (firstName: string, lastName: string) => ((firstName + ' ' + lastName).toLowerCase());
 
     console.log(searchInput);
-    const dms = data.dms.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput) || dm.username) || [];
-    const contacts = data.contacts.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput)) || [];
+    const dms = data.dms.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput) || dm.username?.includes(searchInput)) || [];
+    const contacts = data.contacts.data?.filter((dm) => fullname(dm.firstName, dm.lastName).includes(searchInput) || dm.username?.includes(searchInput)) || [];
 
     return (
         <div className="h-ful w-full pl-2">
-            <div className="text-lg font-semibold">Chats</div>
-            <DmsList data={dms} onClick={onClick} />
-            <div className="text-lg font-semibold">Contacts</div>
-            <DmsList data={contacts} onClick={onClick} />
+            {
+                dms.length > 0 &&
+                <>
+                    <div className="text-lg font-semibold">Chats</div>
+                    <DmsList data={dms} onClick={onClick} />
+                </>
+            }
+            {
+                contacts.length > 0 &&
+                <>
+                    <div className="text-lg font-semibold">Contacts</div>
+                    <DmsList data={contacts} onClick={onClick} />
+                </>
+            }
         </div>
     )
 } 

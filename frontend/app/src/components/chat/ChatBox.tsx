@@ -3,19 +3,13 @@ import Message from "./Message";
 import { useEffect, useRef, useState } from "react";
 import { useMessages } from "../../context/messagesProvider";
 import { useActiveDm } from "../../context/activeDmProvider";
+import { monthAndDayAndTimeDateFormat, getFormattedTime } from "../../utils/dateFormatter";
 
-
-
-function    getFormattedTime() {
-    const   dateNow = new Date();
-    const   formattedTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
-    return (formattedTime)
-}
 
 const   ChatBox = () => {
     const {activeDmId} = useActiveDm();
     const chatBoxRef = useRef<HTMLDivElement>(null);
-    const { messages, fetchMoreMessages } = useMessages();
+    const { messages, fetchMoreMessages, hasMore } = useMessages();
     const [shouldScrollDown, setShouldScrollDown] = useState<boolean>(true);
     const [showScrollButton, setShowScrollButton] = useState<boolean>(false); // ? this will be true if the user viewing older messages
     const [prevScrollHeight, setPrevScrollHeight] = useState(0);
@@ -74,6 +68,13 @@ const   ChatBox = () => {
                 <div className="h-full w-full p-2 pr-0">
                     <div ref={chatBoxRef} className="h-[calc(100%-50px)] overflow-y-auto scrollbar mr-1 pr-1.5"  onScroll={handleOnScroll}>
                         {
+                            !hasMore && messages.length > 0 &&
+                            <div className="w-full text-center py-2">
+                                <p className="text-gray-500 text-sm italic">Beginning of the conversation</p>
+                                <p className="text-gray-400 text-xs">{monthAndDayAndTimeDateFormat(messages[0].sentAt)}</p>
+                            </div>
+                        }
+                        {
                             messages.map((message, index, arr) => {
                                 const   isAudio = message.messageType === 'audio';
                                 console.log(`isAudio: ${isAudio}`)
@@ -86,7 +87,7 @@ const   ChatBox = () => {
                                         <Message
                                             key={message.messageId}
                                             message={message.messageContent}
-                                            sentAt={getFormattedTime()}
+                                            sentAt={getFormattedTime(message.sentAt)}
                                             isSender={message.isSender}
                                             isAudio={isAudio}
                                         />

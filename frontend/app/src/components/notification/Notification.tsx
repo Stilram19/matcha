@@ -1,43 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa6";
 import NotificationList, { INotification } from "./NotificationList";
 import useOutsideClick from "../../hooks/useOutsideClick";
-import { prepareSocketEventRegistration } from "../../utils/socket";
-import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
-import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 import usePaginatedFetch from "../../hooks/usePaginatedFetch";
+import { markNotificationAsRead, registerNotificationEventHandlers } from "./helpers";
 
 
-function registerEventHandlers(setNotifications: Dispatch<SetStateAction<INotification[] | undefined>>) {
-
-    const   handleNewNotification = (notification: INotification) => {
-        // i think, i should not overwhelmed user, with message notifications when the chat is open
-        console.log(notification);
-        setNotifications((prev) => {
-            if (!prev)
-                return (prev);
-            return [notification, ...prev]
-        })
-    }
-
-    const   registrarFunction = prepareSocketEventRegistration([
-        ['notification:new', handleNewNotification]
-    ]);
-
-    useSocketEventRegister(registrarFunction);
-}
-
-
-// ! move this to another file
-async function markNotificationAsRead() {
-    console.log('marking read')
-    try {
-        await sendLoggedInActionRequest('PATCH', import.meta.env.VITE_LOCAL_NOTIFICATION_MARK_READ);
-    } catch (e) {
-        console.log('marking notification as read error');
-        console.log(e);
-    }
-}
 
 
 
@@ -45,7 +13,7 @@ async function markNotificationAsRead() {
 const   Notification = () => {
     const   [isOpen, setIsOpen] = useState<boolean>(false);
     // const   [notifications, setNotifications] = useFetch<INotification[]>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL);   
-    const   {data: notifications, setData: setNotifications, fetchMoreData: fetchMoreNotifications} = usePaginatedFetch<INotification>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL) 
+    const   {data: notifications, setData: setNotifications, fetchMoreData: fetchMoreNotifications, hasMore} = usePaginatedFetch<INotification>(import.meta.env.VITE_LOCAL_NOTIFICATION_API_URL) 
     const   notificationRef = useOutsideClick(() => setIsOpen(false))
     const   [unreadCount, setUnreadCount] = useState<number>(0);
 
@@ -70,7 +38,7 @@ const   Notification = () => {
 
     console.log(`count ${unreadCount}`)
 
-    registerEventHandlers(setNotifications);
+    registerNotificationEventHandlers(setNotifications);
 
 
     return (
@@ -97,7 +65,12 @@ const   Notification = () => {
                                 notifications && <NotificationList notifications={notifications} />
                             }
                         </div>
-                        <div className="w-full text-center cursor-pointer hover:bg-blue-50" onClick={fetchMoreNotifications}>load more</div>
+                        <div className="w-full text-center cursor-pointer hover:bg-blue-50">
+                        {hasMore ?
+                            <button onClick={fetchMoreNotifications}>load more</button>
+                            : <p>no more notifications</p>
+                        }
+                        </div>
                     </div>
                 </div>
             }

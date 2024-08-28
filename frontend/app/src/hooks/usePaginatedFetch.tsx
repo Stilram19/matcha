@@ -40,7 +40,6 @@ function usePaginatedFetch<T>(url: string, uriQuery?: Record<string, string>) : 
             const data = await sendLoggedInGetRequest(paginatedUrl) as T[];
             if (!(data.length > 0)) {
                 setHasMore(false);
-                console.log("WTFFFFFFFFFFFFFFFFFFF")
                 return ;
             }
             setData((prev) => [...(prev || []), ...data]);

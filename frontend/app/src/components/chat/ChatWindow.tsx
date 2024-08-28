@@ -2,8 +2,6 @@ import ChatBox from "./ChatBox";
 import ConversationHeader from "./ConversationHeader";
 import { EventsEnum, MessageType, ParticipantUser } from "../../types";
 import { Dispatch, SetStateAction } from "react";
-// import users from '../../data/users.json' // dummy data , previwing rendering
-// import dmMessages from '../../data/messages.json' // dummy data , previwing rendering
 import eventObserver from "../../utils/eventObserver";
 import { useActiveDm } from "../../context/activeDmProvider";
 import { prepareSocketEventRegistration } from "../../utils/socket";
@@ -11,12 +9,6 @@ import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import MessagesProvider from "../../context/messagesProvider";
 import useFetch from "../../hooks/useFetch";
 import usePaginatedFetch from "../../hooks/usePaginatedFetch";
-
-function    getFormattedTime() {
-    const   dateNow = new Date();
-    const   formattedTime = `${dateNow.getHours()}:${dateNow.getMinutes()}`
-    return (formattedTime)
-}
 
 // function   
 
@@ -37,7 +29,7 @@ function    registerEventHandlers(setMessages: Dispatch<SetStateAction<any[] | u
                     {
                         id: message.messageId,
                         isSender: message.isSender,
-                        sentAt: getFormattedTime(),
+                        sentAt: message.sentAt,
                         messageType: message.messageType,
                         messageContent: message.messageContent
                     },

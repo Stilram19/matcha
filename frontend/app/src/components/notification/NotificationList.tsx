@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import notificatioRoutes from "../utils/notificationRoutes";
+import { dayAndTimeDateFormat } from "../../utils/dateFormatter";
 
 export interface INotification {
     id: number;
@@ -25,14 +26,7 @@ const   NotificationList = ({notifications}: {notifications: INotification[]}) =
             <div className="bg-white p-1 flex flex-col gap-1">
                 {notifications?.map((value) => {
                     const   notificationLink = notificatioRoutes[value.type] ? notificatioRoutes[value.type](value.actorId) : '#';
-                    const formattedTime = new Date(value.createdAt).toLocaleString('en-US', {
-                        // year: 'numeric',
-                        // month: 'long',
-                        weekday: 'long',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true,
-                    });
+                    const formattedTime = dayAndTimeDateFormat(value.createdAt);
 
                     return (
                         <Link

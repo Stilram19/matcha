@@ -6,7 +6,7 @@ export async function getSearchResult(request: Request, response: Response) {
     const userId = request.user.id;
     const searchQuery = request.query.s || '';
     const page = Number(request.query.page) || 0;
-    const pageSize = 1;
+    const pageSize = Number(request.query.pageSize) || 20;
 
     if (!searchQuery || typeof searchQuery != 'string') {
         response.json([]);
