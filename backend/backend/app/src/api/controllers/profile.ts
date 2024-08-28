@@ -67,7 +67,6 @@ export async function getCurrBriefProfileInfosController(request: Request, respo
         const profileInfos = await getBriefProfileInfosService(userId as number);
 
         console.log('userId: ' + userId);
-        console.log('profileInfos: ' + profileInfos?.profilePicture);
 
         if (!profileInfos) {
             response.status(404).send( { msg: 'user not found' } );

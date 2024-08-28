@@ -20,6 +20,22 @@ export type UserInfos = {
     fameRating: number;
 };
 
+export type RecommendedProfileInfos = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    profilePicture: string; // URL
+    biography: string;
+    fameRating: number;
+    commonInterestsCount: number;
+    profileInterests: string[];
+    profilePhotos: string[];
+};
+
 export type BriefProfileInfos = {
     id: string;
     firstName: string;

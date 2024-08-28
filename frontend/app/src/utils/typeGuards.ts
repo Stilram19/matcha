@@ -1,4 +1,4 @@
-import { BriefProfileInfos } from "../types/profile";
+import { BriefProfileInfos, RecommendedProfileInfos } from "../types/profile";
 import { isArray } from "./generalPurpose";
 
 export function getFormError(error: unknown): FormError | undefined {
@@ -59,3 +59,38 @@ export function isOfBriefProfileInfosType(obj: any): obj is BriefProfileInfos {
     typeof obj.profilePicture === 'string'
     );
 }
+
+export function isOfRecommendedProfileInfosType(obj: any): obj is RecommendedProfileInfos {
+    return (
+        obj !== null && typeof obj === 'object' &&
+        typeof obj.id === 'string' &&
+        typeof obj.firstName === 'string' &&
+        typeof obj.lastName === 'string' &&
+        typeof obj.userName === 'string' &&
+        typeof obj.age === 'number' &&
+        typeof obj.gender === 'string' &&
+        typeof obj.sexualPreferences === 'string' &&
+        typeof obj.profilePicture === 'string' &&
+        typeof obj.biography === 'string' &&
+        typeof obj.fameRating === 'number' &&
+        typeof obj.commonInterestsCount === 'number' &&
+        isArray(obj.profileInterests, undefined, 'string') &&
+        isArray(obj.profilePhotos, undefined, 'string')
+    );
+}
+
+// export type RecommendedProfileInfos = {
+//     id: string;
+//     firstName: string;
+//     lastName: string;
+//     userName: string;
+//     age: number;
+//     gender: string;
+//     sexualPreferences: string;
+//     profilePicture: string; // URL
+//     biography: string;
+//     fameRating: number;
+//     commonInterestsCount: number;
+//     profileInterests: Set<string>;
+//     profilePhotos: string[];
+// };
