@@ -7,13 +7,13 @@ import FameRatingDisplay from "../../components/utils/FameRatingDisplay"
 import { BioAndInterestsProps, MatchedUserSummaryProps } from "./types"
 import { useEffect, useState } from "react"
 import FilterOverlay from "../../components/explore/FilterOverlay"
-import { ProfileInfos } from "../../types/profile"
+import { RecommendedProfileInfos } from "../../types/profile"
 import { sendLoggedInActionRequest } from "../../utils/httpRequests"
 import NoResult from "../../components/utils/no-results/NoResults"
 import ErrorOccurred from "../../components/utils/error-occurred/ErrorOccurred"
-import { isOfProfileInfosType } from "../../utils/typeGuards"
+import { isOfRecommendedProfileInfosType } from "../../utils/typeGuards"
 import { FaArrowLeft } from "react-icons/fa6"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 const   MatchedUserSummary = ({firstName, lastName, fameRating, age, gender}: MatchedUserSummaryProps) => {
     return (
@@ -62,24 +62,24 @@ function BioAndInterests({biography, userInterests}: BioAndInterestsProps) {
     )
 }
 
-const   MatchedProfile = ({ profileInfos }: { profileInfos: ProfileInfos }) => {
+const   MatchedProfile = ({ profileInfos }: { profileInfos: RecommendedProfileInfos }) => {
 
     return (
         <div className="flex flex-row gap-10 w-full h-full max-h-full md:max-h-screen w-full pb-20 md:w-11/12 lg:w-9/12 2xl:w-8/12">
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden">
                 <div className="relative aspect-[2/3] mb-10 pr-1 md:pr-4 pt-1 md:pt-3">
-                    <Link to={`/profile/${profileInfos.userInfos.id}`}><img src={profileInfos.userInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" /></Link>
+                    <Link to={`/profile/${profileInfos.id}`}><img src={profileInfos.profilePicture} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" /></Link>
                     <div className="absolute bottom-4 left-7 w-[50%]">
-                        <MatchedUserSummary id={profileInfos.userInfos.id} firstName={profileInfos.userInfos.firstName} lastName={profileInfos.userInfos.lastName} age={profileInfos.userInfos.age} fameRating={profileInfos.userInfos.fameRating} gender={profileInfos.userInfos.gender}/>
+                        <MatchedUserSummary id={profileInfos.id} firstName={profileInfos.firstName} lastName={profileInfos.lastName} age={profileInfos.age} fameRating={profileInfos.fameRating} gender={profileInfos.gender}/>
                     </div>
                 </div>
                 <div className="md:hidden md:w-1/2 overflow-x-hidden overflow-y-hidden md:overflow-y-auto md:scrollbar mb-10">
-                    <BioAndInterests biography={profileInfos.userInfos.biography} userInterests={profileInfos.interests}/>
+                    <BioAndInterests biography={profileInfos.biography} userInterests={profileInfos.profileInterests}/>
                 </div>
                 <h2 style={{fontSize: 30, fontWeight: 'semi-bold'}} className="risque-regular pt-6 pl-2 sm:pl-6 pb-6">Photos</h2>
                 {
-                    profileInfos && profileInfos.userPhotos && profileInfos.userPhotos.length > 0 ?
-                    profileInfos.userPhotos.map((pictureURL) => (
+                    profileInfos && profileInfos.profilePhotos && profileInfos.profilePhotos.length > 0 ?
+                    profileInfos.profilePhotos.map((pictureURL) => (
                         <div className="relative aspect-[2/3] overflow-y-auto scrollbar overflow-x-hidden mb-6 pr-4">
                             <img src={pictureURL} className="w-full h-full object-cover rounded-2xl shadow-lg shadow-blue-500" />
                         </div>
@@ -88,7 +88,7 @@ const   MatchedProfile = ({ profileInfos }: { profileInfos: ProfileInfos }) => {
             </div>
 
             <div className="md:w-1/2 md:overflow-y-auto md:scrollbar overflow-x-hidden hidden md:inline-flex">
-                <BioAndInterests biography={profileInfos.userInfos.biography} userInterests={profileInfos.interests}/>
+                <BioAndInterests biography={profileInfos.biography} userInterests={profileInfos.profileInterests}/>
             </div>
         </div>
     )
@@ -100,10 +100,11 @@ const Explore = () => {
     let [ageRange, setAgeRange] = useState([18, 30]);
     let [interests, setInterests] = useState<Set<string>>();
     let [currIndex, setCurrIndex] = useState(0);
-    let [recommendedProfiles, setRecommendedProfiles] = useState<ProfileInfos[]>();
+    let [recommendedProfiles, setRecommendedProfiles] = useState<RecommendedProfileInfos[]>();
     let [isLoading, setIsLoading] = useState(true);
     let [errorOccurred, setErrorOccurred] = useState(false);
     let [noResult, setNoResult] = useState(false);
+    let navigate = useNavigate();
 
     async function fetchProfiles() {
         setIsLoading(true);
@@ -116,22 +117,27 @@ const Explore = () => {
                 requestBody['interests'] = [...interests];
             }
 
+            console.log('AgeFilter: ' + requestBody.ageRange);
+            console.log('FameRatingFilter: ' + requestBody.fameRatingRange);
+
             const responseBody = await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_RECOMMENDED_PROFILES_API_URL, requestBody);
 
-            if (!responseBody || !responseBody.recommendedProfiles 
+            if (!responseBody || !responseBody.recommendedProfiles
                 || !Array.isArray(responseBody.recommendedProfiles)
-                && !responseBody.recommendedProfiles.every( (recommendedProfile: any) => isOfProfileInfosType(recommendedProfile))) {
+                && !responseBody.recommendedProfiles.every( (recommendedProfile: any) => isOfRecommendedProfileInfosType(recommendedProfile))) {
                     console.log('heloooooo');
                 setErrorOccurred(true);
                 return ;
             }
 
+            console.log('recommendedProfiles: ' + responseBody.recommendedProfiles);
+ 
             if (responseBody.recommendedProfiles.length == 0) {
                 setNoResult(true)
                 return ;
             }
 
-            responseBody.recommendedProfiles.forEach((item: any) => item.interests = new Set(item.interests));
+            responseBody.recommendedProfiles.forEach((item: any) => item.profileInterests = new Set(item.profileInterests));
             setRecommendedProfiles(responseBody.recommendedProfiles);
             setCurrIndex(0);
         }
@@ -146,7 +152,7 @@ const Explore = () => {
         fetchProfiles();
     }, [fameRatingRange, ageRange, interests]);
 
-    if (isLoading || !recommendedProfiles) {
+    if (isLoading) {
         return ;
     }
 
@@ -193,7 +199,10 @@ const Explore = () => {
         }
 
         try {
-            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${recommendedProfiles[currIndex].userInfos.id}`);
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_LIKE_API_URL + `/${recommendedProfiles[currIndex].id}`);
+            setTimeout(() => {
+                navigate(`/profile/${recommendedProfiles[currIndex].id}`);
+            }, 300);
         }
         catch (err) {
             setErrorOccurred(true);
@@ -204,11 +213,11 @@ const Explore = () => {
         <div className="flex justify-center w-screen pl-4 pr-4 md:pl-6 md:pr-6 lg:pl-10 lg:pr-10 xl:pl-32 xl:pr-32 2xl:pl-44 2xl:pr-44">
             { noResult && <NoResult />}
             { errorOccurred && <ErrorOccurred />}
-            <div className={isFilterOverlayOpen == false || errorOccurred || noResult ? 'hidden' : ''}>
+            <div className={isFilterOverlayOpen == false || errorOccurred ? 'hidden' : ''}>
                 <FilterOverlay handleFilterOverlayClose={handleFilterOverlayClose}/>
             </div>
             <div className={`pt-4 flex justify-center md:pt-6 w-screen ${errorOccurred || noResult ? 'hidden' : ''}`}>
-                <MatchedProfile profileInfos={recommendedProfiles[currIndex]}/>
+                {recommendedProfiles && <MatchedProfile profileInfos={recommendedProfiles[currIndex]}/>}
             </div>
             <div className="fixed z-20 pb-4 bottom-1 flex justify-center gap-2 sm:gap-4">
                 <button className="bg-blue-950 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center hover:scale-125 transition-transform duration-300 ease-in-out">

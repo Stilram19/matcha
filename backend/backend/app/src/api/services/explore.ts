@@ -8,9 +8,14 @@ import { getUserInterests } from "./profile.js";
 dotenv.config();
 
 export async function getRecommendedProfilesService(userId: number, filters: Filters): Promise<RecommendedProfileInfos[]> {
+    // console.log('AgeFilter: ' + filters.ageRange);
+    // console.log('FameRatingFitler: ' + filters.fameRatingRange);
+    // console.log('interests: ' + filters.interests);
     try {
         const userInterests = filters.interests ?? await getUserInterests(userId);
         const profiles = await filterProfilesByPersonalInfos(userId, filters.fameRatingRange, filters.ageRange);
+
+        console.log('userInterests: ' + userInterests);
 
         let filteredIds = profiles.map(profile => Number(profile.id));
         if (filteredIds.length === 0) return [];
@@ -45,6 +50,8 @@ export async function getRecommendedProfilesService(userId: number, filters: Fil
             profile.profilePhotos = profilePhotosMap.get(Number(profile.id)) || [];
         });
 
+        // sort the profiles
+
         return finalProfiles;
     } catch (error) {
         console.error('Error getting recommended profiles:', error);
@@ -73,6 +80,9 @@ async function filterProfilesByPersonalInfos(
         const sexualPreferences = getMatchingSexualOrientation(userPreferences.gender, userPreferences.sexual_preference);
         const oppositeGenders = getOppositeGenders(userPreferences.gender);
 
+        console.log('suggestedSexualPreferences: ' + sexualPreferences);
+        console.log('suggestedGenders: ' + oppositeGenders);
+
         const profilesQuery = `
             SELECT id, first_name, last_name, username, age, gender,
             sexual_preference, biography, profile_picture, fame_rating 
@@ -81,7 +91,7 @@ async function filterProfilesByPersonalInfos(
             AND (
                 (sexual_preference = ANY($2::text[]) AND sexual_preference != 'heterosexual')
                 OR 
-                (sexual_preference = 'heterosexual' AND gender = ANY($3::text[]))
+                (sexual_preference = 'heterosexual' AND 'heterosexual' = ANY($2::text[]) AND gender = ANY($3::text[]))
             )
             AND fame_rating BETWEEN $4 AND $5
             AND age BETWEEN $6 AND $7

@@ -31,3 +31,19 @@ export type BriefProfileInfos = {
     biography: string;
     profilePicture: string;
 };
+
+export type RecommendedProfileInfos = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    age: number;
+    gender: string;
+    sexualPreferences: string;
+    profilePicture: string; // URL
+    biography: string;
+    fameRating: number;
+    commonInterestsCount: number;
+    profileInterests: Set<string>;
+    profilePhotos: string[];
+};

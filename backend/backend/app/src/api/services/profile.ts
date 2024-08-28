@@ -15,7 +15,7 @@ export async function getUserInterests(userId: number): Promise<string[]> {
         const result = await client.query(query, [userId]);
 
         if (result.rows.length === 0) {
-            throw new Error(`failed retrieve profile interests`);
+            return [];
         }
 
         const interests = result.rows.map(row => row.interest);
@@ -23,10 +23,15 @@ export async function getUserInterests(userId: number): Promise<string[]> {
         return (interests);
     }
     catch (err) {
+        console.log('this is userId: ' + userId);
         throw new Error('failed to retrieve brief profile interests');
     } finally {
         if (client) {
-            client.release();
+            try {
+                client.release();
+            } catch (releaseErr) {
+                console.error('Failed to release client:', releaseErr);
+            }
         }
     }
 }
@@ -41,7 +46,7 @@ async function getUserPhotos(userId: number): Promise<string[]> {
         const result = await client.query(query, [userId]);
 
         if (result.rows.length === 0) {
-            throw new Error(`failed retrieve profile photos`);
+            return [];
         }
 
         const photosPaths = result.rows.map(row => process.env.BASE_URL + '/' + row.photo);
@@ -126,7 +131,7 @@ async function getUserInfos(userId: number, visitorUserId: number): Promise<User
 }
 
 export async function getProfileInfosService(userId: number, visitorUserId: number): Promise<ProfileInfos | undefined> {
-    if (userId < 1 || userId > 3) {
+    if (!userId) {
         return (undefined);
     }
 
@@ -310,7 +315,9 @@ export async function reportFakeAccountService(reportingUserId: number, reported
         console.error('Error reporting user:', err);
         throw new Error('Failed to report user');
     } finally {
-        client.release();
+        if (client) {
+            client.release();
+        }
     }
 }
 

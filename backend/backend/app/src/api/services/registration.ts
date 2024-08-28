@@ -33,7 +33,6 @@ export async function saveUserSignUpCredentialsService(email: string, username: 
 
     try {
         client = await pool.connect();
-        let userId = undefined;
         const query = `
             INSERT INTO "user" (username, email, first_name, last_name, password, password_salt)
             VALUES ($1, $2, $3, $4, $5, $6)
@@ -49,12 +48,11 @@ export async function saveUserSignUpCredentialsService(email: string, username: 
             passwordSalt,
         ]);
 
-
-        if (results.rows.length > 0) {
-            userId = results.rows[0].id;
+        if (results.rows.length === 0) {
+            throw new Error(`failed to register user!!`);
         }
 
-        return (userId);
+        return (results.rows[0].id);
     }
     catch (err) {
         console.log(err);
@@ -106,12 +104,12 @@ export async function userVerificationService(verificationToken: string): Promis
 
         try {
             // Query to find the user associated with the verification token
-            const query = `SELECT id FROM "email_verification" 
+            const query = `SELECT user_id FROM "email_verification" 
                 WHERE token = $1;`;
             const result = await client.query(query, [verificationToken]);
 
             if (result.rows.length > 0) {
-                userId = result.rows[0].id;
+                userId = result.rows[0].user_id;
 
                 // Update the user record to set is_verified to true
                 const updateUserQuery = `UPDATE "user" 

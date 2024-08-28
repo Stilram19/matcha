@@ -52,7 +52,6 @@ export async function localStrategyController(request: Request, response: Respon
 
 export async function emailVerficiationController(request: Request, response: Response): Promise<void> {
     try {
-        console.log('helloooo');
         // the token is already checked in the previous middleware
         const authHeader = request.headers['authorization'] as string;
         const token = authHeader.split(' ')[1] as string;

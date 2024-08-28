@@ -4,11 +4,11 @@ export function getMatchingSexualOrientation(gender: string, sexualPreference: s
     }
 
     if (sexualPreference === 'bisexual-male') {
-        return (['homosexual', 'bisexual-female', 'heterosexual']);
+        return (['homosexual', 'bisexual-female', 'bisexual-male', 'heterosexual']);
     }
 
     if (sexualPreference === 'bisexual-female') {
-        return (['lesbian', 'bisexual-male', 'heterosexual']);
+        return (['lesbian', 'bisexual-male', 'bisexual-female', 'heterosexual']);
     }
 
     if (sexualPreference === 'lesbian') {
