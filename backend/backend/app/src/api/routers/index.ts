@@ -7,6 +7,7 @@ import completeProfileRouter from './complete-profile.js'
 import exploreRouter from './explore.js'
 import searchRouter from './search.js'
 import oauthRouter from './oauth.js'
+import historyRouter from './history.js'
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use(completeProfileRouter);
 router.use(exploreRouter);
 
 router.use(searchRouter)
+router.use(historyRouter);
 
 export default router;

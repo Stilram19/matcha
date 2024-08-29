@@ -23,6 +23,7 @@ import { getUserBrief, substituteActorInNotificationDesc } from "./helper.servic
 
 export async function    profileVisitNotificationHandler(client: Socket, data: UserEventData) {
     // validate data object
+    console.log(data);
     if (!isValidUserEventData(data))
         throw new ApplicationError('Invalid visit event data')
 

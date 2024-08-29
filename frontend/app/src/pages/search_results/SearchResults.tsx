@@ -1,9 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import dummySearchResults from "../../components/utils/dummySearchResults";
+// import dummySearchResults from "../../components/utils/dummySearchResults";
 import SexualPreferences from "../../components/utils/SexualPreferences";
 import Gender from "../../components/utils/Gender";
 import './style.css'
-import useFetch from "../../hooks/useFetch";
 import usePaginatedFetch from "../../hooks/usePaginatedFetch";
 import { UserInfos } from "../../types/profile";
 
@@ -22,7 +21,7 @@ function SearchResults() {
     // need to implement a search results logic in a seperate module
     return (
         <div className="overflow-hidden shadow rounded-20px flex flex-col ml-3 mt-3 mr-3 sm:ml-6 sm:mr-6 sm:mt-6 md:mt-8 md:ml-8 md:mr-8 lg:ml-10 lg:mr-10 xl:ml-32 xl:mr-32 2xl:ml-44 2xl:mr-44 bg-white">
-            <h1 className="text-3xl pl-5 sm:pl-12 pb-12"> Results</h1>
+            <h1 className="text-3xl font-semibold pl-5 sm:pl-12 pb-12"> Results</h1>
             <div className="md:pl-0 sm:pl-14">
                 {
                     data && data.length > 0 ?
@@ -36,7 +35,7 @@ function SearchResults() {
                                 </Link>
                                 <div className="flex flex-col sm:gap-2">
                                     <div className="flex">
-                                        <Link to="#"><h3 className="text-fullname mr-8 font-bold">{result.firstName} {result.lastName}</h3></Link>
+                                        <Link to={`/profile/${result.id}`}><h3 className="text-fullname mr-8 font-bold">{result.firstName} {result.lastName}</h3></Link>
                                     </div>
                                     <div className="flex">
                                         <p className="text-username" >@{result.userName}</p>
@@ -58,10 +57,11 @@ function SearchResults() {
                     : null
                 }
                 <div className="w-full flex justify-center p-1 bg-gray-50 hover:bg-gray-100">
-                    {hasMore
-                        ? <button onClick={handleLoadMore}>laod more ...</button> 
-                        : <p>no more results</p>
-                    }
+                {
+                    hasMore && data && data.length > 0 ? 
+                    <button onClick={fetchMoreData} className="w-full hover:gray-100 italic">load more</button>
+                    : <p className="text-gray-500 italic">no more history</p>
+                }
                 </div>
             </div>
         </div>

@@ -53,8 +53,11 @@ function UserProfile() {
                 setProfileInfos(responseBody.profileInfos);
 
                 // ? *******
-                if (userId)
-                    socket?.emit(EventsEnum.NOTIFICATION_VISIT, {targetUserId: userId});
+                if (userId) {
+                    console.log(`targetUserId: ${userId}`);
+                    socket?.emit(EventsEnum.NOTIFICATION_VISIT, {targetUserId: Number(userId)});
+                    await sendLoggedInActionRequest('POST', `${import.meta.env.VITE_LOCAL_HISTORY_VISIT}/${userId}`);
+                }
                 // ? *******
             } catch(err) {
                 setErrorOccurred(true);

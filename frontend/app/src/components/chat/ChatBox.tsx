@@ -77,7 +77,6 @@ const   ChatBox = () => {
                         {
                             messages.map((message, index, arr) => {
                                 const   isAudio = message.messageType === 'audio';
-                                console.log(`isAudio: ${isAudio}`)
                                 return (
                                     <div
                                         key={index} // ! add the id of the message instead of the array index

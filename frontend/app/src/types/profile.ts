@@ -31,3 +31,5 @@ export type BriefProfileInfos = {
     biography: string;
     profilePicture: string;
 };
+
+export type BriefProfileInfosPresence = BriefProfileInfos & {status: string};

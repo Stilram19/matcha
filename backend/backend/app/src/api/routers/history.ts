@@ -8,3 +8,6 @@ const router = Router();
 
 router.get('/history', getVisitsHistory);
 router.post('/visit/:userId', validateDmParam, visitProfile)
+
+
+export default router;

@@ -20,6 +20,7 @@ export async function getVisitsHistoryService(userId: number, page: number, page
             first_name,
             last_name,
             profile_picture,
+            biography,
             gender,
             age,
             sexual_preference,
@@ -41,7 +42,8 @@ export async function getVisitsHistoryService(userId: number, page: number, page
             userName: visitor.username,
             firstName: visitor.first_name,
             lastName: visitor.last_name,
-            profilePicture: visitor.profile_picture,
+            profilePicture: process.env.BASE_URL + '/' + visitor.profile_picture,
+            biography: visitor.biography,
             gender: visitor.gender,
             age: visitor.age,
             sexualPreferences: visitor.sexual_preference,
@@ -66,6 +68,8 @@ export async function visitProfileService(visitorId: number, visitedId: number) 
             VALUES
                 ($1, $2)
         `
+    if (visitedId === visitorId)
+        return ;
 
     const client = await pool.connect();
     try {
@@ -79,7 +83,7 @@ export async function visitProfileService(visitorId: number, visitedId: number) 
             SELECT EXISTS (
                 SELECT 1
                 FROM "history"
-                WHERE visitor_id = 2 AND visited_id = 1
+                WHERE visitor_id = $1 AND visited_id = $2
                     AND visited_at > NOW() - INTERVAL '1 hour'
                 ) AS exists;
         `

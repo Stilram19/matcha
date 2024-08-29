@@ -13,7 +13,6 @@ export async function getVisitsHistory(request: Request, response: Response) {
     try {
 
         const   history = await getVisitsHistoryService(userId, page, pageSize);
-    
         response.json(history);
     } catch (e) {
         const { status, message } = getHttpError(e);
