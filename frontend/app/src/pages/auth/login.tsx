@@ -61,11 +61,11 @@ export default function Login() {
     }
 
     return (
-        <div className="flex relative w-screen h-screen">
-            <div className="flex justify-center w-full md:w-[60%]">
-                <div className="flex flex-col items-center justify-center">
-                    <h1 className="mb-4 text-5xl poetsen-one-regular text-center">Login to your account</h1>
-                    <p className="mb-4">Enter your email and password to sign in</p>
+        <div className="flex w-screen pt-20">
+            <div className="flex justify-center w-full md:w-[55%]">
+                <div className="flex flex-col items-center justify-center w-4/5">
+                    <h1 className="mb-4 text-3xl sm:text-4xl poetsen-one-regular text-center">Login to your account</h1>
+                    <p className="mb-4 text-center">Enter your email and password to sign in</p>
                     <Formik
                         initialValues={{ username: '', password: '' }}
                         validationSchema={LoginSchema}
@@ -107,7 +107,7 @@ export default function Login() {
                                             <p className="text-red-600 mt-4">Invalid username or password.</p>
                                         )}
                                         {showForgotPasswordMessage && (
-                                            <p className="text-green-600 mt-4">If the email is registered, you will receive password reset instructions.</p>
+                                            <p className="text-green-600 mt-4 text-center">If the email is registered, you will receive password reset instructions.</p>
                                         )}
                                     </div>
                                     <button
@@ -124,7 +124,7 @@ export default function Login() {
 
                     <div className="flex items-center gap-2 my-3">
                         <hr className="w-24 border-none h-[1px] bg-gray-300" />
-                        <p className="text-continue">or continue with</p>
+                        <p className="text-continue text-center">or continue with</p>
                         <hr className="w-24 border-none h-[1px] bg-gray-300" />
                     </div>
                     <button onClick={handleSigninWithGoogle} className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
@@ -134,10 +134,10 @@ export default function Login() {
                 </div>
             </div>
 
-            <div className="hidden p-8 md:flex flex-col justify-center items-center w-[40%] bg-pastel-pink">
+            <div className="hidden p-8 md:flex flex-col justify-center items-center w-[45%] bg-pastel-pink">
                 <div className="flex flex-col mb-10">
-                    <h1 className="poetsen-one-regular text-6xl text-white">New here?</h1>
-                    <p className="poetsen-one-regular text-xl">
+                    <h1 className="poetsen-one-regular text-4xl text-white text-center pb-12">New here?</h1>
+                    <p className="poetsen-one-regular text-xl text-center">
                         New here? Sign up now and start your journey to find your life partner. With our easy-to-use platform, you'll connect with like-minded individuals who share your interests and values. Don't wait—your perfect match could be just a click away! Join us today and discover the love of your life.
                     </p>
                 </div>

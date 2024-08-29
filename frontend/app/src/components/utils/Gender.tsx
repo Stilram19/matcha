@@ -7,7 +7,11 @@ function Gender({gender, iconsFolder}: GenderProps) {
     console.log(gender);
     function genderIconPath(): string {
         let svgPath = '';
-        const genders = new Set(['male', 'female', 'intersex', 'non-binary', 'transgender']);
+        const genders = new Set(['male', 'female', 'transgender']);
+
+        if (gender === 'transgender-male' || gender === 'transgender-female') {
+            gender = 'transgender';            
+        }
 
         if (genders.has(gender)) {
             svgPath = `${iconsFolder}/${gender}.svg`;

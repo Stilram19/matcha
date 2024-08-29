@@ -42,18 +42,18 @@ export function isLastNameValid(firstName: string): boolean {
 }
 
 export function isGenderAndSexualPreferenceValid(gender: string, sexualPreference: string): boolean {
-    const handledGenders = new Set(['male', 'female', 'transgender']);
+    const handledGenders = new Set(['male', 'female', 'transgender-male', 'transgender-female']);
     const handledSexualPreferences = new Set(['heterosexual', 'bisexual-male', 'bisexual-female', 'homosexual', 'lesbian']);
 
     if (!handledGenders.has(gender) || !handledSexualPreferences.has(sexualPreference)) {
         return (false);
     }
 
-    if (gender == 'male' && (sexualPreference == 'lesbian' || sexualPreference == 'bisexual-female')) {
+    if ((gender === 'male' || gender === 'transgender-male') && (sexualPreference == 'lesbian' || sexualPreference == 'bisexual-female')) {
         return (false);
     }
 
-    if (gender == 'female' && (sexualPreference == 'homosexual' || sexualPreference == 'bisexual-male')) {
+    if ((gender === 'female' || gender === 'transgender-female') && (sexualPreference === 'homosexual' || sexualPreference === 'bisexual-male')) {
         return (false);
     }
 

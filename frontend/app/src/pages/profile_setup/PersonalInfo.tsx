@@ -185,7 +185,7 @@ const PersonalInfo = () => {
     return (
         <div className="w-full">
             <h1 className="text-xl my-9">1/3</h1>
-            <h1 className="text-4xl mb-3">Tell us a little bit about yourself</h1>
+            <h1 className="text-4xl md:text-5xl mb-10 text-center">Tell us a little bit about yourself</h1>
 
             <Formik
                 initialValues={{
@@ -203,44 +203,48 @@ const PersonalInfo = () => {
                 {({ isSubmitting }) => (
                     <Form>
                         <div className="w-full flex flex-col justify-center gap-3">
-                            <div className="flex justify-between">
-                                <div className="w-full">
-                                    <label htmlFor="firstname" className="block">First Name</label>
-                                    <Field
-                                        id="firstname"
-                                        name="firstname"
-                                        type="text"
-                                        className="border p-2 rounded-lg outline-none w-full"
-                                        placeholder="John"
-                                    />
-                                    <ErrorMessage name="firstname" component="div" className="text-red-600 text-sm mt-1" />
+                            <div className="flex flex-col sm:flex-row justify-between gap-3">
+                                <div className="w-full flex gap-3">
+                                    <div className="w-full">
+                                        <label htmlFor="firstname" className="block">First Name</label>
+                                        <Field
+                                            id="firstname"
+                                            name="firstname"
+                                            type="text"
+                                            className="border p-2 rounded-lg outline-none w-full"
+                                            placeholder="John"
+                                        />
+                                        <ErrorMessage name="firstname" component="div" className="text-red-600 text-sm mt-1" />
+                                    </div>
+                                    <div className="w-full">
+                                        <label htmlFor="lastname" className="block">Last Name</label>
+                                        <Field
+                                            id="lastname"
+                                            name="lastname"
+                                            type="text"
+                                            className="border p-2 rounded-lg outline-none w-full"
+                                            placeholder="Doe"
+                                        />
+                                        <ErrorMessage name="lastname" component="div" className="text-red-600 text-sm mt-1" />
+                                    </div>
                                 </div>
-                                <div className="w-full">
-                                    <label htmlFor="lastname" className="block">Last Name</label>
-                                    <Field
-                                        id="lastname"
-                                        name="lastname"
-                                        type="text"
-                                        className="border p-2 rounded-lg outline-none w-full"
-                                        placeholder="Doe"
-                                    />
-                                    <ErrorMessage name="lastname" component="div" className="text-red-600 text-sm mt-1" />
-                                </div>
-                                <div className="w-full">
-                                    <label htmlFor="username" className="block">Username</label>
-                                    <Field
-                                        id="username"
-                                        name="username"
-                                        type="text"
-                                        className="border p-2 rounded-lg outline-none w-full"
-                                        placeholder="username"
-                                    />
-                                    <ErrorMessage name="username" component="div" className="text-red-600 text-sm mt-1" />
-                                </div>
-                                <div className="w-full">
-                                    <label htmlFor="username" className="block">Age</label>
-                                    <Field id="age" name="age" className="border p-2 rounded-lg outline-none w-full" placeholder="Age" />
-                                    <ErrorMessage name="age" component="div" className="text-red-500" />
+                                <div className="w-full flex gap-3">
+                                    <div className="w-full">
+                                        <label htmlFor="username" className="block">Username</label>
+                                        <Field
+                                            id="username"
+                                            name="username"
+                                            type="text"
+                                            className="border p-2 rounded-lg outline-none w-full"
+                                            placeholder="username"
+                                        />
+                                        <ErrorMessage name="username" component="div" className="text-red-600 text-sm mt-1" />
+                                    </div>
+                                    <div className="w-full">
+                                        <label htmlFor="username" className="block">Age</label>
+                                        <Field id="age" name="age" className="border p-2 rounded-lg outline-none w-full" placeholder="Age" />
+                                        <ErrorMessage name="age" component="div" className="text-red-500" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -256,13 +260,13 @@ const PersonalInfo = () => {
                                 <ErrorMessage name="biography" component="div" className="text-red-600 text-sm mt-1" />
                             </div>
 
-                            <div className="flex">
-                                <div className="flex flex-col h-full">
+                            <div className="flex gap-3 mb-3">
+                                <div className="flex flex-col h-full w-2/5">
                                     <label htmlFor="gender">Gender</label>
-                                    <Select name='gender' defaultOption='Gender' options={[{ value: 'male', label: "Male" }, { value: 'female', label: "Female" }, { value: 'transgender', label: 'Transgender' } ]} />
+                                    <Select name='gender' defaultOption='Gender' options={[{ value: 'male', label: "Male" }, { value: 'female', label: "Female" }, { value: 'transgender-male', label: 'Transgender_Male' }, { value: 'transgender-female', label: 'Transgender_Female' } ]} />
                                     <ErrorMessage name="gender" component="div" className="text-red-600 text-sm mt-1" />
                                 </div>
-                                <div className="flex flex-col h-full">
+                                <div className="flex flex-col h-full w-3/5">
                                     <label htmlFor="sexualPreference">Sexual Preference</label>
                                     <Select name='sexualPreference' defaultOption='Sexual Preference' options={[{ value: 'heterosexual', label: "Heterosexual" }, { value: 'bisexual-male', label: "Bisexual-male" }, { value: 'bisexual-female', label: 'Bisexual-female' }, { value: 'lesbian', label: 'Lesbian' }, { value: 'homosexual', label: 'Homosexual' }]} />
                                     <ErrorMessage name="sexualPreference" component="div" className="text-red-600 text-sm mt-1" />
@@ -286,7 +290,7 @@ const PersonalInfo = () => {
                                 />
                             </div>
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-end mb-7">
                             <button
                                 type="submit"
                                 className="mt-6 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black focus:ring"
