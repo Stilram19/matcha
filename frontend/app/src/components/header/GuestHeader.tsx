@@ -40,13 +40,13 @@ export default function GuestHeader() {
     
                     <div className={`py-2 absolute top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
                         <ul className='w-full flex flex-col items-center justify-center list-none'>
-                            <li className="w-full"><NavLink to="/" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</NavLink></li>
-                            <li className="w-full"><NavLink to="#" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">about</NavLink></li>
-                            <li className="w-full"><NavLink to="#" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">why us</NavLink></li>
+                            <li onClick={handleOnClick} className="w-full"><NavLink to="/" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">home</NavLink></li>
+                            <li onClick={handleOnClick} className="w-full"><NavLink to="#" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">about</NavLink></li>
+                            <li onClick={handleOnClick} className="w-full"><NavLink to="#" className="w-full text-center block p-2 hover:text-pastel-pink hover:bg-gray-300 text-lg">why us</NavLink></li>
                         </ul>
                         <div className="flex justify-center gap-4">
-                            <Link to="/login" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider hover:text-pastel-pink">login</Link>
-                            <Link to="/signup" className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider bg-pink text-white hover:text-pastel-pink">sign up</Link>
+                            <Link to="/login" onClick={handleOnClick} className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider hover:text-pastel-pink">login</Link>
+                            <Link to="/signup" onClick={handleOnClick} className="px-4 bg-light-gray py-2 font-semibold rounded-lg tracking-wider bg-pink text-white hover:text-pastel-pink">sign up</Link>
                         </div>
                     </div>
                 </div>
