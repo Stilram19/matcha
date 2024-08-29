@@ -29,7 +29,8 @@ export async function getSearchResultService(userId: number, searchQueryStr: str
                     LEFT JOIN "user_likes" ul2
                         ON ul2.liked_user_id = $1 AND ul2.liking_user_id = u.id
                     WHERE
-                        (
+                        u.is_verified = true
+                        AND (
                             u.username ILIKE '%' || $2 || '%'
                             OR u.first_name || ' ' || u.last_name ILIKE '%' || $2 || '%'
                         )

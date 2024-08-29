@@ -60,7 +60,7 @@ export async function getVisitsHistoryService(userId: number, page: number, page
 }
 
 
-export async function visitProfileService(visitorId: number, visitedId: number) {
+export async function visitProfileService(visitorId: number, visitedId: number): Promise<boolean> {
 
     const query = `
             INSERT INTO "history"
@@ -69,7 +69,7 @@ export async function visitProfileService(visitorId: number, visitedId: number) 
                 ($1, $2)
         `
     if (visitedId === visitorId)
-        return ;
+        return false;
 
     const client = await pool.connect();
     try {
@@ -89,10 +89,11 @@ export async function visitProfileService(visitorId: number, visitedId: number) 
         `
         const duplicateVisit = await client.query(checkQuery, [visitorId, visitedId]);
         if (duplicateVisit.rows[0].exists === true) {
-            return ;
+            return false;
         }
 
         await client.query(query, [visitorId, visitedId]);
+        return (true);
     } catch (e) {
         throw (e);
     } finally {

@@ -55,8 +55,9 @@ function UserProfile() {
                 // ? *******
                 if (userId) {
                     console.log(`targetUserId: ${userId}`);
-                    socket?.emit(EventsEnum.NOTIFICATION_VISIT, {targetUserId: Number(userId)});
-                    await sendLoggedInActionRequest('POST', `${import.meta.env.VITE_LOCAL_HISTORY_VISIT}/${userId}`);
+                    const data = await sendLoggedInActionRequest('POST', `${import.meta.env.VITE_LOCAL_HISTORY_VISIT}/${userId}`);
+                    if (data.success) // emit visit notification only when the visit history is being added (1 hour interval)
+                        socket?.emit(EventsEnum.NOTIFICATION_VISIT, {targetUserId: Number(userId)});
                 }
                 // ? *******
             } catch(err) {

@@ -10,33 +10,27 @@ type ImageCardsProps = {
     handleRemove: (key: number) => void;
 }
 
+
 // I should pass only the image source for this component, to make things more abstract
-const ImageCards = ({images, handleRemove} : ImageCardsProps) => {
-
+const ImageCards = ({ images, handleRemove }: ImageCardsProps) => {
     return (
-        <>
-            <div className="p-3 pt-4 shadow border w-full h-72 rounded-2xl flex gap-7">
-
-                {!images.length ? (
-                    <div className="text-center w-full flex justify-center items-center text-2xl">
-                        Select pictures
-                    </div>
-                ) : (
-                    images.map((image, index) => (
-                        <ImageCard
-                            key={image.name} // i shouldn't use index as key here
-                            imageSrc={URL.createObjectURL(image)}
-                            onRemove={() => handleRemove(index)}
-                        />
-                    ))
-                )}
-
-            </div>
-        </>
+        <div className="p-3 pt-4 shadow border w-full h-72 rounded-2xl flex flex-wrap justify-center gap-4 overflow-y-auto scrollbar">
+            {!images.length ? (
+                <div className="text-center w-full flex justify-center items-center text-2xl">
+                    Select pictures
+                </div>
+            ) : (
+                images.map((image, index) => (
+                    <ImageCard
+                        key={image.name}
+                        imageSrc={URL.createObjectURL(image)}
+                        onRemove={() => handleRemove(index)}
+                    />
+                ))
+            )}
+        </div>
     )
-
 }
-
 export default function ProfileSetup() {
     const   [images, setImages] = useState<File[]>([]);
     const   [isLoading, setIsLoading] = useState(true);
@@ -108,7 +102,7 @@ export default function ProfileSetup() {
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full pb-3">
                 <h1 className="text-xl my-9">3/3</h1>
                 <h1 className=" text-4xl mb-1">Upload Some Pictures</h1>
                 <p className="mb-4">
@@ -116,10 +110,10 @@ export default function ProfileSetup() {
                 </p>
 
                 <label htmlFor="upload" className="mb-6">
-                    <div className="flex justify-around mb-10"> 
-                        <div className="p-7 w-1/2 h-72 flex flex-col  items-center justify-center upload-section hover:upload-section rounded-3xl  cursor-pointer" >
+                    <div className="flex w-full mb-10 md:justify-around"> 
+                        <div className="w-full md:w-3/4 lg:w-1/2 p-7 h-48 md:h-72 flex flex-col  items-center justify-center upload-section hover:upload-section rounded-3xl  cursor-pointer" >
                             <MdCloudUpload size={65} fill="#49243E" />
-                            <h1 className="text-xl">Browse Files to upload</h1>
+                            <h1 className="text-xl text-center">Browse Files to upload</h1>
                         </div>
                     </div>
                 </label>
@@ -137,7 +131,6 @@ export default function ProfileSetup() {
 
                 <div className="flex justify-end">
                     <button onClick={onConfirm} className="mt-5 px-6 py-2 bg-pastel-pink-100 rounded-lg font-semibold tracking-wide text-white hover:text-black  focus:ring">
-
                         Confirm
                     </button>
                 </div>

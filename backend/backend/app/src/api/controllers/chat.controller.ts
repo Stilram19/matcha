@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getChatHistory, getContactDetails, getContactsService, getParticipantInfoById, markMessagesAsReadService, retrieveDms } from "../services/chat.service.js";
+import { addFavoriteContactService, getChatHistory, getContactDetails, getContactsService, getParticipantInfoById, markMessagesAsReadService, removeFavoriteContactService, retrieveDms } from "../services/chat.service.js";
 import { getHttpError } from '../helpers/getErrorObject.js';
 
 
@@ -105,6 +105,34 @@ export async function MarkMessagesAsRead(request: Request, response: Response) {
         response.status(status).json({status, message});
     }
     
+}
+
+export async function addFavoriteContact(request: Request, response: Response) {
+    const userId = request.user.id;
+    const favUserId = request.body.userId;
+
+    try {
+        await addFavoriteContactService(userId, favUserId);
+        response.sendStatus(201);
+    } catch (e) {
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
+    }
+}
+
+export async function removeFavoriteContact(request: Request, response: Response) {
+    const userId = request.user.id;
+    const favUserId = request.body.userId;
+
+    try {
+        await removeFavoriteContactService(userId, favUserId);
+        response.sendStatus(200);
+    } catch (e) {
+        const {status, message} = getHttpError(e);
+        response.status(status).json({status, message});
+    }
+
+
 }
 
 

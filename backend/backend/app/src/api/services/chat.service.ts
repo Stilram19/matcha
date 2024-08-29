@@ -1,6 +1,7 @@
 import { QueryResult } from "pg";
 import pool from "../model/pgPoolConfig.js";
 import { isUserOnline } from "./socket.service.js";
+import HttpError from "../helpers/HttpError.js";
 
 // type DmListType = {
 //     id: number,
@@ -349,6 +350,49 @@ export  async function markMessagesAsReadService(userId: number, participantId: 
     }
 }
 
+
+
+export async function addFavoriteContactService(userId: number, favUserId: number) {
+    const query = `
+        INSERT INTO "user_favorite_contacts"
+            (user_id, favorite_user_id)
+        VALUES
+            ($1, $2);
+    `
+
+    const client = await pool.connect();
+
+    try {
+        const userExistsQuery = `SELECT COUNT(*) AS count FROM "user" WHERE id = $1`;
+        const res = await client.query(userExistsQuery, [favUserId]);
+        if (res.rows[0].count === 0) {
+            throw new HttpError(400, 'user not found');
+        }
+        await client.query(query, [userId, favUserId]);
+    } catch (e) {
+        throw (e);
+    } finally {
+        client.release();
+    }
+}
+
+
+export async function removeFavoriteContactService(userId: number, favUserId: number) {
+    const query = `
+        DELETE FROM "user_favorite_contacts"
+        WHERE user_id = $1 AND favorite_user_id = $2;
+    `
+
+    const client = await pool.connect();
+
+    try {
+        await client.query(query, [userId, favUserId]);
+    } catch (e) {
+        throw (e);
+    } finally {
+        client.release();
+    }
+}
 
 
 

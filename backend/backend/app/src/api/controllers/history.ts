@@ -27,8 +27,8 @@ export async function visitProfile(request: Request, response: Response) {
     const visitedUserId = Number(request.params.userId);
 
     try {
-        await visitProfileService(userId, visitedUserId);
-        response.sendStatus(201);
+        const success = await visitProfileService(userId, visitedUserId);
+        response.status(201).json({success});
     } catch (e) {
         const { status, message } = getHttpError(e);
         response.status(status).json({status, message});

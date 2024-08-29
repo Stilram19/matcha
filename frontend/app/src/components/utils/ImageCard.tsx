@@ -10,7 +10,7 @@ const ImageCard = ({imageSrc, onRemove}: ImageCardProps) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (                 
-        <div className="flex w-1/5">
+        <div className="flex w-full sm:w-2/3 md:w-1/3 lg:w-1/3 xl:w-1/5 p-2">
             <div className="relative h-full rounded-2xl flex justify-center items-center bg-deep-plum p-1">
 
                 <img

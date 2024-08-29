@@ -9,6 +9,7 @@ import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import MessagesProvider from "../../context/messagesProvider";
 import useFetch from "../../hooks/useFetch";
 import usePaginatedFetch from "../../hooks/usePaginatedFetch";
+import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 
 // function   
 
@@ -66,14 +67,22 @@ const ChatWindow = () => {
     // const   [participant, setParticipant] = useState<ParticipantUser>();
 
     registerEventHandlers(messages.setData, setParticipant);
-    const   handleFavoriteClick = (conversationId: number) => {
+    const   handleFavoriteClick = async (conversationId: number) => {
         setParticipant((prev) => {
             if (!prev)
                 return ;
             return ({...prev, isFavorite: !prev.isFavorite})
         });
-        eventObserver.publish(EventsEnum.APP_FAVORITE_CHANGE, conversationId);
-        // ! Patch it
+        if (!participant)
+            return ;
+        // ! Post it
+        try {
+            await sendLoggedInActionRequest(!participant.isFavorite ? 'POST' : 'DELETE', import.meta.env.VITE_LOCAL_CHAT_FAVORITES, {userId: activeDmId});
+            eventObserver.publish(EventsEnum.APP_FAVORITE_CHANGE, conversationId);
+        } catch (e) {
+            console.log(e);
+            // ! later handling
+        }
     }
 
     const   reversed_data = [...(messages.data || [])];
