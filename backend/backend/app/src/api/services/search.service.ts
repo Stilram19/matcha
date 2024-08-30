@@ -43,6 +43,7 @@ export async function getSearchResultService(userId: number, searchQueryStr: str
                             FROM "blocked_users"
                             WHERE blocked_user_id = $1 OR blocking_user_id = $1
                         )
+                    ORDER BY u.username, u.first_name, u.last_name
                     LIMIT $3
                     OFFSET $4
                 `;

@@ -12,4 +12,5 @@ export enum    EventsEnum {
     // application events (pulisher-observer pattern)
     APP_FAVORITE_CHANGE = 'app:favorite',
     // APP_SEND_MESSAGE = 'app:send',
+    APP_BLOCK_CHAT_UNLIKE='app:block-unlike-chat'
 }
