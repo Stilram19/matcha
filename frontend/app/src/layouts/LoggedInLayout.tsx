@@ -1,5 +1,6 @@
 import { FC, ReactNode, useEffect, useState } from "react";
 import LoggedInHeader from "../components/header/LoggedInHeader";
+import SocketProvider from '../context/SocketProvider';
 import { getCookie } from "../utils/generalPurpose";
 import { useNavigate } from "react-router-dom";
 
@@ -44,8 +45,10 @@ const LoggedInLayout: FC<Props> = ({children}) =>  {
 
     return (
         <>
-            <LoggedInHeader />
-            {children}
+            <SocketProvider>
+                <LoggedInHeader />
+                {children}
+            </SocketProvider>
         </>
     )
 }

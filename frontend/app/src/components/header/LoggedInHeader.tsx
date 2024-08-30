@@ -2,6 +2,8 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import './style.css'
 import { useState } from "react";
 import Search from "./Search";
+import Notification from "../notification/Notification";
+import { FaBell } from "react-icons/fa6";
 import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 import HamburgerMenuOverlay from "./HamburgerMenuOverlay";
 
@@ -64,13 +66,12 @@ function LoggedInHeader() {
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/profile'>profile</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/chat'>chat</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/history'>history</NavLink></li>
+                    <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/test'>history</NavLink></li>
                 </ul>
                 <img src="/icons/nav-bar-divider.svg" alt="nav bar divider" className="h-34px mt-5" />
-                <div className="flex items-center">
-                    <div className="p-3 lg:p-5">
-                        <img src="/icons/notification-bell.svg" alt="notification bell" style={{minWidth: 28}}/>
-                    </div>
-                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink" onClick={handleLogout} >logout</div>
+                <div className="flex items-center gap-1">
+                    <Notification />
+                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
                 </div>
             </nav>
             {/* <div className={`md:hidden py-2 absolute z-10 top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
@@ -85,7 +86,7 @@ function LoggedInHeader() {
             {isHidden && <HamburgerMenuOverlay handleLogout={handleLogout} handleHamburgerMenuOverlayClose={handleHamburgerMenuOverlayClose} />}
             <div className={`flex justify-between md:hidden sm:gap-2 items-center ${isSearchOpen ? 'hidden' : ''}`}>
                 <div className="p-2">
-                    <img src="/icons/notification-bell.svg" alt="notification bell" style={{width: 24}}/>
+                    <Link to="/notifications"><FaBell size={28}  className="cursor-pointer hover:text-pastel-pink"/></Link>
                 </div>
                 <div className="cursor-pointer" onClick={() => { setIsHidden(!isHidden) }} style={{overflow: 'hidden'}}><i className="p-2 scale-150 fa-sharp fa-solid fa-bars p-7"></i></div>
             </div>

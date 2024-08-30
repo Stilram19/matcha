@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Tag from "../../components/Tag";
 import interests from "../../utils/interests";
 import { sendLoggedInActionRequest } from "../../utils/httpRequests";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "../../utils/generalPurpose";
+import Tag from "../../components/utils/Tag";
 
 const InterestTag = () => {
     const   [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())

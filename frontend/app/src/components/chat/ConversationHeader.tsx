@@ -1,15 +1,15 @@
 import { LuHeart } from "react-icons/lu";
-
-type ConversationHeaderProps = {
-    firstName: string;
-    lastName: string;
-    profilePicture: string;
-    status: 'online' | 'offline';
-    isFavorite: boolean;
-}
+import { ParticipantUser } from "../../types";
 
 
-const ConversationHeader = ({firstName, lastName, profilePicture, status, isFavorite}: ConversationHeaderProps) => {
+const ConversationHeader = ({id, firstName, lastName, profilePicture, status, isFavorite, onClick}: ParticipantUser & {onClick: (dmId: number) => void}) => {
+    console.log("render conv header");
+
+    // useEffect(() => {
+        
+    // })
+
+    // console.log(id, firstName, lastName, profilePicture, status, isFavorite)
 
     return (
         <div className="border-b h-[80px] w-full flex justify-between items-center py-2 px-5">
@@ -25,11 +25,11 @@ const ConversationHeader = ({firstName, lastName, profilePicture, status, isFavo
                 title={`${!isFavorite ? 'add to favorites' : 'remove from favorites'}`}
                 size={25}
                 className={`${isFavorite ? 'fill-black hover:fill-none' : 'hover:fill-black'} cursor-pointer`}
+                onClick={() => onClick(id)}
             />
         </div>
     )
 
 }
-
 
 export default ConversationHeader;

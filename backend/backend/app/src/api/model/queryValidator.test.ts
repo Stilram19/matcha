@@ -267,7 +267,7 @@ try {
                     {
                         id: [1, 2, 3],
                         username: ['oussama', 'khiar']
-                    }
+                    },
                 ],
                 id: [12, 13, 14]
             },

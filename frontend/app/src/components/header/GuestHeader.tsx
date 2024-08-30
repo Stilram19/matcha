@@ -13,7 +13,7 @@ export default function GuestHeader() {
     }
 
     return (
-        <nav className="h-[74px] flex  fixed top-0 w-screen z-10 bg-white">
+        <nav className="h-[74px] flex   w-screen z-10 bg-white">
             <div className="hidden md:flex items-center justify-between shadow px-10 w-full">
                 <div className="flex gap-16">
                     <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>

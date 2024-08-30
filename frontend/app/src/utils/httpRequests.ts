@@ -152,6 +152,8 @@ export async function sendLoggedInGetRequest(url: string) {
     return (responseBody);
 }
 
+
+// ! why if the endpoint not found the server respond with unauthorized
 export async function sendGetRequest(url: string) {
     const response = await fetch(url, {
         method: "GET",
@@ -180,3 +182,4 @@ export async function sendGetRequest(url: string) {
 
     return (responseBody);
 }
+

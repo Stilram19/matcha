@@ -32,6 +32,7 @@ export type BriefProfileInfos = {
     profilePicture: string;
 };
 
+export type BriefProfileInfosPresence = BriefProfileInfos & {status: string};
 export type RecommendedProfileInfos = {
     id: string;
     firstName: string;

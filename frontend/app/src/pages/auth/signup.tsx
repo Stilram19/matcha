@@ -2,7 +2,7 @@
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
-import { sendActionRequest } from '../../utils/httpRequests';
+import { sendActionRequest, sendGetRequest } from '../../utils/httpRequests';
 import { getFormError } from '../../utils/typeGuards';
 
 const SignupSchema = Yup.object().shape({
@@ -90,19 +90,17 @@ const SignUp = () => {
     }
 
     return (
-        <div className="flex w-screen pt-20">
-            <div className="w-full flex flex-col items-center justify-center">
-                <div className="w-11/12">
-                    <h1 className="text-3xl sm:text-4xl poetsen-one-regular text-center">Sign up!</h1>
-                    <h1 className="mb-4 text-3xl sm:text-4xl poetsen-one-regular text-center">and find your partner</h1>
-                </div>
+        <div className="flex w-full">
+            <div className="w-full md:w-3/5 flex flex-col items-center justify-center">
+                <h1 className="text-5xl poetsen-one-regular">Sign up!</h1>
+                <h1 className="mb-4 text-5xl poetsen-one-regular text-center">and find your partner</h1>
                 <Formik
                     initialValues={{ email: '', username: '', firstname: '', lastname: '', password: '' }}
                     validationSchema={SignupSchema}
                     onSubmit={handleSignupWithEmailSubmit}
                     >
                     {({ isSubmitting }) => (
-                        <Form className="flex flex-col justify-center items-center w-4/5" noValidate>
+                        <Form className="flex flex-col justify-start" noValidate>
                             <div className="mb-4">
                                 <label htmlFor="email" className="block mb-2">Email</label>
                                 <Field
@@ -164,7 +162,7 @@ const SignUp = () => {
                                 <ErrorMessage name="password" component="div" className="text-red-600 text-sm mt-1" />
                             </div>
                             
-                            <button type="submit" className="w-full bg-black font-semibold text-white py-2 px-5 rounded-lg mt-4 text-center sm:w-96" disabled={isSubmitting}>
+                            <button type="submit" className="w-full bg-black font-semibold text-white py-2 px-5 rounded-lg mt-4" disabled={isSubmitting}>
                                 Sign up with email
                             </button>
                         </Form>
@@ -172,15 +170,15 @@ const SignUp = () => {
                 </Formik>
 
                 {showVerificationMessage && (
-                    <p className="text-green-600 mt-4 text-center">Please verify your email. Check your inbox for further instructions.</p>
+                    <p className="text-green-600 mt-4">Please verify your email. Check your inbox for further instructions.</p>
                 )}
 
                 <div className="flex items-center gap-2 my-3">
                     <hr className="w-24 border-none h-[1px] bg-gray-300" />
-                    <p className="text-continue text-center">or continue with</p>
+                    <p className="text-continue">or continue with</p>
                     <hr className="w-24 border-none h-[1px] bg-gray-300" />
                 </div>
-                <button onClick={handleSignupWithGoogle} className="bg-light-gray flex justify-center gap-2 w-4/5 sm:w-96 py-3 rounded-lg">
+                <button onClick={handleSignupWithGoogle} className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
                     <img src="/google.svg" alt="Google" />Google
                 </button>
                 <p className="text-center w-96 mt-3">
@@ -190,7 +188,7 @@ const SignUp = () => {
                 <a className="text-blue-900" href="#"> Privacy Policy</a>
                 </p>
             </div>
-            <div className="hidden md:block md:w-[45%]">
+            <div className="hidden md:block w-2/5">
                 <img src="/imgs/lovers.jpg" className="w-full h-full object-cover" alt="Lovers" />
             </div>
         </div>

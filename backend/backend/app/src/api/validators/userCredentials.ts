@@ -28,6 +28,7 @@ export function isEmailFormatValid(email: string): boolean {
     return (emailRegexp.test(email));
 }
 
+
 export function isFirstNameValid(firstName: string): boolean {
     const firstnameRegexp = /^[a-zA-Z]{2,20}$/;
 

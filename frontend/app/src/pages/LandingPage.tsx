@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const LandingPage = () => {
 
     return (
-        <div className="relative mt-[74px] w-screen min-h-[calc(100vh-74px)] h-min">
+        <div className="relative w-screen min-h-[calc(100vh-74px)] h-min">
             <img alt="background" src="/imgs/landing_page_bg.jpg" className="w-full h-full object-cover absolute top-0" />
 
                 <div className="w-full min-h-[calc(100vh-74px)] h-full flex justify-center items-center relative bg-black bg-opacity-40 pt-8">
