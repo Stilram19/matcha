@@ -39,6 +39,8 @@ function UserProfile() {
             setIsLoading(true);
             setErrorOccurred(false);
             try {
+                console.log('USERID: ' + import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}`);
+
                 const profileInfosUrl = (userId ? import.meta.env.VITE_LOCAL_PROFILE_INFOS_API_URL + `/${userId}` : import.meta.env.VITE_LOCAL_CURR_PROFILE_INFOS_API_URL);
                 const responseBody = await sendLoggedInGetRequest(profileInfosUrl);
 

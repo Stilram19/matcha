@@ -66,12 +66,11 @@ function LoggedInHeader() {
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/profile'>profile</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/chat'>chat</NavLink></li>
                     <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/history'>history</NavLink></li>
-                    <li><NavLink className="p-3 lg:p-5 hover:text-pastel-pink" to='/test'>history</NavLink></li>
                 </ul>
                 <img src="/icons/nav-bar-divider.svg" alt="nav bar divider" className="h-34px mt-5" />
                 <div className="flex items-center gap-1">
                     <Notification />
-                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink">logout</div>
+                    <div className="p-3 lg:p-5 cursor-pointer hover:text-pastel-pink" onClick={handleLogout}>logout</div>
                 </div>
             </nav>
             {/* <div className={`md:hidden py-2 absolute z-10 top-[74px] left-0 w-full bg-gray-200 ${isHidden ? 'hidden' : ''}`}>
