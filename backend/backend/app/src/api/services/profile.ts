@@ -11,15 +11,15 @@ export async function getUserInterests(userId: number): Promise<string[]> {
     try {
         client = await pool.connect();
         const query = `SELECT interest FROM "user_interest" WHERE user_id = $1;`
-
+        
         const result = await client.query(query, [userId]);
 
         if (result.rows.length === 0) {
             return [];
         }
-
+            
         const interests = result.rows.map(row => row.interest);
-
+        
         return (interests);
     }
     catch (err) {
@@ -248,10 +248,10 @@ export async function addUserInterestsService(userId: number, interests: string[
     }
 }
 
-async function removeUserConnection(blockingUserId: number, blockedUserId: number) {
-    await unlikeProfileService(blockingUserId, blockedUserId);
-    await unlikeProfileService(blockedUserId, blockingUserId);
-}
+// async function removeUserConnection(blockingUserId: number, blockedUserId: number) {
+//     await unlikeProfileService(blockingUserId, blockedUserId);
+//     await unlikeProfileService(blockedUserId, blockingUserId);
+// }
 
 async function addBlockedUser(blockingUserId: number, blockedUserId: number) {
     const client = await pool.connect();
@@ -261,8 +261,9 @@ async function addBlockedUser(blockingUserId: number, blockedUserId: number) {
             INSERT INTO blocked_users (blocking_user_id, blocked_user_id)
             VALUES ($1, $2)
             ON CONFLICT (blocking_user_id, blocked_user_id) DO NOTHING
+            RETURNING id;
         `;
-        await client.query(insertBlockQuery, [blockingUserId, blockedUserId]);
+        const result = await client.query(insertBlockQuery, [blockingUserId, blockedUserId]);
 
     } catch (err) {
         console.error('Error blocking user:', err);
@@ -273,7 +274,7 @@ async function addBlockedUser(blockingUserId: number, blockedUserId: number) {
 }
 
 export async function blockUserService(blockingUserId: number, blockedUserId: number) {
-    await removeUserConnection(blockingUserId, blockedUserId);
+    // await removeUserConnection(blockingUserId, blockedUserId);
     await addBlockedUser(blockingUserId, blockedUserId);
 }
 
