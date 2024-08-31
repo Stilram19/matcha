@@ -92,6 +92,8 @@ export async function getContactsService(userId: number) {
 }
 
 
+
+// ! think about the performance of the query here
 export async function retrieveDms(userId: number) {
     const   query = `
         WITH latest_messages as (
@@ -107,7 +109,20 @@ export async function retrieveDms(userId: number) {
                     END
                 ) as unread_count
             FROM "dm"
-            WHERE sender_id = $1 OR receiver_id = $1
+            WHERE 
+                (sender_id = $1 OR receiver_id = $1)
+                AND NOT EXISTS (SELECT 1 FROM blocked_users WHERE blocking_user_id IN (sender_id, receiver_id) AND blocked_user_id IN (sender_id, receiver_id))
+                AND EXISTS (
+                    SELECT 1
+                    FROM user_likes ul1
+                    JOIN user_likes ul2
+                    ON ul1.liking_user_id = ul2.liked_user_id
+                    AND ul1.liked_user_id = ul2.liking_user_id
+                    WHERE 
+                        (ul1.liking_user_id = sender_id AND ul1.liked_user_id = receiver_id)
+                        AND 
+                        (ul2.liking_user_id = receiver_id AND ul2.liked_user_id = sender_id)
+                )
             GROUP BY user1, user2
         )
         SELECT

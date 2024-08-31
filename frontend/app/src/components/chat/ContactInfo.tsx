@@ -10,6 +10,9 @@ import { ContactDetailsType, EventsEnum } from "../../types";
 import { prepareSocketEventRegistration } from "../../utils/socket";
 import { useSocketEventRegister } from "../../hooks/useSocketEventResgiter";
 import { Link } from "react-router-dom";
+import { useSocket } from "../../context/SocketProvider";
+import { sendLoggedInActionRequest } from "../../utils/httpRequests";
+import eventObserver from "../../utils/eventObserver";
 
 type    DropdownItemType = {
     title: string,
@@ -79,17 +82,36 @@ function registerEventHandlers(setContactDetails: React.Dispatch<React.SetStateA
 
 function getDropdownItems() : DropdownItemType[] {
     const   {activeDmId, setActiveDmId} = useActiveDm();
+    const   socket = useSocket();
     const   dropdowns: DropdownItemType[] = [];
 
-    const   handleBlock = () => {
+    const   handleBlock = async () => {
         // http post request for blocking the active dm user
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_BLOCK_API_URL + `/${activeDmId}`);
+            eventObserver.publish(EventsEnum.APP_BLOCK_CHAT_UNLIKE, activeDmId);
+            setActiveDmId(-1);
+        }
+        catch (err) {
+            console.log(err);
+        }
         console.log(`block ${activeDmId}`);
-        setActiveDmId(-1);
         // emit the Block event to the Dms List  Component
     }
 
-    const   handleUnlike = () => {
+    const   handleUnlike = async () => {
         // http unlike the user
+        try {
+            await sendLoggedInActionRequest('POST', import.meta.env.VITE_LOCAL_PROFILE_UNLIKE_API_URL + `/${activeDmId}`);
+            // ? BY OUSSMA *********
+            socket?.emit(EventsEnum.NOTIFICATION_UNLIKE, {targetUserId: activeDmId});
+            // ? **************
+            eventObserver.publish(EventsEnum.APP_BLOCK_CHAT_UNLIKE, activeDmId);
+            setActiveDmId(-1);
+        }
+        catch (err) {
+            console.log(err);
+        }
         console.log(`unlike ${activeDmId}`);
     }
 

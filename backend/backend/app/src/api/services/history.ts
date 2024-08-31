@@ -11,7 +11,10 @@ export async function getVisitsHistoryService(userId: number, page: number, page
                 visitor_id,
                 visited_at
             FROM history
-            WHERE visited_id = $1
+            LEFT JOIN blocked_users b
+                ON (blocked_user_id, blocking_user_id) = (visitor_id, visited_id)
+                    OR (blocking_user_id, blocked_user_id) = (visitor_id, visited_id)
+            WHERE visited_id = $1 AND b.blocking_user_id IS NULL
         )
 
         SELECT
@@ -28,7 +31,7 @@ export async function getVisitsHistoryService(userId: number, page: number, page
         FROM visitors v
         JOIN "user" u
             ON u.id = v.visitor_id
-        ORDER BY visited_at
+        ORDER BY visited_at DESC
         LIMIT $2
         OFFSET $3
     `

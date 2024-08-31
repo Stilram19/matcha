@@ -136,11 +136,17 @@ const   useFetchAllAndSubscribe: () => {dms: FetchedData, contacts: FetchedData,
     registerSocketEvents(activeDmId, setDms, setContacts);
     useEffect(() => {
         const   handleFavChange = (dmId: number) => handleFevoritesChange(dmId, setDms);
+        const   handleBlockUnlikeUser = (dmId: number) => {
+            setDms((dms) => dms?.filter((dm) => dm.id != dmId))
+            setContacts((contacts) => contacts?.filter((contact) => contact.id != dmId))
+        }
 
         eventObserver.subscribe(EventsEnum.APP_FAVORITE_CHANGE, handleFavChange);
+        eventObserver.subscribe(EventsEnum.APP_BLOCK_CHAT_UNLIKE, handleBlockUnlikeUser)
 
         return () => {
             eventObserver.unsubscribe(EventsEnum.APP_FAVORITE_CHANGE, handleFavChange);
+            eventObserver.unsubscribe(EventsEnum.APP_BLOCK_CHAT_UNLIKE, handleBlockUnlikeUser);
         }
     }, []);
 

@@ -77,6 +77,16 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
         }
     }
 
+    // this to prioritizing the result clicking event handler over the blur event handler so that the search result doesn't gets cleared
+    function handleLinkMouseDown(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (searchRef.current) {
+          searchRef.current.blur();
+        }
+        navigate(`/profile/${id}`);
+    }
+
     return (
         <div>
             <div className={`hidden sm:inline-flex flex mt-3 w-52 h-12 search-bar-bg round-7px mb-3 ${isSearchOnFocus ? 'w-screen' : ''}`} style={isSmallSearchOpen ? {display: 'inline-flex'} : {}}>
@@ -89,7 +99,7 @@ function Search({isSmallSearchOpen, handleSearchOpen, handleSearchClose}: Search
                     isSearchOnFocus && searchResults && searchResults.length > 0 ?
                     searchResults.map(
                         (result) => (
-                            <Link to={`profile/${result.id}`}>
+                            <Link to={`/profile/${result.id}`} key={result.id} onMouseDown={(e) => handleLinkMouseDown(e, result.id)}>
                                 <div className="flex items-center search-result-bg round-7px">
                                     <img src="/icons/search-icon.svg" alt='search-icon' className="w-5 h-5 m-3"/>
                                     <p style={{width: 90, marginRight: 8}}>{result.userName}</p>
