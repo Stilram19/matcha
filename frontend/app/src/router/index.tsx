@@ -19,6 +19,7 @@ import ResetPassword from "../pages/auth/resetVerification";
 // import { useEffect } from "react";
 import CommonLayout from "../layouts/CommonLayout";
 import NotificationPage from "../pages/notification/NotificationPage";
+import NotFound from "../components/utils/not-found/NotFound";
 
 
 // const Test = () => {
@@ -89,10 +90,6 @@ const router = createBrowserRouter([
       path: '/explore',
       element: <LoggedInLayout><Explore /></LoggedInLayout>
     },
-    // {
-    //   path: '/explore1',
-    //   element: <LoggedInLayout><ExploreV2 /></LoggedInLayout>
-    // },
     {
       path: '/chat/:conversationId?',
       element: <LoggedInLayout><Chat/></LoggedInLayout>
@@ -116,6 +113,10 @@ const router = createBrowserRouter([
     {
       path: '/notifications',
       element: <LoggedInLayout><NotificationPage /></LoggedInLayout>
+    },
+    {
+      path: '*',  // Catch all other routes
+      element: <NotFound />  // Display the NotFound component
     }
 ]);
 
