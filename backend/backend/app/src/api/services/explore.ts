@@ -30,7 +30,7 @@ export async function getRecommendedProfilesService(userId: number, filters: Fil
             interestsFilteredIds.map(user => [user.userId, [user.commonInterestsCount, user.profileInterests]])
         );
 
-        const finalProfiles = profiles.filter(profile => {
+        let finalProfiles = profiles.filter(profile => {
             const value = interestsFilteredIdsMap.get(Number(profile.id));
             if (value !== undefined) {
                 profile.commonInterestsCount = value[0];
@@ -49,8 +49,9 @@ export async function getRecommendedProfilesService(userId: number, filters: Fil
         finalProfiles.forEach(profile => {
             profile.profilePhotos = profilePhotosMap.get(Number(profile.id)) || [];
         });
-
         // sort the profiles
+
+        finalProfiles = await filterBlockedUsers(userId, finalProfiles);
 
         return finalProfiles;
     } catch (error) {
@@ -260,5 +261,38 @@ async function getProfilesPhotos(userIds: number[]): Promise<{ userId: number, p
         if (client) {
             client.release();
         }
+    }
+}
+
+async function filterBlockedUsers(
+    userId: number,
+    profiles: RecommendedProfileInfos[]
+): Promise<RecommendedProfileInfos[]> {
+    const client = await pool.connect();
+
+    try {
+        const profileIds = profiles.map(profile => Number(profile.id));
+
+        if (profileIds.length === 0) return [];
+
+        const blockedUsersQuery = `
+            SELECT blocked_user_id FROM blocked_users
+            WHERE blocking_user_id = $1 AND blocked_user_id = ANY($2::int[])
+            UNION
+            SELECT blocking_user_id FROM blocked_users
+            WHERE blocked_user_id = $1 AND blocking_user_id = ANY($2::int[]);
+        `;
+
+        const blockedUsersResult = await client.query(blockedUsersQuery, [userId, profileIds]);
+        const blockedUserIds = new Set(blockedUsersResult.rows.map(row => row.blocked_user_id));
+
+        const filteredProfiles = profiles.filter(profile => !blockedUserIds.has(Number(profile.id)));
+
+        return filteredProfiles;
+    } catch (err) {
+        console.error(`Error filtering blocked users for user ${userId}:`, err);
+        throw new Error('Failed to filter blocked users');
+    } finally {
+        client.release();
     }
 }
