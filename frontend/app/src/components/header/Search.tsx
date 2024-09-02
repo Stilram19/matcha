@@ -1,7 +1,6 @@
 import './style.css'
 import { useState, ChangeEvent, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import dummySearchResults from '../utils/dummySearchResults';
 import Gender from '../utils/Gender';
 import SexualPreferences from '../utils/SexualPreferences';
 import { UserInfos } from '../../types/profile';

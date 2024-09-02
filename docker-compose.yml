@@ -10,10 +10,10 @@ services:
       - ./backend/database/.env
     networks:
       - backend
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
-    # expose:
-    #   - "${POSTGRES_PORT}"
+    # ports:
+    #   - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    expose:
+      - "${POSTGRES_PORT}"
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -26,6 +26,34 @@ services:
   #     - postgres
   #   networks:
   #     - backend
+  backend:
+    build: ./backend/backend
+    image: backend
+    container_name: backend
+    restart: on-failure
+    env_file:
+      - ./backend/backend/app/.env
+    networks:
+      - backend
+      # - client_server_net
+    depends_on:
+      - postgres
+    ports:
+      - ${API_PORT}:${API_PORT}
+  
+  frontend:
+    build: ./frontend
+    image: frontend
+    container_name: frontend
+    restart: on-failure
+    env_file:
+      - ./frontend/app/.env
+    # networks:
+    #   - client_server_net
+    depends_on:
+      - backend
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
 
 networks:
   client_server_net:

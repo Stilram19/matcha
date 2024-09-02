@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { sendLoggedInGetRequest } from "../utils/httpRequests";
-import eventObserver from "../utils/eventObserver";
 
 // type UseFetchType<T> = (url: string, dependency?: any[]) => 
 

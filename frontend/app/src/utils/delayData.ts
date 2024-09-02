@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 export const delayData = (then: (data: any) => void) => {
     useEffect(() => {
-        const promise = new Promise((resolve, reject) => {
+        const promise = new Promise((resolve) => {
             setTimeout(() => resolve(1), 5000);
         })
         promise.then(() => {
