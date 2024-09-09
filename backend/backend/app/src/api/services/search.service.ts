@@ -53,14 +53,14 @@ export async function getSearchResultService(userId: number, searchQueryStr: str
 
 
         return (searchResults.rows.map((result) => {
-
+            const profilePicture = result.profile_picture ? process.env.BASE_URL as string + '/' + result.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string;
             return {
                 id: result.id,
                 userName: result.username,
                 firstName: result.first_name,
                 lastName: result.last_name,
                 gender: result.gender,
-                profilePicture: process.env.BASE_URL + '/' + result.profile_picture,
+                profilePicture: profilePicture,
                 isSelf: result.is_self,
                 isLiked: result.is_liked,
                 isLiking: result.is_liking,

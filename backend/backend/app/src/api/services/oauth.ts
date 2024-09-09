@@ -41,6 +41,7 @@ export async function findOrCreateUser(profile: any): Promise<number> {
         return (insertResult.rows[0].id);
 
     } catch (err) {
+        console.log(err);
         throw new Error('findOrCreateUser failed!');
     } finally {
         if (client) {

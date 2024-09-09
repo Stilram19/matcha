@@ -86,7 +86,7 @@ export async function getContactsService(userId: number) {
         firstName: contact.first_name,
         lastName: contact.last_name,
         username: contact.username,
-        profilePicture: `${process.env.BASE_URL}/${contact.profile_picture}`,
+        profilePicture: contact.profile_picture ? process.env.BASE_URL as string + '/' + contact.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string,
         status: isUserOnline(contact.id) ? 'online' : 'offline',
     }));
 }
@@ -177,7 +177,7 @@ export async function retrieveDms(userId: number) {
             lastMessage: dm.content,
             unreadCount: Number(dm.unread_count),
             status: isUserOnline(dm.id) ? 'online' : 'offline',
-            profilePicture: process.env.BASE_URL + '/' + dm.profile_picture,
+            profilePicture: dm.profile_picture ? process.env.BASE_URL as string + '/' + dm.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string,
             isSender: dm.is_sender,
             isFavorite: dm.is_favorite,
         })));
@@ -273,7 +273,7 @@ export async function getContactDetails(participant: number) {
             username: contactDetails.username,
             firstName: contactDetails.first_name,
             lastName: contactDetails.last_name,
-            profilePicture: process.env.BASE_URL + '/' + contactDetails.profile_picture,
+            profilePicture: contactDetails.profile_picture ? process.env.BASE_URL as string + '/' + contactDetails.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string,
             biography: contactDetails.biography,
             status: (isUserOnline(contactDetails.id) ? 'online' : 'offline')
         }
@@ -329,7 +329,7 @@ export async function getParticipantInfoById(userId: number, participantId: numb
             username: participantUser.username,
             firstName: participantUser.first_name,
             lastName: participantUser.last_name,
-            profilePicture: process.env.BASE_URL + '/' + participantUser.profile_picture,
+            profilePicture: participantUser.profile_picture ? process.env.BASE_URL as string + '/' + participantUser.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string,
             isFavorite: participantUser.is_favorite,
             status: isUserOnline(participantId) ? 'online' : 'offline',
         })

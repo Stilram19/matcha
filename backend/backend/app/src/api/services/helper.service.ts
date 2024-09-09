@@ -60,7 +60,7 @@ export async function getUserBrief(userId: number): Promise<IUserBrief> {
         id: user.id,
         firstName: user.first_name,
         lastName: user.last_name,
-        profilePicture: process.env.BASE_URL + '/' + user.profile_picture, // put this in it own function
+        profilePicture: user.profile_picture ? process.env.BASE_URL as string + '/' + user.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string, // put this in it own function
         status: (isUserOnline(userId) ? 'online' : 'offline') as 'online' | 'offline',
     };
 }

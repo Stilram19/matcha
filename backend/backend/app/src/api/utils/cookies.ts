@@ -8,12 +8,14 @@ export function setJwtTokensAsHttpOnlyCookies(userId: number, response: Response
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     });
 
     response.cookie('RefreshToken', refreshToken, {
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     });
 }
 
@@ -22,12 +24,14 @@ export function setCSRFcookies(response: Response) {
 
     response.cookie('csrfSecretCookie', csrfCookie, {
         httpOnly: true,
-        sameSite: 'lax' 
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     });
 
     response.cookie('csrfClientExposedCookie', csrfCookie, {
         httpOnly: false,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     });
 }
 
@@ -36,14 +40,16 @@ export function setAccessTokensCookie(userId: number, response: Response) {
 
     response.cookie('AccessToken', accessToken, {
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     });
 }
 
 export function setCompleteProfileInfosCookie(value: number, response: Response) {
     response.cookie('CompleteProfile', value, {
         httpOnly: false,
-        sameSite: 'lax'
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     });
 }
 

@@ -14,10 +14,6 @@ function SearchResults() {
     const {data, fetchMoreData, hasMore} = usePaginatedFetch<UserInfos>(import.meta.env.VITE_LOCAL_SEARCH, {s: SearchQuery || ''});
     // i should update the way usePaginatedFetch handles query, by extartcing all the queries string first from the given url and then add the page and pageSize
 
-    const handleLoadMore = () => {
-        fetchMoreData();
-    }
-
     // need to implement a search results logic in a seperate module
     return (
         <div className="overflow-hidden shadow rounded-20px flex flex-col ml-3 mt-3 mr-3 sm:ml-6 sm:mr-6 sm:mt-6 md:mt-8 md:ml-8 md:mr-8 lg:ml-10 lg:mr-10 xl:ml-32 xl:mr-32 2xl:ml-44 2xl:mr-44 bg-white">

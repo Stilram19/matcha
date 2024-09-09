@@ -16,7 +16,7 @@ export default function GuestHeader() {
         <nav className="h-[74px] flex   w-screen z-10 bg-white">
             <div className="hidden md:flex items-center justify-between shadow px-10 w-full">
                 <div className="flex gap-16">
-                    <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>
+                    <Link to="/"><img src="/matcha_logo.svg" width={116} height={74} /></Link>
                     <ul className="flex items-center list-none">
                         <li><NavLink to="/" className="p-5 hover:text-pastel-pink">home</NavLink></li>
                         <li><NavLink to="#" className="p-5 hover:text-pastel-pink">about</NavLink></li>
@@ -31,7 +31,7 @@ export default function GuestHeader() {
 
             {/* Phone version */}
             <div className="px-3 w-full flex justify-between shadow md:hidden">
-                <Link to="/"><img src="/matcha_logo.png" width={116} height={74} /></Link>
+                <Link to="/"><img src="/matcha_logo.svg" width={116} height={74} /></Link>
                 <div ref={wrapper} className="flex">
                     {/* <button onClick={handleOnClick}><RxHamburgerMenu size={40} /></button> */}
                     <button onClick={handleOnClick}><FaBars size={25} className="hover:fill-pastel-pink" /></button>
