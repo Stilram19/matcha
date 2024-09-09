@@ -8,24 +8,10 @@ type Props = {
 }
 
 const   SocketContext = createContext<Socket | null>(null);
-const   IO_SERVER_URL = "http://localhost:3000"
+const   IO_SERVER_URL = import.meta.env.VITE_API_URL;
 
 const   SocketProvider = ({children}: Props) => {
     const   socket = io(IO_SERVER_URL, {withCredentials: true})
-
-    // const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    //     const input = e.target as HTMLInputElement;
-    //     if (e.key === "Enter") {
-    //         socket.disconnect();
-    //         setUserId(+input.value);
-    //     }
-    // }
-
-    // // ! testing
-    // socket.on('error', () => {
-    //     console.log('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
-    //     eventObserver.publish(GlobalEventEnum.ERROR_OCCURED, 'something went wrong with socket')
-    // })
 
     return (
         <SocketContext.Provider value={socket}>

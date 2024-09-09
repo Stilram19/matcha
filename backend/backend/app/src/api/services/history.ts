@@ -45,7 +45,7 @@ export async function getVisitsHistoryService(userId: number, page: number, page
             userName: visitor.username,
             firstName: visitor.first_name,
             lastName: visitor.last_name,
-            profilePicture: process.env.BASE_URL + '/' + visitor.profile_picture,
+            profilePicture: visitor.profile_picture ? process.env.BASE_URL as string + '/' + visitor.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string,
             biography: visitor.biography,
             gender: visitor.gender,
             age: visitor.age,

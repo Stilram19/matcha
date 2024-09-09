@@ -119,8 +119,6 @@ export async function sendLoggedInActionRequest(method: string, url: string, dat
 export async function sendLoggedInGetRequest(url: string) {
     const csrfClientExposedCookie = getCookie('csrfClientExposedCookie');
 
-    console.log(csrfClientExposedCookie);
-
     const response = await fetch(url, {
         method: "GET",
         credentials: 'include',
@@ -153,7 +151,6 @@ export async function sendLoggedInGetRequest(url: string) {
 }
 
 
-// ! why if the endpoint not found the server respond with unauthorized
 export async function sendGetRequest(url: string) {
     const response = await fetch(url, {
         method: "GET",

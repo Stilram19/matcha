@@ -178,8 +178,9 @@ const SignUp = () => {
                     <p className="text-continue">or continue with</p>
                     <hr className="w-24 border-none h-[1px] bg-gray-300" />
                 </div>
-                <button onClick={handleSignupWithGoogle} className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
-                    <img src="/google.svg" alt="Google" />Google
+                <button onClick={handleSignupWithGoogle} className="bg-light-gray flex justify-center items-center font-semibold gap-2 w-96 py-3 rounded-lg" style={{color: "#5865f2"}}>
+                    <img src="/discord.svg" alt="Discord" />
+                    Discord
                 </button>
                 <p className="text-center w-96 mt-3">
                 By clicking continue, you agree to our

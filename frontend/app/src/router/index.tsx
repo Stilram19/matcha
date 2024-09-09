@@ -21,23 +21,6 @@ import CommonLayout from "../layouts/CommonLayout";
 import NotificationPage from "../pages/notification/NotificationPage";
 import NotFound from "../components/utils/not-found/NotFound";
 
-
-// const Test = () => {
-
-//   useEffect(() => {
-//     (async () => {
-//       const res = await fetch("http://localhost:3000/blah", {credentials: 'include'});
-//       const data = await res.json();
-
-//       console.log(data);
-//   })()
-//   }, [])
-
-//   return <div>
-//     hello
-//   </div>
-// }
-
 const router = createBrowserRouter([
     {
         path: '/',

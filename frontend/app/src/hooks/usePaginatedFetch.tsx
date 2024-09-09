@@ -30,7 +30,6 @@ function usePaginatedFetch<T>(url: string, uriQuery?: Record<string, string>) : 
 
     const   fetchMoreData = async () => {
         if (!hasMore) {
-            console.log('no more data');
             return
         }
 
@@ -45,7 +44,6 @@ function usePaginatedFetch<T>(url: string, uriQuery?: Record<string, string>) : 
             setData((prev) => [...(prev || []), ...data]);
             setPage((prevPage) => prevPage + 1);
         } catch (e) {
-            console.log(`FETCHING MORE DATA ERROR, URL : ${url}`);
             console.log(e);
         }
     }

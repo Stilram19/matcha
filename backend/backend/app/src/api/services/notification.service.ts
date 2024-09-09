@@ -225,18 +225,22 @@ export async function retrieveNotifications(userId: number, page: number, pageSi
         client.release();
     }
 
-    const mappedResults: INotification[] = results.rows.map((notification) => ({
-        id: notification.id,
-        type: notification.type,
-        title: notification.title,
-        message: substituteActorInNotificationDesc(notification.description, `${notification.first_name} ${notification.last_name}`),
-        actorId: notification.actor_id,
-        firstName: notification.first_name,
-        lastName: notification.last_name,
-        profilePicture: process.env.BASE_URL + '/' + notification.profile_picture,
-        notificationStatus: notification.status,
-        createdAt: new Date(notification.created_at).toISOString(),
-    }))
+    const mappedResults: INotification[] = results.rows.map((notification) => {
+        const profilePicture = notification.profile_picture ? process.env.BASE_URL as string + '/' + notification.profile_picture : process.env.DEFAULT_PROFILE_PICTURE as string;
+
+            return ({
+            id: notification.id,
+            type: notification.type,
+            title: notification.title,
+            message: substituteActorInNotificationDesc(notification.description, `${notification.first_name} ${notification.last_name}`),
+            actorId: notification.actor_id,
+            firstName: notification.first_name,
+            lastName: notification.last_name,
+            profilePicture: profilePicture,
+            notificationStatus: notification.status,
+            createdAt: new Date(notification.created_at).toISOString(),
+        })
+    })
 
 
     return (mappedResults);

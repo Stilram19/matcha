@@ -17,13 +17,13 @@ function useFetch<T>(url: string, dependency?: any[]): [T | undefined, React.Dis
                 setData(data);
             } catch (error) {
                 console.log(`fetch error: ${error}`);
-                // ! error handling
+
                 setError(`fetch error: something went wrong`);
             }
         }
 
-        fetchData();
         console.log("fetching.....");
+        fetchData();
     }, [url, ...(dependency ? dependency : [])])
 
     return [data, setData, error];

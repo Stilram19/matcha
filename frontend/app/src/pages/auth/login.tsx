@@ -127,9 +127,9 @@ export default function Login() {
                         <p className="text-continue">or continue with</p>
                         <hr className="w-24 border-none h-[1px] bg-gray-300" />
                     </div>
-                    <button onClick={handleSigninWithGoogle} className="bg-light-gray flex justify-center gap-2 w-96 py-3 rounded-lg">
-                        <img src="/google.svg" alt="Google" />
-                        Google
+                    <button onClick={handleSigninWithGoogle} className="bg-light-gray flex justify-center items-center font-semibold gap-3 w-96 py-3 rounded-lg" style={{color: "#5865f2"}}>
+                        <img src="/discord.svg" alt="Discord" />
+                        Discord
                     </button>
                 </div>
             </div>
